@@ -1,32 +1,27 @@
 from src.database import db
 from werkzeug.security import generate_password_hash, check_password_hash
 
-class AccountDb(db.Model):
-    __tablename__ = 'accounttest'
-    AccountId = db.Column(db.Integer, primary_key=True, autoincrement= True)
-    # displayName = db.Column(db.String(50))
-    email = db.Column(db.String(100))
-    Password = db.Column(db.String)
-    RoleId = db.Column(db.Integer)
-    isActivated = db.Column(db.Boolean(), nullable=False, server_default='0')
-    confirmedAt = db.Column(db.DateTime)
-    GoogleId = db.Column(db.String(50))
-    CreateAt = db.Column(db.DateTime)
-    UpdateAt = db.Column(db.TIMESTAMP)
 
-    def __init__(self, AccountId, email, Password, RoleId,
-                 isActivated, confirmedAt,
-                GoogleId, CreateAt, UpdateAt,
-                ):
-        self.AccountId = AccountId
+class AccountDb(db.Model):
+    __tablename__ = 'account'
+    accountId = db.Column(db.Integer, primary_key=True)
+    password = db.Column(db.String)
+    email = db.Column(db.String)
+    roleId = db.Column(db.Integer)
+    managerAccount = db.Column(db.Integer, db.ForeignKey('account.accountId'))
+    startTime = db.Column(db.Date)
+    endTime = db.Column(db.Date)
+    isLocked = db.Column(db.Integer)
+
+    def __init__(self, AccountId, email, Password, RoleId, managerAccount, startTime, endTime, isLocked):
+        self.accountId = AccountId
         self.email = email
-        self.Password = Password
-        self.RoleId = RoleId
-        self.isActivated = isActivated
-        self.confirmedAt = confirmedAt
-        self.GoogleId = GoogleId
-        self.CreateAt = CreateAt
-        self.UpdateAt = UpdateAt
+        self.password = Password
+        self.roleId = RoleId
+        self.managerAccount = managerAccount
+        self.startTime = startTime
+        self.endTime = endTime
+        self.isLocked = isLocked
 
     def __init__(self, email, Password, createdAt):
 
@@ -36,17 +31,17 @@ class AccountDb(db.Model):
 
 
     @classmethod
-    def find_account(cls, mail, passWord):
-        return cls.query.filter_by(email=mail, Password=passWord).first()
+    def find_account(cls, accId, passWord):
+        return cls.query.filter_by(accountId=accId, password=passWord).first()
 
     @classmethod
-    def find_by_email(cls, email):
-        return cls.query.filter_by(email=email).first()
+    def find_by_email(cls, email, accId):
+        return cls.query.filter_by(email=email, accountId=accId).first()
 
     @classmethod
-    def check_password(cls, password, email):
-        user = cls.query.filter_by(email=email).first()
-        return check_password_hash(user.Password, password)
+    def check_password(cls, password, accId):
+        user = cls.query.filter_by(accoundId=accId).first()
+        return check_password_hash(user.password, password)
 
     def save_to_db(self):
         db.session.add(self)
