@@ -28,44 +28,6 @@ def random_string():
     return final_string
 
 
-
-# @app.route('/', methods=['POST'])
-# def login():
-#     email = request.form['email']
-#     password = request.form['password']
-#     if AccountDb.find_by_email(email) is None:
-#         return {'message': "An image with name already exists."}, 404
-#     user = AccountDb.find_by_email(email)
-#     if check_password_hash(user.Password, password):
-#         return {'message': "Login success"}, 200
-#     return {"message": "forbidden"}, 404
-#
-#
-# @app.route('/register', methods=['POST'])
-# def register():
-#     email = request.form['email']
-#     password = request.form['password']
-#     if AccountDb.find_by_email(email) is not None:
-#         return {'message': "An image with name already exists."}, 404
-#     print(datetime.now())
-#     user = AccountDb(email=email, Password=generate_password_hash(password, method='sha256'), createdAt=datetime.now())
-#     user.save_to_db()
-#     token = su.dumps(email, salt='email-confirm')
-#     msg = Message('Confirm Email', sender='phucpb.hrt@gmail.com', recipients=[email])
-#     link = url_for('confirmation', token=token, _external=True)
-#     msg.body = 'Your link is {}'.format(link)
-#     my_mail.send(msg)
-#     return {'message': "Login success"}, 200
-#
-#
-# @app.route('/confirm_email/<token>', methods=['GET'])
-# def get(token):
-#         try:
-#             email = su.loads(token, salt='email-confirm', max_age=3600)
-#         except SignatureExpired:
-#             return '<h1>The token is expired!</h1>'
-#         return '<h1>The token works!</h1>'
-
 class Account(Resource):
     parser = reqparse.RequestParser()
     parser.add_argument('email', type=str)
@@ -126,20 +88,6 @@ class Register(Resource):
             user.save_to_db()
         except:
             return {'message': "Unable to send confirmation mail"}, 400
-        # msg = EmailMessage()
-        # s = smtplib.SMTP(host='smtp.gmail.com', port=587)
-        # s.starttls()
-        # s.login('phucpb.hrt@gmail.com', 'hrtechf10')
-        # # msg = Message('Confirm Email', sender='19020037@vnu.edu.vn', recipients=[email])
-        # link = url_for('confirmation', token=token, _external=True)
-        # # msg.body = 'Your link is {}'.format(link)
-        # msg.set_content('Your link is {}'.format(link))
-        # # mail.send(msg)
-        # msg['Subject'] = 'CONFIRM MAIL'
-        # msg['From'] = 'PB Phuc<phucpb.hrt@gmail.com>'
-        # msg['To'] = f'{email}'
-        # s.send_message(msg)
-        # s.quit()
         return {'message': "Login success"}, 200
 
     def delete(self):

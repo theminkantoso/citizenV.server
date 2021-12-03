@@ -10,31 +10,9 @@ class AccountDb(db.Model):
     RoleId = db.Column(db.Integer)
     isActivated = db.Column(db.Boolean(), nullable=False, server_default='0')
     confirmedAt = db.Column(db.DateTime)
-    # RecoverPasswordCode = db.Column(db.String(50))
-    # ExpiredTimeCode = db.Column(db.DateTime)
-    # FacebookId = db.Column(db.String(50))
     GoogleId = db.Column(db.String(50))
     CreateAt = db.Column(db.DateTime)
     UpdateAt = db.Column(db.TIMESTAMP)
-    # ImageId = db.Column(db.Integer)
-
-
-    # def __init__(self, AccountId, displayName, email, Password, RoleId,
-    #              RecoverPasswordCode, ExpiredTimeCode, FacebookId,
-    #              GoogleId, CreateAt, UpdateAt, ImageId
-    #             ):
-    #     self.AccountId = AccountId
-    #     self.displayName = displayName
-    #     self.email = email
-    #     self.Password = Password
-    #     self.RoleId = RoleId
-    #     self.RecoverPasswordCode = RecoverPasswordCode
-    #     self.ExpiredTimeCode = ExpiredTimeCode
-    #     self.FacebookId = FacebookId
-    #     self.GoogleId = GoogleId
-    #     self.CreateAt = CreateAt
-    #     self.UpdateAt = UpdateAt
-    #     self.ImageId = ImageId
 
     def __init__(self, AccountId, email, Password, RoleId,
                  isActivated, confirmedAt,
@@ -56,10 +34,7 @@ class AccountDb(db.Model):
         self.Password = Password
         self.CreateAt = createdAt
 
-    # def json(self):
-    #     return {'Name': self.Name, 'Content': self.Content, 'Url': self.Url, 'Path': self.Path,
-    #             'MimeType': self.MimeType}
-    #
+
     @classmethod
     def find_account(cls, mail, passWord):
         return cls.query.filter_by(email=mail, Password=passWord).first()
