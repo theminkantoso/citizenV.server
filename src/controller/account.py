@@ -39,7 +39,7 @@ class Account(Resource):
         password = data['password']
         regex_id = '^[0-9]*$'
         pattern_id = re.compile(regex_id)
-        if not pattern_id.fullmatch(id) or not password.isalnum():
+        if not pattern_id.fullmatch(id) or not password.isalnum() or len(id) % 2 != 0:
             return {'message': "Invalid id or password"}, 401
         if AccountDb.find_by_id(id) is None:
             return {'message': "Incorrect id or password"}, 401
@@ -122,7 +122,7 @@ class Repass(Resource):
         pattern_id = re.compile(regex_id)
         regex_mail = r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b'
         pattern_mail = re.compile(regex_mail)
-        if not pattern_mail.fullmatch(email.lower()) or pattern_id.fullmatch(id):
+        if not pattern_mail.fullmatch(email.lower()) or pattern_id.fullmatch(id) or len(id) % 2 != 0:
             return {'message': "Check your id or email"}, 400
         if AccountDb.find_by_email(email, id) is None:
             return {'message': "No account with this email and id"}, 400
