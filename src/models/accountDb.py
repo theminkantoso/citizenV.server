@@ -26,7 +26,7 @@ class AccountDb(db.Model):
     def __init__(self, email, Password, createdAt):
 
         self.email = email
-        self.Password = Password
+        self.password = Password
         self.CreateAt = createdAt
 
 
@@ -37,6 +37,10 @@ class AccountDb(db.Model):
     @classmethod
     def find_by_email(cls, email, accId):
         return cls.query.filter_by(email=email, accountId=accId).first()
+
+    @classmethod
+    def find_by_id(cls, accId):
+        return cls.query.filter_by(accountId=accId).first()
 
     @classmethod
     def check_password(cls, password, accId):
