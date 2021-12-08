@@ -41,9 +41,9 @@ class Account(Resource):
         pattern_id = re.compile(regex_id)
         if not pattern_id.fullmatch(id) or not password.isalnum() or len(id) % 2 != 0:
             return {'message': "Invalid id or password"}, 401
-        if AccountDb.find_by_id(id) is None:
-            return {'message': "Incorrect id or password"}, 401
         user = AccountDb.find_by_id(id)
+        if user is None:
+            return {'message': "Incorrect id or password"}, 401
         if check_password_hash(user.password, password):
             access_token = create_access_token(identity=id)
             return jsonify(access_token=access_token)
@@ -122,12 +122,12 @@ class Repass(Resource):
         pattern_id = re.compile(regex_id)
         regex_mail = r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b'
         pattern_mail = re.compile(regex_mail)
-        if not pattern_mail.fullmatch(email.lower()) or pattern_id.fullmatch(id) or len(id) % 2 != 0:
+        if not pattern_mail.fullmatch(email.lower()) or not pattern_id.fullmatch(id) or len(id) % 2 != 0:
             return {'message': "Check your id or email"}, 400
-        if AccountDb.find_by_email(email, id) is None:
+        get_user = AccountDb.find_by_email(email, id)
+        if get_user is None:
             return {'message': "No account with this email and id"}, 400
         try:
-            get_user = AccountDb.find_by_email(email, id)
             new_password = random_string()
             get_user.Password = generate_password_hash(new_password, method='sha256')
             msg = Message('New Password Recovery', sender='phucpb.hrt@gmail.com', recipients=[email.lower()])

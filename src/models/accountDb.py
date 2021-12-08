@@ -23,13 +23,6 @@ class AccountDb(db.Model):
         self.endTime = endTime
         self.isLocked = isLocked
 
-    def __init__(self, email, Password, createdAt):
-
-        self.email = email
-        self.password = Password
-        self.CreateAt = createdAt
-
-
     @classmethod
     def find_account(cls, accId, passWord):
         return cls.query.filter_by(accountId=accId, password=passWord).first()
@@ -41,11 +34,6 @@ class AccountDb(db.Model):
     @classmethod
     def find_by_id(cls, accId):
         return cls.query.filter_by(accountId=accId).first()
-
-    @classmethod
-    def check_password(cls, password, accId):
-        user = cls.query.filter_by(accoundId=accId).first()
-        return check_password_hash(user.password, password)
 
     def save_to_db(self):
         db.session.add(self)
