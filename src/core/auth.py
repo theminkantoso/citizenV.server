@@ -48,3 +48,17 @@ def authorized_required(func, roles):
             return {'message': "You are not authorized to perform this activity"}, 403
         return func(*args, **kwargs)
     return decorated
+
+
+def crud_permission_required(func):
+    @wraps(func)
+    def decorated(*args, **kwargs):
+        try:
+            user_id = get_id_from_jwt_token()
+            user = AccountDb.find_by_id(user_id)
+            if user.isLocked:
+                raise Exception()
+        except:
+            return {'message': "You are not authorized to perform this activity"}, 403
+        return func(*args, **kwargs)
+    return decorated

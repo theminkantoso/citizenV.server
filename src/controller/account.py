@@ -25,6 +25,13 @@ def random_string():
     return final_string
 
 
+def validate_regex(input_string, regex):
+    pattern = re.compile(regex)
+    if pattern.match(input_string):
+        return True
+    return False
+
+
 class Account(Resource):
     parser = reqparse.RequestParser()
     parser.add_argument('id', type=int)
@@ -38,14 +45,14 @@ class Account(Resource):
         id = data['id']
         password = data['password']
         regex_id = '^[0-9]*$'
-        pattern_id = re.compile(regex_id)
-        if not pattern_id.fullmatch(id) or not password.isalnum() or len(id) % 2 != 0:
+        if not validate_regex(input_string=id, regex=regex_id) or not password.isalnum() or len(id) % 2 != 0:
             return {'message': "Invalid id or password"}, 401
         user = AccountDb.find_by_id(id)
         if user is None:
             return {'message': "Incorrect id or password"}, 401
         if check_password_hash(user.password, password):
             access_token = create_access_token(identity=id)
+            # update time true or not
             return jsonify(access_token=access_token)
         return {"message": "Incorrect username or password"}, 401
 
@@ -119,10 +126,10 @@ class Repass(Resource):
         id = data['id']
         email = data['email']
         regex_id = '^[0-9]*$'
-        pattern_id = re.compile(regex_id)
         regex_mail = r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b'
-        pattern_mail = re.compile(regex_mail)
-        if not pattern_mail.fullmatch(email.lower()) or not pattern_id.fullmatch(id) or len(id) % 2 != 0:
+        if not validate_regex(input_string=email.lower(), regex=regex_mail) \
+                or not validate_regex(input_string=id, regex=regex_id) \
+                or len(id) % 2 != 0:
             return {'message': "Check your id or email"}, 400
         get_user = AccountDb.find_by_email(email, id)
         if get_user is None:
