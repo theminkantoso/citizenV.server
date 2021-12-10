@@ -30,7 +30,7 @@ class WardDb(db.Model) :
 
     @classmethod
     def find_by_D_Wname(cls, DId, Wname):
-        return cls.query.filter_by(districtId=DId,wardName=Wname).first()
+        return cls.query.filter_by(districtId=DId, wardName=Wname).first()
 
     @classmethod
     def find_by_DWname(cls, DId, Wname):

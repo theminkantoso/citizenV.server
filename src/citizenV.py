@@ -2,10 +2,10 @@ from flask_restful import Api
 from flask import Flask
 
 from src.controller.account import Account, Register, Confirmation, Repass, ChangePass, UserLogoutAccess
-from src.controller.cityProvince import City,Cities
+from src.controller.cityProvince import City, Cities
 from src.controller.district import District, Districts
-from src.controller.ward import Ward,Wards
-from src.controller.residentialGroup import Group,Groups
+from src.controller.ward import Ward, Wards
+from src.controller.residentialGroup import Group, Groups
 
 from src import controller
 
@@ -39,6 +39,8 @@ api.add_resource(Wards, '/wards/<string:name>')
 # Thôn/bản/tdp
 api.add_resource(Group, '/group', '/group/<string:Wname>/<string:Gname>')
 api.add_resource(Groups, '/groups/<string:name>')
+
+
 @controller.jwt_manager.token_in_blacklist_loader
 def check_if_token_in_blacklist(decrypted_token):
 

@@ -24,9 +24,9 @@ class DistrictDb(db.Model) :
     def find_by_C_D_name(cls, CId, Dname):
         return cls.query.filter_by(cityProvinceId=CId,districtName=Dname).first()
 
-    @classmethod
-    def find_by_C_Dname(cls, CId, Dname):
-        return cls.query.filter_by(cityProvinceId=CId, districtName=Dname).all()
+    # @classmethod
+    # def find_by_C_Dname(cls, CId, Dname):
+    #     return cls.query.filter_by(cityProvinceId=CId, districtName=Dname).all()
 
     @classmethod
     def find_by_id(cls, id):
