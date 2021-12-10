@@ -1,0 +1,11 @@
+flask
+flask_mysqldb
+flask_sqlalchemy
+flask_restful
+flask-bcrypt
+werkzeug.*
+flask_mail
+itsdangerous
+jwt
+flask_jwt_extended == 3.21.0
+PyJWT == 1.7.1
