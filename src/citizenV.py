@@ -1,7 +1,7 @@
 from flask_restful import Api
 from flask import Flask
 
-from src.controller.account import Account, Register, Confirmation, Repass, ChangePass, UserLogoutAccess
+from src.controller.account import Account, Repass, ChangePass, UserLogoutAccess
 from src.controller.cityProvince import City, Cities
 from src.controller.district import District, Districts
 from src.controller.ward import Ward, Wards
@@ -18,8 +18,6 @@ api = Api(app)
 controller.init_app(app)
 
 api.add_resource(Account, '/login')
-api.add_resource(Register, '/register')
-api.add_resource(Confirmation, '/confirm_email/<token>')
 api.add_resource(Repass, '/repass')
 api.add_resource(ChangePass, '/changepass')
 api.add_resource(UserLogoutAccess, '/logout')
