@@ -8,20 +8,31 @@ class AccountDb(db.Model):
     password = db.Column(db.String)
     email = db.Column(db.String)
     roleId = db.Column(db.Integer)
-    managerAccount = db.Column(db.Integer, db.ForeignKey('account.accountId'))
-    startTime = db.Column(db.Date)
-    endTime = db.Column(db.Date)
-    isLocked = db.Column(db.Integer)
+    managerAccount = db.Column(db.Integer)
+    startTime = db.Column(db.DateTime)
+    endTime = db.Column(db.DateTime)
+    isLocked = db.Column(db.Boolean)
 
-    def __init__(self, AccountId, email, Password, RoleId, managerAccount, startTime, endTime, isLocked):
+    # def __init__(self, AccountId, email, Password, RoleId, managerAccount, startTime, endTime, isLocked):
+    #     self.accountId = AccountId
+    #     self.email = email
+    #     self.password = Password
+    #     self.roleId = RoleId
+    #     self.managerAccount = managerAccount
+    #     self.startTime = startTime
+    #     self.endTime = endTime
+    #     self.isLocked = isLocked
+
+    def __init__(self, AccountId, Password, RoleId, isLocked):
         self.accountId = AccountId
-        self.email = email
         self.password = Password
         self.roleId = RoleId
-        self.managerAccount = managerAccount
-        self.startTime = startTime
-        self.endTime = endTime
         self.isLocked = isLocked
+
+    def json(self):
+        return {"accountId":self.accountId, "password": self.password, "email": self.email, "roleId": self.roleId,
+                "managerAccount": self.managerAccount, "startTime": self.startTime, "endTime": self.endTime,
+                "isLocked": self.isLocked}
 
     @classmethod
     def find_account(cls, accId, passWord):
@@ -34,6 +45,10 @@ class AccountDb(db.Model):
     @classmethod
     def find_by_id(cls, accId):
         return cls.query.filter_by(accountId=accId).first()
+
+    @classmethod
+    def find_managed_account_by_id(cls, accId):
+        return cls.query.filter_by(managerAccount=accId).all()
 
     def save_to_db(self):
         db.session.add(self)

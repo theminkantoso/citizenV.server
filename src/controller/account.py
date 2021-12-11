@@ -5,7 +5,7 @@ from datetime import datetime
 from itsdangerous import URLSafeTimedSerializer, SignatureExpired
 from src.controller import my_mail
 from flask import url_for, jsonify
-from flask_jwt_extended import create_access_token, jwt_required, current_user, get_jwt_identity, get_raw_jwt
+from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity, get_jwt
 from flask_mail import Message
 
 import json
@@ -27,14 +27,14 @@ def random_string():
 
 def validate_regex(input_string, regex):
     pattern = re.compile(regex)
-    if pattern.match(input_string):
+    if pattern.fullmatch(input_string):
         return True
     return False
 
 
 class Account(Resource):
     parser = reqparse.RequestParser()
-    parser.add_argument('id', type=int)
+    parser.add_argument('id', type=str)
     parser.add_argument('password', type=str)
 
     def get(self):
@@ -45,15 +45,16 @@ class Account(Resource):
         id = data['id']
         password = data['password']
         regex_id = '^[0-9]*$'
-        if not validate_regex(input_string=id, regex=regex_id) or not password.isalnum() or len(id) % 2 != 0:
-            return {'message': "Invalid id or password"}, 401
+        if not validate_regex(id, regex_id) or not password.isalnum() or len(id) % 2 != 0:
+            return {'message': "Invalid id or password"}, 400
         user = AccountDb.find_by_id(id)
         if user is None:
             return {'message': "Incorrect id or password"}, 401
         if check_password_hash(user.password, password):
-            access_token = create_access_token(identity=id)
+            additional_claim = {"role": user.roleId}
+            access_token = create_access_token(identity=id, additional_claims=additional_claim)
             # update time true or not
-            return jsonify(access_token=access_token)
+            return jsonify(access_token=access_token.decode('utf-8'))
         return {"message": "Incorrect username or password"}, 401
 
     def delete(self):
@@ -63,42 +64,29 @@ class Account(Resource):
         return {'message': 'Not allowed'}, 404
 
 
-# class Register(Resource):
-#     parser = reqparse.RequestParser()
-#     parser.add_argument('email', type=str)
-#     parser.add_argument('password',type=str)
-#
-#
-#     def get(self):
-#         pass
-#
-#     def post(self):
-#         data = Register.parser.parse_args()
-#         email = data['email']
-#         password = data['password']
-#         regex_mail = r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b'
-#         pattern_mail = re.compile(regex_mail)
-#         if not pattern_mail.fullmatch(email.lower()) or not password.isalnum():
-#             return {'message': "Invalid email or password"}, 400
-#         if AccountDb.find_by_email(email.lower()) is not None:
-#             return {'message': "An account with this email already existed."}, 400
-#         user = AccountDb(email=email.lower(), Password=generate_password_hash(password, method='sha256'), createdAt=datetime.now())
-#         token = su.dumps(email.lower(), salt='email-confirm')
-#         link = url_for('confirmation', token=token, _external=True)
-#         try:
-#             msg = Message('Confirm Email', sender='phucpb.hrt@gmail.com', recipients=[email.lower()])
-#             msg.body = 'Your link is {}'.format(link)
-#             my_mail.send(msg)
-#             user.save_to_db()
-#         except:
-#             return {'message': "Unable to send confirmation mail"}, 400
-#         return {'message': "Login success"}, 200
-#
-#     def delete(self):
-#         return {'message': 'Not allowed'}, 404
-#
-#     def put(self):
-#         return {'message': 'Not allowed'}, 404
+class Register(Resource):
+    parser = reqparse.RequestParser()
+    parser.add_argument('email', type=str)
+    parser.add_argument('password', type=str)
+
+
+    def get(self):
+        pass
+
+    def post(self):
+        data = Register.parser.parse_args()
+        email = data['email']
+        password = data['password']
+        user = AccountDb(AccountId=email, Password=generate_password_hash(password, method='sha256'), RoleId=0,
+                         isLocked=0)
+        user.save_to_db()
+        return {'message': "Login success"}, 200
+
+    def delete(self):
+        return {'message': 'Not allowed'}, 404
+
+    def put(self):
+        return {'message': 'Not allowed'}, 404
 
 
 # class Confirmation(Resource):
@@ -150,21 +138,17 @@ class ChangePass(Resource):
     parser = reqparse.RequestParser()
     parser.add_argument('password', type=str)
     parser.add_argument('newpassword', type=str)
-    parser.add_argument('renewpassword', type=str)
 
-    @jwt_required
+    @jwt_required()
     def post(self):
         data = ChangePass.parser.parse_args()
         password = data['password']
         new_password = data['newpassword']
-        re_new_password = data['renewpassword']
-        if new_password != re_new_password:
-            return {'message': "Not matching new password"}, 400
-        if not password.isalnum() or not new_password.isalnum() or not re_new_password.isalnum():
+        if not password.isalnum() or not new_password.isalnum():
             return {'message': "Wrong input format"}, 400
         id = get_jwt_identity()
         get_user = AccountDb.find_by_id(id)
-        if check_password_hash(get_user.Password, password):
+        if check_password_hash(get_user.password, password):
             get_user.Password = generate_password_hash(new_password, method='sha256')
             get_user.commit_to_db()
             return {'message': "New password saved succeed!"}, 200
@@ -176,10 +160,10 @@ class UserLogoutAccess(Resource):
     User Logout Api
     """
 
-    @jwt_required
+    @jwt_required()
     def post(self):
 
-        jti = get_raw_jwt()['jti']
+        jti = get_jwt()['jti']
         # revoked_token = RevokedTokenModel(jti=jti)
         #
         # revoked_token.add()

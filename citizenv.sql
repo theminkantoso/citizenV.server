@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1:3306
--- Generation Time: Dec 08, 2021 at 05:07 AM
+-- Generation Time: Dec 11, 2021 at 01:27 PM
 -- Server version: 10.4.21-MariaDB-log
 -- PHP Version: 8.0.10
 
@@ -30,13 +30,32 @@ SET time_zone = "+00:00";
 CREATE TABLE `account` (
   `accountId` int(10) NOT NULL,
   `password` varchar(10000) NOT NULL,
-  `email` varchar(1000) NOT NULL,
+  `email` varchar(1000) DEFAULT NULL,
   `roleId` int(10) NOT NULL,
   `managerAccount` int(10) DEFAULT NULL,
-  `startTime` date NOT NULL,
-  `endTime` date DEFAULT NULL,
+  `startTime` datetime DEFAULT NULL,
+  `endTime` datetime DEFAULT NULL,
   `isLocked` tinyint(1) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Dumping data for table `account`
+--
+
+INSERT INTO `account` (`accountId`, `password`, `email`, `roleId`, `managerAccount`, `startTime`, `endTime`, `isLocked`) VALUES
+(0, 'sha256$iUtOAp2l3Fot4W6j$e865a998d8ab5d9b98db60448d64b33892e4790863c80bfa42c0de4c80886595', NULL, 0, NULL, NULL, NULL, 0);
+
+--
+-- Triggers `account`
+--
+DELIMITER $$
+CREATE TRIGGER `disableAccount` AFTER UPDATE ON `account` FOR EACH ROW BEGIN
+ IF new.isLocked = 1 THEN
+	UPDATE account SET isLocked = 1 WHERE managerAccount = old.accountId;
+END IF;
+END
+$$
+DELIMITER ;
 
 -- --------------------------------------------------------
 
@@ -106,6 +125,13 @@ CREATE TABLE `revoked_tokens` (
   `id` int(11) NOT NULL,
   `jti` varchar(120) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Dumping data for table `revoked_tokens`
+--
+
+INSERT INTO `revoked_tokens` (`id`, `jti`) VALUES
+(1, '79d0a1b0-335c-4650-8782-de62e11c03b5');
 
 -- --------------------------------------------------------
 
@@ -188,17 +214,11 @@ ALTER TABLE `citizen`
 -- AUTO_INCREMENT for table `revoked_tokens`
 --
 ALTER TABLE `revoked_tokens`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- Constraints for dumped tables
 --
-
---
--- Constraints for table `account`
---
-ALTER TABLE `account`
-  ADD CONSTRAINT `fk_account_account` FOREIGN KEY (`managerAccount`) REFERENCES `account` (`accountId`) ON UPDATE CASCADE;
 
 --
 -- Constraints for table `citizen`

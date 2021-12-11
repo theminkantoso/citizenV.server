@@ -7,5 +7,5 @@ werkzeug.*
 flask_mail
 itsdangerous
 jwt
-flask_jwt_extended == 3.21.0
+flask_jwt_extended == 4.3.1
 PyJWT == 1.7.1
