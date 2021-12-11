@@ -26,7 +26,7 @@ from ..models.accountDb import AccountDb
 #     return decorated
 
 
-@jwt_required
+@jwt_required()
 def get_id_from_jwt_token():
     id = get_jwt_identity()
     return id
