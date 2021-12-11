@@ -1,6 +1,6 @@
 from flask import Flask, request, jsonify, make_response, request
 import jwt
-from flask_jwt_extended import jwt_required, current_user, get_jwt_identity, get_raw_jwt
+from flask_jwt_extended import jwt_required, current_user, get_jwt_identity, get_jwt
 from functools import wraps
 from ..models.accountDb import AccountDb
 # su = 'Thisisasecret!'
