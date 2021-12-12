@@ -41,7 +41,7 @@ api.add_resource(Groups, '/groups/<string:name>')
 
 # Màn hình quản lý tài khoản
 api.add_resource(AccountManagement, '/accounts')
-api.add_resource(AccountManagementChange, '/accounts/<int:id>')
+api.add_resource(AccountManagementChange, '/accounts/<string:id>')
 
 
 # @controller.jwt_manager.token_in_blacklist_loader

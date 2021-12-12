@@ -44,9 +44,12 @@ class Account(Resource):
         data = Account.parser.parse_args()
         id = data['id']
         password = data['password']
+
+        # validate
         regex_id = '^[0-9]*$'
         if not validate_regex(id, regex_id) or not password.isalnum() or len(id) % 2 != 0:
             return {'message': "Invalid id or password"}, 400
+
         user = AccountDb.find_by_id(id)
         if user is None:
             return {'message': "Incorrect id or password"}, 401
@@ -64,44 +67,29 @@ class Account(Resource):
         return {'message': 'Not allowed'}, 404
 
 
-class Register(Resource):
-    parser = reqparse.RequestParser()
-    parser.add_argument('email', type=str)
-    parser.add_argument('password', type=str)
-
-
-    def get(self):
-        pass
-
-    def post(self):
-        data = Register.parser.parse_args()
-        email = data['email']
-        password = data['password']
-        user = AccountDb(AccountId=email, Password=generate_password_hash(password, method='sha256'), RoleId=0,
-                         isLocked=0)
-        user.save_to_db()
-        return {'message': "Login success"}, 200
-
-    def delete(self):
-        return {'message': 'Not allowed'}, 404
-
-    def put(self):
-        return {'message': 'Not allowed'}, 404
-
-
-# class Confirmation(Resource):
-#     def get(self, token):
-#         try:
-#             email = su.loads(token, salt='email-confirm', max_age=3600)
-#             get_user = AccountDb.find_by_email(email)
-#             get_user.isActivated = 1
-#             get_user.confirmedAt = datetime.now()
-#             get_user.updatedAt = datetime.now()
-#             get_user.commit_to_db()
-#         except SignatureExpired:
-#             return {'message': "The token is expired!"}, 400
-#         # update email to true
-#         return {'message': "Activated succeed"}, 200
+# class Register(Resource):
+#     parser = reqparse.RequestParser()
+#     parser.add_argument('email', type=str)
+#     parser.add_argument('password', type=str)
+#
+#
+#     def get(self):
+#         pass
+#
+#     def post(self):
+#         data = Register.parser.parse_args()
+#         email = data['email']
+#         password = data['password']
+#         user = AccountDb(AccountId=email, Password=generate_password_hash(password, method='sha256'), RoleId=0,
+#                          isLocked=0)
+#         user.save_to_db()
+#         return {'message': "Login success"}, 200
+#
+#     def delete(self):
+#         return {'message': 'Not allowed'}, 404
+#
+#     def put(self):
+#         return {'message': 'Not allowed'}, 404
 
 
 class Repass(Resource):
@@ -113,12 +101,15 @@ class Repass(Resource):
         data = Repass.parser.parse_args()
         id = data['id']
         email = data['email']
+
+        # validate
         regex_id = '^[0-9]*$'
         regex_mail = r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b'
         if not validate_regex(input_string=email.lower(), regex=regex_mail) \
                 or not validate_regex(input_string=id, regex=regex_id) \
                 or len(id) % 2 != 0:
             return {'message': "Check your id or email"}, 400
+
         get_user = AccountDb.find_by_email(email, id)
         if get_user is None:
             return {'message': "No account with this email and id"}, 400
@@ -144,8 +135,11 @@ class ChangePass(Resource):
         data = ChangePass.parser.parse_args()
         password = data['password']
         new_password = data['newpassword']
-        if not password.isalnum() or not new_password.isalnum():
+
+        # validate
+        if not password.isalnum() or not new_password.isalnum() or len(new_password) == 0:
             return {'message': "Wrong input format"}, 400
+
         id = get_jwt_identity()
         get_user = AccountDb.find_by_id(id)
         if check_password_hash(get_user.password, password):
@@ -178,7 +172,6 @@ class UserLogoutAccess(Resource):
             return {'message': 'Access token has been revoked'}, 200
 
         except:
-
             return {'message': 'Something went wrong'}, 500
 
 
