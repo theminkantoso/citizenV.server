@@ -173,11 +173,11 @@ class AccountManagementChange(Resource):
             return {"message": "not authorized"}, 403
 
         try:
-            current_user.delete_from_db()
             try:
                 AccountDb.delete_managed_account_hierachy(id_delete)
             except:
                 return {"message": "something wrong"}, 500
+            current_user.delete_from_db()
             return {"message": "done"}, 200
         except:
             return {"message": "something wrong"}, 500
