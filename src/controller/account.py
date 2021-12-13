@@ -160,11 +160,6 @@ class UserLogoutAccess(Resource):
     def post(self):
 
         jti = get_jwt()['jti']
-        # revoked_token = RevokedTokenModel(jti=jti)
-        #
-        # revoked_token.add()
-        #
-        # return {'message': 'Access token has been revoked'}, 200
         try:
             # Revoking access token
             revoked_token = RevokedTokenModel(jti=jti)

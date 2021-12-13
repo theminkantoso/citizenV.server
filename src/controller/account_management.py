@@ -80,7 +80,7 @@ class AccountManagement(Resource):
 
         try:
             password = random_string()
-            msg = Message('New Password Recovery', sender='phucpb.hrt@gmail.com', recipients=[email_create.lower()])
+            msg = Message('Your account information', sender='phucpb.hrt@gmail.com', recipients=[email_create.lower()])
             msg.body = 'Your id is {f_id} and your password is {f_pass}'.format(f_id=id_create, f_pass=password)
             my_mail.send(msg)
             new_account = AccountDb(AccountId=id_create, Password=generate_password_hash(password, method='sha256'),
@@ -176,11 +176,13 @@ class AccountManagementChange(Resource):
         try:
             try:
                 AccountDb.delete_managed_account_hierachy(id_delete)
-            except:
+            except Exception as e:
+                print(e)
                 return {"message": "something wrong"}, 500
             current_user.delete_from_db()
             return {"message": "done"}, 200
-        except:
+        except Exception as e:
+            print(e)
             return {"message": "something wrong"}, 500
 
 

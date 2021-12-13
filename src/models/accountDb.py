@@ -40,7 +40,7 @@ class AccountDb(db.Model):
             endTime_json = self.endTime.isoformat()
         else:
             endTime_json = ''
-        return {"accountId": self.accountId, "password": self.password, "email": self.email, "roleId": self.roleId,
+        return {"accountId": self.accountId, "email": self.email, "roleId": self.roleId,
                 "managerAccount": self.managerAccount, "startTime": startTime_json,
                 "endTime": endTime_json, "isLocked": self.isLocked}
 
