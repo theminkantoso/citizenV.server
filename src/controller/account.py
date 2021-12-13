@@ -4,7 +4,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime
 from itsdangerous import URLSafeTimedSerializer, SignatureExpired
 from src.controller import my_mail
-from flask import url_for, jsonify
+from flask import url_for, jsonify, request
 from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity, get_jwt
 from flask_mail import Message
 
@@ -39,6 +39,8 @@ class Account(Resource):
 
     def get(self):
         pass
+        # args = request.args
+        # print(args['a'])  # For debugging
 
     def post(self):
         data = Account.parser.parse_args()

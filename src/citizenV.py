@@ -11,7 +11,7 @@ from src.controller.account_management import AccountManagement, AccountManageme
 from src import controller
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://root:12345678@localhost/citizenv'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://root:''@localhost/citizenv'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config.from_pyfile('core/config.py')
 
