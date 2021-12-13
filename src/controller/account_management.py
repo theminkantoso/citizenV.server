@@ -133,6 +133,17 @@ class AccountManagementChange(Resource):
             if start_date_modify > end_date_modify:
                 data_ok = False
 
+        # hợp lệ thời gian khai báo với tài khoản cha
+        # if
+        # id_parent = id_modify[0:len(id_modify)-2]
+        # parent_user = AccountDb.find_by_id(id_parent)
+        # if parent_user is None:
+        #     return {'message': "something went wrong"}, 500
+        #
+        # # đảm bảo tài khoản con có thời gian khai báo nằm trong thời gian của cha
+        # if
+        # if parent_user.startTime > start_date_modify or parent_user.endTime < end_date_modify
+
         if not data_ok:
             return {'message': "invalid input"}, 400
 
@@ -157,7 +168,7 @@ class AccountManagementChange(Resource):
                     return {"message": "something wrong"}, 500
 
         try:
-            current_user.commit_to_db()
+            # current_user.commit_to_db() #need to recheck
             return {"message": "done"}, 200
         except:
             return {"message": "something wrong"}, 500
@@ -179,7 +190,7 @@ class AccountManagementChange(Resource):
             except Exception as e:
                 print(e)
                 return {"message": "something wrong"}, 500
-            current_user.delete_from_db()
+            # current_user.delete_from_db() #need to recheck
             return {"message": "done"}, 200
         except Exception as e:
             print(e)

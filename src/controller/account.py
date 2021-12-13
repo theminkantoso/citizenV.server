@@ -1,7 +1,7 @@
 from flask_restful import Resource, reqparse
 from src.models.accountDb import AccountDb, RevokedTokenModel
 from werkzeug.security import generate_password_hash, check_password_hash
-from datetime import datetime
+from datetime import date
 from itsdangerous import URLSafeTimedSerializer, SignatureExpired
 from src.controller import my_mail
 from flask import url_for, jsonify, request
@@ -58,7 +58,21 @@ class Account(Resource):
         if check_password_hash(user.password, password):
             additional_claim = {"role": user.roleId}
             access_token = create_access_token(identity=id, additional_claims=additional_claim)
+
             # update time true or not
+            today = date.today()
+            if user.startTime is not None and user.endTime is not None:
+                if user.startTime <= today:
+                    user.isLocked = False
+                elif user.endTime > today:
+                    user.isLocked = True
+
+            # khóa tài khoản con
+            try:
+                AccountDb.lock_managed_account_hierachy(id)
+            except Exception as e:
+                print(e)
+
             return jsonify(access_token=access_token.decode('utf-8'))
         return {"message": "Incorrect username or password"}, 401
 
