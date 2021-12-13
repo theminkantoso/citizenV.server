@@ -1,22 +1,26 @@
 from flask_restful import Resource, reqparse
-from src.models.accountDb import AccountDb, RevokedTokenModel
+from src.models.accountDb import AccountDb
 from src.models.cityProvinceDb import CityDb
 from src.models.districtDb import DistrictDb
 from src.models.wardDb import WardDb
 from src.models.residentialGroupDb import GroupDb
-from werkzeug.security import generate_password_hash, check_password_hash
+from src.core.auth import crud_permission_required
+from werkzeug.security import generate_password_hash
 from datetime import datetime
 from src.controller import my_mail
 from flask import url_for, jsonify
 from flask_jwt_extended import jwt_required, get_jwt_identity, get_jwt
 from flask_mail import Message
 
-import json
 import re
 import random
 import string
 
 def random_string():
+    """
+    Generate a random password
+    :return: a random string
+    """
     str1 = ''.join((random.choice(string.ascii_letters) for x in range(6)))
     str1 += ''.join((random.choice(string.digits) for x in range(6)))
 
@@ -27,6 +31,12 @@ def random_string():
 
 
 def validate_regex(input_string, regex):
+    """
+    Validate input string with a given regular expression
+    :param input_string: the string that needed to be checked
+    :param regex: regex pattern
+    :return: True if satisfy and vice versa
+    """
     pattern = re.compile(regex)
     if pattern.fullmatch(input_string):
         return True
@@ -46,7 +56,8 @@ class AccountManagement(Resource):
             return {'Accounts': list(map(lambda x: x.json(), managed_accounts))}, 200
         return {}, 200
 
-    @jwt_required
+    @jwt_required()
+    @crud_permission_required
     def post(self):
         data = AccountManagement.parser.parse_args()
         id_acc = get_jwt_identity()
@@ -71,9 +82,15 @@ class AccountManagement(Resource):
             duplicate_check = WardDb.find_by_id(id=id_create)
         elif id_create_len == 8:
             duplicate_check = GroupDb.find_by_id(id=id_create)
+
         if duplicate_check is None:
             return {'message': "This is a trash account"}, 400
 
+        # check tk phải có id đúng format <tkcha> + <2 ký tự>
+        if id_acc != id_create[0:id_create_len-2]:
+            return {'message': "Wrong format <id> plus two digit"}, 400
+
+        # chống tạo tài khoản trùng
         exist_check = AccountDb.find_by_id(accId=id_create)
         if exist_check:
             return {'message': "Account already existed"}, 400
@@ -112,6 +129,7 @@ class AccountManagementChange(Resource):
             return {"message": "Not found"}, 404
 
     @jwt_required()
+    @crud_permission_required
     def put(self, id):
         data = AccountManagementChange.parser.parse_args()
         id_acc = get_jwt_identity()
@@ -134,15 +152,14 @@ class AccountManagementChange(Resource):
                 data_ok = False
 
         # hợp lệ thời gian khai báo với tài khoản cha
-        # if
-        # id_parent = id_modify[0:len(id_modify)-2]
-        # parent_user = AccountDb.find_by_id(id_parent)
-        # if parent_user is None:
-        #     return {'message': "something went wrong"}, 500
-        #
+        parent_user = AccountDb.find_by_id(id_acc)
+        if parent_user is None:
+            return {'message': "something went wrong"}, 500
+
         # # đảm bảo tài khoản con có thời gian khai báo nằm trong thời gian của cha
-        # if
-        # if parent_user.startTime > start_date_modify or parent_user.endTime < end_date_modify
+        if parent_user.startTime is not None and parent_user.endTime is not None:
+            if parent_user.startTime > start_date_modify or parent_user.endTime < end_date_modify:
+                data_ok = False
 
         if not data_ok:
             return {'message': "invalid input"}, 400
@@ -174,6 +191,7 @@ class AccountManagementChange(Resource):
             return {"message": "something wrong"}, 500
 
     @jwt_required()
+    @crud_permission_required
     def delete(self, id):
         id_acc = get_jwt_identity()
         id_delete = id

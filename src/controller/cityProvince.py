@@ -54,6 +54,7 @@ class City(Resource):
             return c.json()
         return {'message': 'cityProvince not found.'}, 404
 
+
 # Danh sách các tỉnh/thành phố
 class Cities(Resource):
     def get(self):
