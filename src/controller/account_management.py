@@ -152,7 +152,8 @@ class AccountManagementChange(Resource):
             if is_locked_modify:
                 try:
                     AccountDb.lock_managed_account_hierachy(id_modify)
-                except:
+                except Exception as e:
+                    print(e)
                     return {"message": "something wrong"}, 500
 
         try:

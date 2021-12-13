@@ -1,4 +1,4 @@
-import datetime
+from datetime import datetime, date
 from src.database import db
 
 
@@ -32,9 +32,17 @@ class AccountDb(db.Model):
         self.isLocked = isLocked
 
     def json(self):
+        if isinstance(self.startTime, date):
+            startTime_json = self.startTime.isoformat()
+        else:
+            startTime_json = ''
+        if isinstance(self.endTime, date):
+            endTime_json = self.endTime.isoformat()
+        else:
+            endTime_json = ''
         return {"accountId": self.accountId, "password": self.password, "email": self.email, "roleId": self.roleId,
-                "managerAccount": self.managerAccount, "startTime": self.startTime.strftime("%Y-%m-%d"),
-                "endTime": self.endTime.strftime("%Y-%m-%d"), "isLocked": self.isLocked}
+                "managerAccount": self.managerAccount, "startTime": startTime_json,
+                "endTime": endTime_json, "isLocked": self.isLocked}
 
     @classmethod
     def find_account(cls, accId, passWord):
@@ -55,13 +63,13 @@ class AccountDb(db.Model):
     @classmethod
     def lock_managed_account_hierachy(cls, accId):
         search = "{}%".format(accId)
-        db.session.query.filter(cls.managerAccount.like(search)).update({"isLocked": 1})
+        cls.query.filter(cls.managerAccount.like(search)).update({"isLocked": 1}, synchronize_session='fetch')
         db.session.commit()
 
     @classmethod
     def delete_managed_account_hierachy(cls, accId):
         search = "{}%".format(accId)
-        db.session.query.filter(cls.managerAccount.like(search)).delete()
+        cls.query.filter(cls.managerAccount.like(search)).delete()
         db.session.commit()
 
     def save_to_db(self):

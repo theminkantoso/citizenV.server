@@ -2,10 +2,10 @@
 -- version 5.1.1
 -- https://www.phpmyadmin.net/
 --
--- Host: 127.0.0.1:3306
--- Generation Time: Dec 12, 2021 at 11:02 AM
--- Server version: 10.4.21-MariaDB-log
--- PHP Version: 8.0.10
+-- Host: 127.0.0.1
+-- Generation Time: Dec 13, 2021 at 05:30 AM
+-- Server version: 10.4.22-MariaDB
+-- PHP Version: 8.0.13
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -37,18 +37,6 @@ CREATE TABLE `account` (
   `endTime` date DEFAULT NULL,
   `isLocked` tinyint(1) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
---
--- Triggers `account`
---
-DELIMITER $$
-CREATE TRIGGER `disableAccount` AFTER UPDATE ON `account` FOR EACH ROW BEGIN
- IF new.isLocked = 1 THEN
-	UPDATE account SET isLocked = 1 WHERE managerAccount = old.accountId;
-END IF;
-END
-$$
-DELIMITER ;
 
 -- --------------------------------------------------------
 
