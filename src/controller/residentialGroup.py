@@ -2,47 +2,46 @@ from flask_restful import Resource, reqparse
 from src.services.group import GroupServices
 from src.services.ward import WardServices
 
+
 class Group(Resource):
     parser = reqparse.RequestParser()
-    parser.add_argument("groupId", type=int)
+    parser.add_argument("groupId", type=str)
     parser.add_argument("groupName", type=str)
-    parser.add_argument("wardId", type=int)
+    parser.add_argument("wardId", type=str)
     parser.add_argument("created", type=bool)
 
-    # Tìm 1 thôn/bản/tdp theo tên
-    def get(self, Wname, Gname):
-        g = GroupServices.exist_group(Wname, Gname)
-        if g == 1:
-            return {'message': 'group not found'}, 404
-        elif g == 2:
-            return {'message': 'ward not found'}, 404
-        else:
-            return g.json()
+    # Tìm 1 thôn/bản/tdp theo id
+    def get(self, id):
+        pass
 
     # Thêm mã cho 1 thôn/bản/tdp
     def post(self):
         data = Group.parser.parse_args()
         g = GroupServices.create_group(data)
-        if g == 1:
-            return {'message': "An group with name in ward already exists."}, 400
+        if g == 0:
+            return {'message': "Invalid ward_id"}, 400
+        elif g == 1:
+            return {'message': "Invalid group_id"}, 400
         elif g == 2:
-            return {'message': "An group with id in ward already exists."}, 400
+            return {'message': "An group with name in ward already exists."}, 400
         elif g == 3:
-            return {"message": "An error occurred inserting the group."}, 500
+            return {'message': "An group with id in ward already exists."}, 400
         elif g == 4:
+            return {"message": "An error occurred inserting the group."}, 500
+        elif g == 5:
             return {"Message": "group added. "}, 201
         else:
             return {'message': 'ward not found'}, 404
 
     # Xoá 1 thôn/bản/tdp trong 1 xã/phường khỏi danh sách
-    def delete(self, Wname, Gname):
-        g = GroupServices.delete_group(Wname, Gname)
-        if g == 1:
-            return {'message': 'Group deleted.'}
-        elif g == 2:
-            return {'message': 'Group not found.'}, 404
+    def delete(self, id):
+        group = GroupServices.delete_group(id)
+        if group == 0:
+            return {'message': "Invalid id"}, 400
+        elif group == 1:
+            return {'message': 'Group deleted.'}, 200
         else:
-            return {'message': 'Ward not found.'}, 404
+            return {'message': 'Group not found.'}, 404
 
     # Sửa thông tin 1 thôn/bản/tdp
     def put(self, Wname, Gname):
@@ -68,9 +67,10 @@ class Group(Resource):
 # Thống kê các thôn/bản/tdp
 class Groups(Resource):
     # Tất cả thôn/bản/tdp trong 1 xã/phường
-    def get(self, name):
-        g = GroupServices.list_ward_in_group(name)
-        if g:
-            return {"Groups in '{}'".format(name): list(map(lambda x: x.json(), g))}
+    def get(self, ward_id):
+        group = GroupServices.list_ward_in_group(ward_id)
+        if group == 0:
+            return {'message': "Invalid id"}, 400
+        elif group:
+            return {"Groups in '{}'".format(ward_id): list(map(lambda x: x.json(), group))}
         return {'message': 'ward not found.'}, 404
-

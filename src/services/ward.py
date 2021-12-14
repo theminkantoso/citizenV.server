@@ -1,62 +1,75 @@
 from src.models.wardDb import WardDb
 from src.models.districtDb import DistrictDb
+import re
+
+
+# so sánh chuỗi với chuỗi regex
+def validate_regex(input_string, regex):
+    pattern = re.compile(regex)
+    if pattern.fullmatch(input_string):
+        return True
+    return False
 
 
 class WardServices():
 
     # Tìm 1 phường/xã trong 1 quận/huyện
     @staticmethod
-    def exist_ward(Dname: str, Wname: str):
-        d = DistrictDb.find_by_name(Dname)
-        if d:
-            DId = d.districtId
-            w = WardDb.find_by_D_Wname(DId, Wname)
-            if w:
-                return w
-            return 1  # ward not exist
-        return 2  # district not exist
+    def exist_ward(ward_id: str):
+        # Validate
+        regex_id = '^(0[1-9]|[1-9][0-9]){3}$'
+        if not validate_regex(ward_id, regex_id):
+            return 0  # Invalid id
+        ward = WardDb.find_by_id(ward_id)
+        if ward:
+            return ward
+        return None  # ward not exist
 
-    # Tìm bằng name (Tạm như này đã)
-    @staticmethod
-    def find_name(name):
-        w = WardDb.find_by_name(name)
-        if w:
-            return w
-        return None
-
-    # Cấp mã cho 1 xã/phường trong 1 huyện  ->cấp 2 số
+    # Cấp mã cho 1 xã/phường trong 1 huyện  -> cấp 2 số
     @staticmethod
     def create_ward(data: dict):
-        DId = data.get('districtId')
-        d = DistrictDb.find_by_id(DId)
-        if d:
-            data["wardId"] = data["districtId"] * 100 + data["wardId"]
-            Wname = data.get('wardName')
-            if WardDb.find_by_D_Wname(DId, Wname):
-                return 1  # Tên xã/phường đã có trong quận/huyện
+        dist_id = data.get('districtId')
+        ward_id = data["wardId"]
+        ward_name = data["wardName"]
+
+        # Validate dist_id (4 số)
+        regex_id = '^(0[1-9]|[1-9][0-9]){2}$'
+        if not validate_regex(dist_id, regex_id):
+            return 0  # Invalid dist_id
+
+        # Validate ward_id (đầu vào là 2 số)
+        regex_id = '^(0[1-9]|[1-9][0-9])$'
+        if not validate_regex(ward_id, regex_id):
+            return 1  # Invalid ward_id
+
+        dist = DistrictDb.find_by_id(dist_id)
+        if dist:
+            data["wardId"] = dist_id + ward_id
+            if WardDb.find_by_dist_ward_name(dist_id, ward_name):
+                return 2  # Tên xã/phường đã có trong quận/huyện
             if WardDb.find_by_id(data["wardId"]):
-                return 2  # Id đã được cấp cho xã khác
+                return 3  # Id đã được cấp cho xã khác
             w = WardDb(**data)
 
             try:
                 w.save_to_db()
             except:
-                return 3  # error save
-            return 4  # added
-        return 5  # district not exist
+                return 4  # error save
+            return 5  # added
+        return 6  # district not exist
 
     # Xoá 1 xã/phường khỏi danh sách
     @staticmethod
-    def delete_ward(Dname, Wname):
-        d = DistrictDb.find_by_name(Dname)
-        if d:
-            DId = d.districtId
-            w = WardDb.find_by_D_Wname(DId, Wname)
-            if w:
-                w.delete_from_db()
-                return 1  # deleted
-            return 2  # ward not exist
-        return 3  # district not exist
+    def delete_ward(ward_id: str):
+        # Validate
+        regex_id = '^(0[1-9]|[1-9][0-9]){3}$'
+        if not validate_regex(ward_id, regex_id):
+            return 0  # Invalid id
+        ward = WardDb.find_by_id(ward_id)
+        if ward:
+            ward.delete_from_db()
+            return 1  # deleted
+        return 2  # ward not exist
 
     # Sửa thông tin 1 xã/phường
     @staticmethod
@@ -84,10 +97,12 @@ class WardServices():
 
     # List xã/phường
     @staticmethod
-    def list_ward_in_district(name):
-        d = DistrictDb.find_by_name(name)
-        if d:
-            id = d.districtId
-            wards = WardDb.find_by_DistrictId(id)
+    def list_ward_in_district(dist_id: str):
+        regex_id = '^(0[1-9]|[1-9][0-9]){2}$'
+        if not validate_regex(dist_id, regex_id):
+            return 0  # Invalid dist_id
+        dist = DistrictDb.find_by_id(dist_id)
+        if dist:
+            wards = WardDb.find_by_district_id(dist_id)
             return wards
         return None
