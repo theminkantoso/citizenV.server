@@ -3,6 +3,7 @@ flask_mysqldb
 flask_sqlalchemy
 flask_restful
 flask-bcrypt
+flask_cors
 werkzeug.*
 flask_mail
 itsdangerous
