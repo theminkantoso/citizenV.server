@@ -46,16 +46,21 @@ CREATE TABLE `account` (
 
 CREATE TABLE `citizen` (
   `citizenId` int(8) NOT NULL,
-  `DOB` varchar(10) NOT NULL,
-  `sex` varchar(3) NOT NULL,
+  `name` varchar(50) DEFAULT NULL,
+  `DOB` varchar(10) DEFAULT NULL,
+  `sex` varchar(3) DEFAULT NULL,
   `maritalStatus` varchar(15) DEFAULT NULL,
   `nation` varchar(15) DEFAULT NULL,
+  `religion` varchar(50) DEFAULT NULL,
   `CMND` varchar(11) DEFAULT NULL,
-  `countryId` int(5) DEFAULT NULL,
-  `cityProvinceId` int(2) NOT NULL,
-  `districtId` int(4) NOT NULL,
-  `wardId` int(6) NOT NULL,
-  `groupId` int(8) NOT NULL
+  `permanentResidence` varchar(100) DEFAULT NULL,
+  `temporaryResidence` varchar(100) DEFAULT NULL,
+  `educationalLevel` varchar(10) DEFAULT NULL,
+  `job` varchar(50) DEFAULT NULL,
+  `cityProvinceId` varchar(2) NOT NULL,
+  `districtId` varchar(4) NOT NULL,
+  `wardId` varchar(6) NOT NULL,
+  `groupId` varchar(8) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------
@@ -65,7 +70,7 @@ CREATE TABLE `citizen` (
 --
 
 CREATE TABLE `cityprovince` (
-  `cityProvinceId` int(2) NOT NULL,
+  `cityProvinceId` varchar(2) NOT NULL,
   `cityProvinceName` varchar(30) NOT NULL,
   `created` tinyint(1) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
@@ -76,10 +81,11 @@ CREATE TABLE `cityprovince` (
 -- Table structure for table `district`
 --
 
+
 CREATE TABLE `district` (
-  `districtId` int(4) NOT NULL,
+  `districtId` varchar(4) NOT NULL,
   `districtName` varchar(30) NOT NULL,
-  `cityProvinceId` int(2) NOT NULL,
+  `cityProvinceId` varchar(2) NOT NULL,
   `created` tinyint(1) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
@@ -90,12 +96,11 @@ CREATE TABLE `district` (
 --
 
 CREATE TABLE `residentialgroup` (
-  `groupId` int(8) NOT NULL,
+  `groupId` varchar(8) NOT NULL,
   `groupName` varchar(30) NOT NULL,
-  `wardId` int(6) NOT NULL,
+  `wardId` varchar(6) NOT NULL,
   `created` tinyint(1) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
 -- --------------------------------------------------------
 
 --
@@ -114,9 +119,9 @@ CREATE TABLE `revoked_tokens` (
 --
 
 CREATE TABLE `ward` (
-  `wardId` int(6) NOT NULL,
+  `wardId` varchar(6) NOT NULL,
   `wardName` varchar(30) NOT NULL,
-  `districtId` int(4) NOT NULL,
+  `districtId` varchar(4) NOT NULL,
   `created` tinyint(1) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
@@ -136,11 +141,10 @@ ALTER TABLE `account`
 --
 ALTER TABLE `citizen`
   ADD PRIMARY KEY (`citizenId`),
-  ADD KEY `fk_citizen_ward` (`wardId`),
-  ADD KEY `fk_citizen_residentialgroup` (`groupId`),
+  ADD KEY `fk_citizen_cityprovince` (`cityProvinceId`),
   ADD KEY `fk_citizen_district` (`districtId`),
-  ADD KEY `fk_citizen_cityprovince` (`cityProvinceId`);
-
+  ADD KEY `fk_citizen_ward` (`wardId`),
+  ADD KEY `fk_citizen_residentialgroup` (`groupId`);
 --
 -- Indexes for table `cityprovince`
 --
