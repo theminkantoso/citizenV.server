@@ -7,6 +7,7 @@ from src.controller.district import District, Districts
 from src.controller.ward import Ward, Wards
 from src.controller.residentialGroup import Group, Groups
 from src.controller.account_management import AccountManagement, AccountManagementChange
+from src.controller.citizen import Citizen, all_Citizen
 
 from src import controller
 
@@ -24,25 +25,28 @@ api.add_resource(ChangePass, '/changepass')
 api.add_resource(UserLogoutAccess, '/logout')
 
 # Tỉnh/thành phố
-api.add_resource(City, '/city', '/city/<string:name>')
+api.add_resource(City, '/city', '/city/<string:id>')
 api.add_resource(Cities, '/cities')
 
 # Quận/huyện
-api.add_resource(District, '/district', '/district/<string:Cname>/<string:Dname>')
-api.add_resource(Districts, '/districts/<string:name>')
+api.add_resource(District, '/district', '/district/<string:id>')
+api.add_resource(Districts, '/districts/<string:city_id>')
 
 # Xã/phường
-api.add_resource(Ward, '/ward', '/ward/<string:Dname>/<string:Wname>')
-api.add_resource(Wards, '/wards/<string:name>')
+api.add_resource(Ward, '/ward', '/ward/<string:id>')
+api.add_resource(Wards, '/wards/<string:dist_id>')
 
 # Thôn/bản/tdp
-api.add_resource(Group, '/group', '/group/<string:Wname>/<string:Gname>')
-api.add_resource(Groups, '/groups/<string:name>')
+api.add_resource(Group, '/group', '/group/<string:id>')
+api.add_resource(Groups, '/groups/<string:ward_id>')
 
 # Màn hình quản lý tài khoản
 api.add_resource(AccountManagement, '/accounts')
 api.add_resource(AccountManagementChange, '/accounts/<string:id>')
 
+# Người dân
+api.add_resource(Citizen, '/citizen', '/citizen/<int:id>')
+api.add_resource(all_Citizen, '/citizens')
 
 # @controller.jwt_manager.token_in_blacklist_loader
 # def check_if_token_in_blacklist(decrypted_token):
