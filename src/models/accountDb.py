@@ -69,7 +69,7 @@ class AccountDb(db.Model):
     @classmethod
     def delete_managed_account_hierachy(cls, accId):
         search = "{}%".format(accId)
-        cls.query.filter(cls.managerAccount.like(search)).delete()
+        cls.query.filter(cls.managerAccount.like(search)).delete(synchronize_session='fetch')
         db.session.commit()
 
     def save_to_db(self):

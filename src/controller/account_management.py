@@ -208,7 +208,7 @@ class AccountManagementChange(Resource):
             except Exception as e:
                 print(e)
                 return {"message": "something wrong"}, 500
-            # current_user.delete_from_db() #need to recheck
+            current_user.delete_from_db() #need to recheck
             return {"message": "done"}, 200
         except Exception as e:
             print(e)
