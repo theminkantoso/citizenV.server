@@ -72,7 +72,7 @@ class AccountManagement(Resource):
                 or len(id_create) % 2 != 0:
             return {'message': "Invalid input format"}, 400
 
-        # check chống tạo tk rác
+        # check chống tạo tk rác, tài khoản không tương ứng với một mã tỉnh thành quận huyện nào đó
         id_create_len = len(id_create)
         # NEED TO REMOVE THESE COMMENT LATER
         # if id_create_len == 2:
