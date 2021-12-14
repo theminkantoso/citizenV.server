@@ -74,17 +74,18 @@ class AccountManagement(Resource):
 
         # check chống tạo tk rác
         id_create_len = len(id_create)
-        if id_create_len == 2:
-            duplicate_check = CityDb.find_by_id(id=id_create)
-        elif id_create_len == 4:
-            duplicate_check = DistrictDb.find_by_id(id=id_create)
-        elif id_create_len == 6:
-            duplicate_check = WardDb.find_by_id(id=id_create)
-        elif id_create_len == 8:
-            duplicate_check = GroupDb.find_by_id(id=id_create)
-
-        if duplicate_check is None:
-            return {'message': "This is a trash account"}, 400
+        # NEED TO REMOVE THESE COMMENT LATER
+        # if id_create_len == 2:
+        #     duplicate_check = CityDb.find_by_id(id=id_create)
+        # elif id_create_len == 4:
+        #     duplicate_check = DistrictDb.find_by_id(id=id_create)
+        # elif id_create_len == 6:
+        #     duplicate_check = WardDb.find_by_id(id=id_create)
+        # elif id_create_len == 8:
+        #     duplicate_check = GroupDb.find_by_id(id=id_create)
+        #
+        # if duplicate_check is None:
+        #     return {'message': "This is a trash account"}, 400
 
         # check tk phải có id đúng format <tkcha> + <2 ký tự>
         if id_acc != id_create[0:id_create_len-2]:
@@ -101,11 +102,12 @@ class AccountManagement(Resource):
             msg.body = 'Your id is {f_id} and your password is {f_pass}'.format(f_id=id_create, f_pass=password)
             my_mail.send(msg)
             new_account = AccountDb(AccountId=id_create, Password=generate_password_hash(password, method='sha256'),
-                                    email=email_create, RoleId=int(role_acc['role']) + 1, manager_account=int(id_acc),
+                                    email=email_create, RoleId=int(role_acc['role']) + 1, manager_account=id_acc,
                                     isLocked=0)
             new_account.save_to_db()
-
-        except:
+            return {'message': "New account sent to user's mailbox!"}, 200
+        except Exception as e:
+            print(e)
             return {'messsage': 'Something wrong happened'}, 500
 
 

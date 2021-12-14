@@ -28,11 +28,21 @@ from ..models.accountDb import AccountDb
 
 @jwt_required()
 def get_id_from_jwt_token():
+    """
+    Get user's id based on the jwt
+    :return: user's id
+    """
     id = get_jwt_identity()
     return id
 
 
 def authorized_required(func, roles):
+    """
+    Authorization control access based on user role
+    :param func: this is a wrapper function
+    :param roles: list roles allowed
+    :return: 403 if user's role is not in the permission list, else allow them to proceed
+    """
     @wraps(func)
     def decorated(*args, **kwargs):
         try:
@@ -51,6 +61,11 @@ def authorized_required(func, roles):
 
 
 def crud_permission_required(func):
+    """
+    Only allow user to CUD data in their limit time
+    :param func: wrapper function
+    :return: 403 if the account is locked, else allow them to proceed
+    """
     @wraps(func)
     def decorated(*args, **kwargs):
         try:
