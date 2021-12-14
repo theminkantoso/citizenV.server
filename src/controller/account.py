@@ -56,7 +56,7 @@ class Account(Resource):
         if user is None:
             return {'message': "Incorrect id or password"}, 401
         if check_password_hash(user.password, password):
-            additional_claim = {"role": user.roleId}
+            additional_claim = {"role": user.roleId, "isLocked": user.isLocked}
             access_token = create_access_token(identity=id, additional_claims=additional_claim)
 
             # update time true or not
