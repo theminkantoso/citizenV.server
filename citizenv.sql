@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Dec 15, 2021 at 12:05 PM
+-- Generation Time: Dec 15, 2021 at 02:30 PM
 -- Server version: 10.4.22-MariaDB
 -- PHP Version: 8.0.13
 
@@ -45,14 +45,13 @@ CREATE TABLE `account` (
 --
 
 CREATE TABLE `citizen` (
-  `citizenId` int(8) NOT NULL,
+  `CCCD` varchar(12) NOT NULL,
   `name` varchar(50) DEFAULT NULL,
-  `DOB` varchar(10) DEFAULT NULL,
-  `sex` varchar(3) DEFAULT NULL,
-  `maritalStatus` varchar(15) DEFAULT NULL,
-  `nation` varchar(15) DEFAULT NULL,
-  `religion` varchar(50) DEFAULT NULL,
-  `CMND` varchar(11) DEFAULT NULL,
+  `DOB` date NOT NULL,
+  `sex` enum('Nam','Nu') NOT NULL,
+  `maritalStatus` varchar(50) NOT NULL,
+  `nation` varchar(50) NOT NULL,
+  `religion` varchar(50) NOT NULL,
   `permanentResidence` varchar(100) DEFAULT NULL,
   `temporaryResidence` varchar(100) DEFAULT NULL,
   `educationalLevel` varchar(10) DEFAULT NULL,
@@ -194,7 +193,7 @@ ALTER TABLE `account`
 -- Indexes for table `citizen`
 --
 ALTER TABLE `citizen`
-  ADD PRIMARY KEY (`citizenId`),
+  ADD PRIMARY KEY (`CCCD`),
   ADD KEY `fk_citizen_cityprovince` (`cityProvinceId`),
   ADD KEY `fk_citizen_district` (`districtId`),
   ADD KEY `fk_citizen_ward` (`wardId`),
@@ -236,12 +235,6 @@ ALTER TABLE `ward`
 --
 -- AUTO_INCREMENT for dumped tables
 --
-
---
--- AUTO_INCREMENT for table `citizen`
---
-ALTER TABLE `citizen`
-  MODIFY `citizenId` int(8) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `revoked_tokens`
