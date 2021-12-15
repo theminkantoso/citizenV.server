@@ -16,6 +16,10 @@ su = URLSafeTimedSerializer('Thisisasecret!') # reformat later
 
 
 def random_string():
+    """
+    Generate a random password
+    :return: a random string with 6 letters and 6 numbers
+    """
     str1 = ''.join((random.choice(string.ascii_letters) for x in range(6)))
     str1 += ''.join((random.choice(string.digits) for x in range(6)))
 
@@ -26,6 +30,12 @@ def random_string():
 
 
 def validate_regex(input_string, regex):
+    """
+    Validate input string based on a given regex
+    :param input_string: string needs to check
+    :param regex: regex pattern
+    :return: True if satisfied
+    """
     pattern = re.compile(regex)
     if pattern.fullmatch(input_string):
         return True
@@ -138,6 +148,7 @@ class Repass(Resource):
             return {'message': "No account with this email and id"}, 400
         try:
             new_password = random_string()
+            # gửi mail mật khẩu mới cho người dùng
             get_user.Password = generate_password_hash(new_password, method='sha256')
             msg = Message('New Password Recovery', sender='phucpb.hrt@gmail.com', recipients=[email.lower()])
             msg.body = 'Your new password is {}'.format(new_password)
