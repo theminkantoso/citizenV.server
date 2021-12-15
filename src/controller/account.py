@@ -72,8 +72,11 @@ class Account(Resource):
                 AccountDb.lock_managed_account_hierachy(id)
             except Exception as e:
                 print(e)
+            try:
+                return jsonify(access_token=access_token.decode('utf-8'))
+            except:
+                return jsonify(access_token=access_token)
 
-            return jsonify(access_token=access_token.decode('utf-8'))
         return {"message": "Incorrect username or password"}, 401
 
     def delete(self):
