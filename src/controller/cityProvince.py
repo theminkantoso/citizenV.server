@@ -1,5 +1,7 @@
 from flask_restful import Resource, reqparse
 from src.services.city import CityServices
+from flask_jwt_extended import jwt_required, get_jwt_identity, get_jwt
+from src.core.auth import crud_permission_required, authorized_required
 
 
 class City(Resource):
@@ -13,6 +15,9 @@ class City(Resource):
         pass
 
     # Thêm mã cho 1 tỉnh/thành phố
+    @jwt_required()
+    @authorized_required(roles=[1])
+    @crud_permission_required
     def post(self):
         data = City.parser.parse_args()
         c = CityServices.create_city(data)
@@ -26,6 +31,9 @@ class City(Resource):
             return {"Message": "cityProvince added. "}, 201
 
     # Xoá 1 tỉnh/thành phố khỏi danh sách
+    @jwt_required()
+    @authorized_required(roles=[1])
+    @crud_permission_required
     def delete(self, id):
         c = CityServices.exist_city(id)
         if c == 0:
@@ -39,6 +47,9 @@ class City(Resource):
         return {'message': 'cityProvince not found.'}, 404
 
     # Sửa thông tin 1 tỉnh/thành phố
+    @jwt_required()
+    @authorized_required(roles=[1])
+    @crud_permission_required
     def put(self, id):
         data = City.parser.parse_args()
         c = CityServices.exist_city(id)
@@ -60,6 +71,8 @@ class City(Resource):
 
 # Danh sách các tỉnh/thành phố
 class Cities(Resource):
+    @jwt_required()
+    @authorized_required(roles=[1])
     def get(self):
         cities = CityServices.list_city()
         return {'Cities': list(map(lambda x: x.json(), cities))}

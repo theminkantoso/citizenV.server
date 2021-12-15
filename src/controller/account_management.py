@@ -16,6 +16,7 @@ import re
 import random
 import string
 
+
 def random_string():
     """
     Generate a random password
@@ -191,7 +192,7 @@ class AccountManagementChange(Resource):
                     return {"message": "something wrong"}, 500
 
         try:
-            # current_user.commit_to_db() #need to recheck
+            # current_user.commit_to_db() # need to recheck
             return {"message": "done"}, 200
         except:
             return {"message": "something wrong"}, 500
@@ -215,7 +216,7 @@ class AccountManagementChange(Resource):
             except Exception as e:
                 print(e)
                 return {"message": "something wrong"}, 500
-            current_user.delete_from_db() #need to recheck
+            current_user.delete_from_db()  # need to recheck
             return {"message": "done"}, 200
         except Exception as e:
             print(e)

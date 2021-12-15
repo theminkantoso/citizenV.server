@@ -1,6 +1,8 @@
 from flask_restful import Resource, reqparse
 from src.services.ward import WardServices
 from src.services.district import DistrictServices
+from flask_jwt_extended import jwt_required, get_jwt_identity, get_jwt
+from src.core.auth import crud_permission_required, authorized_required
 
 
 class Ward(Resource):
@@ -15,6 +17,9 @@ class Ward(Resource):
         pass
 
     # Thêm mã cho 1 xã/phường
+    @jwt_required()
+    @authorized_required(roles=[3])
+    @crud_permission_required
     def post(self):
         data = Ward.parser.parse_args()
         w = WardServices.create_ward(data)
@@ -34,6 +39,9 @@ class Ward(Resource):
             return {'message': 'District not found'}, 404
 
     # Xoá 1 xã/phường  khỏi danh sách
+    @jwt_required()
+    @authorized_required(roles=[3])
+    @crud_permission_required
     def delete(self, id):
         ward = WardServices.delete_ward(id)
         if ward == 0:
@@ -44,6 +52,9 @@ class Ward(Resource):
             return {'message': 'ward not found.'}, 404
 
     # Sửa thông tin 1 xã/phường
+    @jwt_required()
+    @authorized_required(roles=[3])
+    @crud_permission_required
     def put(self, Dname, Wname):
         data = Ward.parser.parse_args()
         d = DistrictServices.find_name(Dname)
@@ -66,7 +77,10 @@ class Ward(Resource):
 
 # Thống kê các xã/phường
 class Wards(Resource):
+
     # Tất cả xã/phường trong 1 quận/huyện
+    @jwt_required()
+    @authorized_required(roles=[3])
     def get(self, dist_id):
         ward = WardServices.list_ward_in_district(dist_id)
         if ward == 0:
