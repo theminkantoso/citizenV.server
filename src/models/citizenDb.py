@@ -1,71 +1,94 @@
 from src.database import db
-
+from datetime import datetime, date
 
 class CitizenDb(db.Model):
     __tablename__ = 'citizen'
-    citizenId = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    CCCD = db.Column(db.String(12), primary_key=True)
     name = db.Column(db.String(50))
-    DOB = db.Column(db.String(10))
-    sex = db.Column(db.String(3))
-    maritalStatus = db.Column(db.String(15))
-    nation = db.Column(db.String(15))
+    DOB = db.Column(db.Date)
+    sex = db.Column(db.Enum)
+    maritalStatus = db.Column(db.String(50))
+    nation = db.Column(db.String(50))
     religion = db.Column(db.String(50))
-    CMND = db.Column(db.String(11))
     permanentResidence = db.Column(db.String(100))
     temporaryResidence = db.Column(db.String(100))
     educationalLevel = db.Column(db.String(10))
     job = db.Column(db.String(50))
-    cityProvinceId = db.Column(db.String(2))
-    districtId = db.Column(db.String(4))
-    wardId = db.Column(db.String(6))
-    groupId = db.Column(db.String(8))
+    cityProvinceId = db.Column(db.String(2), db.ForeignKey("cityprovince.cityProvinceId"))
+    districtId = db.Column(db.String(4), db.ForeignKey("district.districtId"))
+    wardId = db.Column(db.String(6), db.ForeignKey("ward.wardId"))
+    groupId = db.Column(db.String(8), db.ForeignKey("residentialgroup.groupId"))
 
-    def __init__(self, citizenId, name, DOB, sex, maritalStatus, nation, religion, CMND,
+    def __init__(self, name, DOB, sex, maritalStatus, nation, religion, CCCD,
                  permanentResidence, temporaryResidence, educationalLevel, job):
-        self.citizenId = citizenId
+        self.CCCD = CCCD
         self.name = name
         self.DOB = DOB
         self.sex = sex
         self.maritalStatus = maritalStatus
         self.nation = nation
         self.religion = religion
-        self.CMND = CMND
         self.permanentResidence = permanentResidence
         self.temporaryResidence = temporaryResidence
         self.educationalLevel = educationalLevel
         self.job = job
 
     # Trường hợp B1 nhập liệu
-    def __init__(self, citizenId, name, DOB, sex, maritalStatus, nation, religion, CMND,
+    def __init__(self, name, DOB, sex, maritalStatus, nation, religion, CCCD,
                  permanentResidence, temporaryResidence, educationalLevel, job, groupId):
-        self.citizenId = citizenId
+        self.CCCD = CCCD
         self.name = name
         self.DOB = DOB
         self.sex = sex
         self.maritalStatus = maritalStatus
         self.nation = nation
         self.religion = religion
-        self.CMND = CMND
         self.permanentResidence = permanentResidence
         self.temporaryResidence = temporaryResidence
         self.educationalLevel = educationalLevel
         self.job = job
         self.groupId = groupId
 
+        # full
+    def __init__(self, name, DOB, sex, maritalStatus, nation, religion, CCCD, permanentResidence, temporaryResidence,
+                 educationalLevel, job, cityProvinceId, districtId, wardId, groupId):
+        self.CCCD = CCCD
+        self.name = name
+        self.DOB = DOB
+        self.sex = sex
+        self.maritalStatus = maritalStatus
+        self.nation = nation
+        self.religion = religion
+        self.permanentResidence = permanentResidence
+        self.temporaryResidence = temporaryResidence
+        self.educationalLevel = educationalLevel
+        self.job = job
+        self.cityProvinceId = cityProvinceId
+        self.districtId = districtId
+        self.wardId = wardId
+        self.groupId = groupId
+
     def json(self):
+        if isinstance(self.DOB, date):
+            dob_json = self.DOB.isoformat()
+        else:
+            dob_json = ''
         return {
-            "citizenId": self.citizenId,
+            "CCCD": self.CCCD,
             "name": self.name,
-            "DOB": self.DOB,
+            "DOB": dob_json,
             "sex": self.sex,
             "maritalStatus": self.maritalStatus,
             "nation": self.nation,
             "religion": self.religion,
-            "CMND": self.CMND,
             "permanentResidence": self.permanentResidence,
             "temporaryResidence": self.temporaryResidence,
             "educationalLevel": self.educationalLevel,
-            "job": self.job
+            "job": self.job,
+            "cityProvinceId": self.cityProvinceId,
+            "districtId": self.districtId,
+            "wardId": self.wardId,
+            "groupId": self.groupId
         }
 
     @classmethod

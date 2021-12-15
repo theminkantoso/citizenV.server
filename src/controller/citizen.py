@@ -6,14 +6,13 @@ from src.services.citizen import CitizenServices
 
 class Citizen(Resource):
     parser = reqparse.RequestParser()
-    parser.add_argument("citizenId", type=int)
+    parser.add_argument("CCCD", type=str)
     parser.add_argument("name", type=str)
     parser.add_argument("DOB", type=str)
     parser.add_argument("sex", type=str)
     parser.add_argument("maritalStatus", type=str)
     parser.add_argument("nation", type=str)
     parser.add_argument("religion", type=str)
-    parser.add_argument("CMND", type=str)
     parser.add_argument("permanentResidence", type=str)
     parser.add_argument("temporaryResidence", type=str)
     parser.add_argument("educationalLevel", type=str)
@@ -21,6 +20,7 @@ class Citizen(Resource):
     parser.add_argument("groupId", type=str)
 
     # Tìm kiếm 1 citizen
+    # @jwt_required()
     def get(self, id):
         id_acc = '38010101'
         citizen = CitizenServices.exist_citizen(id, id_acc)
@@ -34,6 +34,8 @@ class Citizen(Resource):
 
     # Nhập liệu 1 citizen
     # @jwt_required()
+    # @authorized_required(roles=[4, 5])
+    # @crud_permission_required
     def post(self):
         # id_acc = get_jwt_identity()  # Là B1 hoặc B2
         # Giả sử người nhập liệu là B2
@@ -47,6 +49,9 @@ class Citizen(Resource):
             return {"Message": "cityProvince added. "}, 201
 
     # Xoá 1 citizen  khỏi danh sách
+    # @jwt_required()
+    # @authorized_required(roles=[4, 5])
+    # @crud_permission_required
     def delete(self, id):
         id_acc = '38010101'
         c = CitizenServices.exist_citizen(id, id_acc)
@@ -68,6 +73,8 @@ class Citizen(Resource):
 
 
 class all_Citizen(Resource):
+
+    # @jwt_required()
     def get(self):
         id_acc = "38010103"
         cities = CitizenServices.all_citizen_by_acc(id_acc)

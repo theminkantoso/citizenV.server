@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Dec 14, 2021 at 11:01 AM
+-- Generation Time: Dec 15, 2021 at 02:30 PM
 -- Server version: 10.4.22-MariaDB
 -- PHP Version: 8.0.13
 
@@ -45,14 +45,13 @@ CREATE TABLE `account` (
 --
 
 CREATE TABLE `citizen` (
-  `citizenId` int(8) NOT NULL,
+  `CCCD` varchar(12) NOT NULL,
   `name` varchar(50) DEFAULT NULL,
-  `DOB` varchar(10) DEFAULT NULL,
-  `sex` varchar(3) DEFAULT NULL,
-  `maritalStatus` varchar(15) DEFAULT NULL,
-  `nation` varchar(15) DEFAULT NULL,
-  `religion` varchar(50) DEFAULT NULL,
-  `CMND` varchar(11) DEFAULT NULL,
+  `DOB` date NOT NULL,
+  `sex` enum('Nam','Nu') NOT NULL,
+  `maritalStatus` varchar(50) NOT NULL,
+  `nation` varchar(50) NOT NULL,
+  `religion` varchar(50) NOT NULL,
   `permanentResidence` varchar(100) DEFAULT NULL,
   `temporaryResidence` varchar(100) DEFAULT NULL,
   `educationalLevel` varchar(10) DEFAULT NULL,
@@ -72,7 +71,7 @@ CREATE TABLE `citizen` (
 CREATE TABLE `cityprovince` (
   `cityProvinceId` varchar(2) NOT NULL,
   `cityProvinceName` varchar(30) NOT NULL,
-  `created` tinyint(1) DEFAULT NULL
+  `completed` tinyint(1) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------
@@ -81,13 +80,30 @@ CREATE TABLE `cityprovince` (
 -- Table structure for table `district`
 --
 
-
 CREATE TABLE `district` (
   `districtId` varchar(4) NOT NULL,
   `districtName` varchar(30) NOT NULL,
   `cityProvinceId` varchar(2) NOT NULL,
-  `created` tinyint(1) DEFAULT NULL
+  `completed` tinyint(1) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Triggers `district`
+--
+DELIMITER $$
+CREATE TRIGGER `updateCompletedDistrict` AFTER UPDATE ON `district` FOR EACH ROW BEGIN 
+	DECLARE countCompleted INT DEFAULT 0;
+    DECLARE total INT DEFAULT 0;
+    SELECT COUNT(*) INTO countCompleted FROM district WHERE cityProvinceId = new.cityProvinceId AND completed = 1;
+    SELECT COUNT(*) INTO total FROM residentialgroup WHERE cityProvinceId = new.cityProvinceId;
+    IF total = countCompleted THEN
+    	UPDATE cityProvince SET cityprovince.completed = 1 WHERE cityprovince.cityProvinceId = new.cityProvinceId;
+    ELSEIF total > countCompleted THEN
+    	UPDATE cityprovince SET cityprovince.completed = 0 WHERE cityprovince.cityProvinceId = new.cityProvinceId;
+    END IF;
+END
+$$
+DELIMITER ;
 
 -- --------------------------------------------------------
 
@@ -99,8 +115,27 @@ CREATE TABLE `residentialgroup` (
   `groupId` varchar(8) NOT NULL,
   `groupName` varchar(30) NOT NULL,
   `wardId` varchar(6) NOT NULL,
-  `created` tinyint(1) DEFAULT NULL
+  `completed` tinyint(1) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Triggers `residentialgroup`
+--
+DELIMITER $$
+CREATE TRIGGER `updateCompletedGroup` AFTER UPDATE ON `residentialgroup` FOR EACH ROW BEGIN 
+	DECLARE countCompleted INT DEFAULT 0;
+    DECLARE total INT DEFAULT 0;
+    SELECT COUNT(*) INTO countCompleted FROM residentialgroup WHERE wardId = new.wardId AND completed = 1;
+    SELECT COUNT(*) INTO total FROM residentialgroup WHERE wardId = new.wardId;
+    IF total = countCompleted THEN
+    	UPDATE ward SET ward.completed = 1 WHERE ward.wardId = new.wardId;
+    ELSEIF total > countCompleted THEN
+    	UPDATE ward SET ward.completed = 0 WHERE ward.wardId = new.wardId;
+    END IF;
+END
+$$
+DELIMITER ;
+
 -- --------------------------------------------------------
 
 --
@@ -122,8 +157,26 @@ CREATE TABLE `ward` (
   `wardId` varchar(6) NOT NULL,
   `wardName` varchar(30) NOT NULL,
   `districtId` varchar(4) NOT NULL,
-  `created` tinyint(1) DEFAULT NULL
+  `completed` tinyint(1) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Triggers `ward`
+--
+DELIMITER $$
+CREATE TRIGGER `updateCompletedWard` AFTER UPDATE ON `ward` FOR EACH ROW BEGIN 
+	DECLARE countCompleted INT DEFAULT 0;
+    DECLARE total INT DEFAULT 0;
+    SELECT COUNT(*) INTO countCompleted FROM ward WHERE districtId = new.districtId AND completed = 1;
+    SELECT COUNT(*) INTO total FROM residentialgroup WHERE districtId = new.districtId;
+    IF total = countCompleted THEN
+    	UPDATE district SET district.completed = 1 WHERE district.districtId = new.districtId;
+    ELSEIF total > countCompleted THEN
+    	UPDATE ward SET district.completed = 0 WHERE district.districtId = new.districtId;
+    END IF;
+END
+$$
+DELIMITER ;
 
 --
 -- Indexes for dumped tables
@@ -140,11 +193,12 @@ ALTER TABLE `account`
 -- Indexes for table `citizen`
 --
 ALTER TABLE `citizen`
-  ADD PRIMARY KEY (`citizenId`),
+  ADD PRIMARY KEY (`CCCD`),
   ADD KEY `fk_citizen_cityprovince` (`cityProvinceId`),
   ADD KEY `fk_citizen_district` (`districtId`),
   ADD KEY `fk_citizen_ward` (`wardId`),
   ADD KEY `fk_citizen_residentialgroup` (`groupId`);
+
 --
 -- Indexes for table `cityprovince`
 --
@@ -181,12 +235,6 @@ ALTER TABLE `ward`
 --
 -- AUTO_INCREMENT for dumped tables
 --
-
---
--- AUTO_INCREMENT for table `citizen`
---
-ALTER TABLE `citizen`
-  MODIFY `citizenId` int(8) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `revoked_tokens`

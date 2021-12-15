@@ -5,18 +5,18 @@ class CityDb(db.Model):
     __tablename__ = 'cityprovince'
     cityProvinceId = db.Column(db.String(2), primary_key=True)
     cityProvinceName = db.Column(db.String(30))
-    created = db.Column(db.Boolean)
+    completed = db.Column(db.Boolean)
 
-    def __init__(self, cityProvinceId, cityProvinceName, created):
+    def __init__(self, cityProvinceId, cityProvinceName, completed):
         self.cityProvinceId = cityProvinceId
         self.cityProvinceName = cityProvinceName
-        self.created = created
+        self.completed = completed
 
     def json(self):
         return {
             "cityProvinceId": self.cityProvinceId,
             "cityProvinceName": self.cityProvinceName,
-            "created": self.created
+            "created": self.completed
         }
 
     @classmethod

@@ -16,7 +16,6 @@ import json
 import re
 import random
 import string
-su = URLSafeTimedSerializer('Thisisasecret!') # reformat later
 
 
 def random_string():
