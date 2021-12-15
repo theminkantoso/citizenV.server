@@ -77,6 +77,7 @@ class Group(Resource):
 
 # Thống kê các thôn/bản/tdp
 class Groups(Resource):
+
     # Tất cả thôn/bản/tdp trong 1 xã/phường
     @jwt_required()
     @authorized_required(roles=[4])
