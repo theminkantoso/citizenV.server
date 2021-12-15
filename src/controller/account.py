@@ -59,19 +59,23 @@ class Account(Resource):
             additional_claim = {"role": user.roleId, "isLocked": user.isLocked}
             access_token = create_access_token(identity=id, additional_claims=additional_claim)
 
-            # update time true or not
+            # update khóa tài khoản
+            # do server không phải chạy 24/24 nên khi đăng nhập server sẽ kiểm tra có khóa tài khoản không
+            # kiểm tra thời gian hiện tại với thời gian tài khoản được thêm sửa xóa
             today = date.today()
             if user.startTime is not None and user.endTime is not None:
-                if user.startTime <= today:
+                if user.startTime <= today <= user.endTime:
                     user.isLocked = False
-                elif user.endTime > today:
+                    user.commit_to_db()
+                else:
                     user.isLocked = True
+                    # khóa tài khoản con
+                    try:
+                        AccountDb.lock_managed_account_hierachy(id)
+                    except Exception as e:
+                        print(e)
 
-            # khóa tài khoản con
-            try:
-                AccountDb.lock_managed_account_hierachy(id)
-            except Exception as e:
-                print(e)
+            # return jwt to FE
             try:
                 return jsonify(access_token=access_token.decode('utf-8'))
             except:

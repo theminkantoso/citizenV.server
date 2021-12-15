@@ -4,7 +4,7 @@ from src.models.cityProvinceDb import CityDb
 from src.models.districtDb import DistrictDb
 from src.models.wardDb import WardDb
 from src.models.residentialGroupDb import GroupDb
-from src.core.auth import crud_permission_required
+from src.core.auth import crud_permission_required, authorized_required
 from werkzeug.security import generate_password_hash
 from datetime import datetime
 from src.controller import my_mail
@@ -49,6 +49,7 @@ class AccountManagement(Resource):
     parser.add_argument('email', type=str)
 
     @jwt_required()
+    @authorized_required(roles=[0, 1, 2, 3, 4])
     def get(self):
         id_acc = get_jwt_identity()
         managed_accounts = AccountDb.find_managed_account_by_id(id_acc)
@@ -57,6 +58,7 @@ class AccountManagement(Resource):
         return {}, 200
 
     @jwt_required()
+    @authorized_required(roles=[0, 1, 2, 3, 4])
     @crud_permission_required
     def post(self):
         data = AccountManagement.parser.parse_args()
@@ -119,6 +121,7 @@ class AccountManagementChange(Resource):
     parser.add_argument('isLocked', type=bool)
 
     @jwt_required()
+    @authorized_required(roles=[0, 1, 2, 3, 4])
     def get(self, id):
         id_acc = get_jwt_identity()
         try:
@@ -131,6 +134,7 @@ class AccountManagementChange(Resource):
             return {"message": "Not found"}, 404
 
     @jwt_required()
+    @authorized_required(roles=[0, 1, 2, 3, 4])
     @crud_permission_required
     def put(self, id):
         data = AccountManagementChange.parser.parse_args()
@@ -193,6 +197,7 @@ class AccountManagementChange(Resource):
             return {"message": "something wrong"}, 500
 
     @jwt_required()
+    @authorized_required(roles=[0, 1, 2, 3, 4])
     @crud_permission_required
     def delete(self, id):
         id_acc = get_jwt_identity()
