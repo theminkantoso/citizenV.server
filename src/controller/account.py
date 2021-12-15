@@ -156,7 +156,7 @@ class Account(Resource):
 
 class Repass(Resource):
     parser = reqparse.RequestParser()
-    parser.add_argument('id', type=int)
+    parser.add_argument('id', type=str)
     parser.add_argument('email', type=str)
 
     def post(self):
@@ -207,7 +207,7 @@ class ChangePass(Resource):
         get_user = AccountDb.find_by_id(id)
         if check_password_hash(get_user.password, password):
             get_user.password = generate_password_hash(new_password, method='sha256')
-            get_user.commit_to_db()
+            get_user.save_to_db()
             return {'message': "New password saved succeed!"}, 200
         return {'message': "Wrong password"}, 400
 
