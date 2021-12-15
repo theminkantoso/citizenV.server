@@ -6,20 +6,20 @@ class DistrictDb(db.Model):
     districtId = db.Column(db.String(4), primary_key=True)
     districtName = db.Column(db.String(30))
     cityProvinceId = db.Column(db.String(2), db.ForeignKey("cityprovince.cityProvinceId"))
-    created = db.Column(db.Boolean)
+    completed = db.Column(db.Boolean)
 
-    def __init__(self, districtId, districtName, cityProvinceId, created):
+    def __init__(self, districtId, districtName, cityProvinceId, completed):
         self.districtId = districtId
         self.districtName = districtName
         self.cityProvinceId = cityProvinceId
-        self.created = created
+        self.completed = completed
 
     def json(self):
         return {
             "districtId": self.districtId,
             "districtName": self.districtName,
             "cityProvinceId": self.cityProvinceId,
-            "created": self.created
+            "created": self.completed
         }
 
     @classmethod
