@@ -57,32 +57,33 @@ class Account(Resource):
             return {'message': "Invalid id or password"}, 400
 
         user = AccountDb.find_by_id(id)
+
+        if user is None:
+            return {'message': "Incorrect id or password"}, 401
+
         name = ""
         if user.roleId == 0:
             name = "Admin"
         elif user.roleId == 1:
             name = "A1"
         elif user.roleId == 2:
-            name = CityDb.find_by_id(user.roleId).cityProvinceId
+            name = CityDb.find_by_id(user.accountId).cityProvinceName
         elif user.roleId == 3:
-            dist = DistrictDb.find_by_id(user.roleId).districtName
-            city = CityDb.find_by_id(user.roleId[0:2]).cicyProvinceName
+            dist = DistrictDb.find_by_id(user.accountId).districtName
+            city = CityDb.find_by_id(user.accountId[0:2]).cityProvinceName
             name = city + '-' + dist
         elif user.roleId == 4:
-            ward = WardDb.find_by_id(user.roleId).wardName
-            dist = DistrictDb.find_by_id(user.roleId[0:4]).districtName
-            city = CityDb.find_by_id(user.roleId[0:2]).cicyProvinceName
+            ward = WardDb.find_by_id(user.accountId).wardName
+            dist = DistrictDb.find_by_id(user.accountId[0:4]).districtName
+            city = CityDb.find_by_id(user.accountId[0:2]).cityProvinceName
             name = city + '-' + dist + '-' + ward
 
         elif user.roleId == 5:
-            group = GroupDb.find_by_id(user.roleId).groupName
-            ward = WardDb.find_by_id(user.roleId[0:6]).wardName
-            dist = DistrictDb.find_by_id(user.roleId[0:4]).districtName
-            city = CityDb.find_by_id(user.roleId[0:2]).cicyProvinceName
+            group = GroupDb.find_by_id(user.accountId).groupName
+            ward = WardDb.find_by_id(user.accountId[0:6]).wardName
+            dist = DistrictDb.find_by_id(user.accountId[0:4]).districtName
+            city = CityDb.find_by_id(user.accountId[0:2]).cityProvinceName
             name = city + '-' + dist + '-' + ward + '-' + group
-
-        if user is None:
-            return {'message': "Incorrect id or password"}, 401
         if check_password_hash(user.password, password):
             additional_claim = {"role": user.roleId, "isLocked": user.isLocked, "name": name}
             access_token = create_access_token(identity=id, additional_claims=additional_claim)
