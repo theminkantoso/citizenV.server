@@ -20,6 +20,10 @@ su = URLSafeTimedSerializer('Thisisasecret!') # reformat later
 
 
 def random_string():
+    """
+    Generate a random password
+    :return: a random string with 6 letters and 6 numbers
+    """
     str1 = ''.join((random.choice(string.ascii_letters) for x in range(6)))
     str1 += ''.join((random.choice(string.digits) for x in range(6)))
 
@@ -30,6 +34,12 @@ def random_string():
 
 
 def validate_regex(input_string, regex):
+    """
+    Validate input string based on a given regex
+    :param input_string: string needs to check
+    :param regex: regex pattern
+    :return: True if satisfied
+    """
     pattern = re.compile(regex)
     if pattern.fullmatch(input_string):
         return True
@@ -88,21 +98,28 @@ class Account(Resource):
             additional_claim = {"role": user.roleId, "isLocked": user.isLocked, "name": name}
             access_token = create_access_token(identity=id, additional_claims=additional_claim)
 
-            # update time true or not
+            # update khóa tài khoản
+            # do server không phải chạy 24/24 nên khi đăng nhập server sẽ kiểm tra có khóa tài khoản không
+            # kiểm tra thời gian hiện tại với thời gian tài khoản được thêm sửa xóa
             today = date.today()
             if user.startTime is not None and user.endTime is not None:
-                if user.startTime <= today:
+                if user.startTime <= today <= user.endTime:
                     user.isLocked = False
-                elif user.endTime > today:
+                    user.commit_to_db()
+                else:
                     user.isLocked = True
+                    # khóa tài khoản con
+                    try:
+                        AccountDb.lock_managed_account_hierachy(id)
+                    except Exception as e:
+                        print(e)
 
-            # khóa tài khoản con
+            # return jwt to FE
             try:
-                AccountDb.lock_managed_account_hierachy(id)
-            except Exception as e:
-                print(e)
+                return jsonify(access_token=access_token.decode('utf-8'))
+            except:
+                return jsonify(access_token=access_token)
 
-            return jsonify(access_token=access_token)
         return {"message": "Incorrect username or password"}, 401
 
     def delete(self):
@@ -160,6 +177,7 @@ class Repass(Resource):
             return {'message': "No account with this email and id"}, 400
         try:
             new_password = random_string()
+            # gửi mail mật khẩu mới cho người dùng
             get_user.Password = generate_password_hash(new_password, method='sha256')
             msg = Message('New Password Recovery', sender='phucpb.hrt@gmail.com', recipients=[email.lower()])
             msg.body = 'Your new password is {}'.format(new_password)

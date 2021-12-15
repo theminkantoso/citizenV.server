@@ -7,7 +7,7 @@ class AccountDb(db.Model):
     accountId = db.Column(db.String, primary_key=True)
     password = db.Column(db.String)
     email = db.Column(db.String)
-    roleId = db.Column(db.Integer)
+    roleId = db.Column(db.Integer)  # ENUM: 0-Admin, 1-A1, 2-A2, 3-A3, 4-B1, 5-B2
     managerAccount = db.Column(db.String)
     startTime = db.Column(db.Date)
     endTime = db.Column(db.Date)

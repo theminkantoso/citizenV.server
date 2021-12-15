@@ -1,6 +1,8 @@
 from flask_restful import Resource, reqparse
 from src.services.group import GroupServices
 from src.services.ward import WardServices
+from flask_jwt_extended import jwt_required, get_jwt_identity, get_jwt
+from src.core.auth import crud_permission_required, authorized_required
 
 
 class Group(Resource):
@@ -15,6 +17,9 @@ class Group(Resource):
         pass
 
     # Thêm mã cho 1 thôn/bản/tdp
+    @jwt_required()
+    @authorized_required(roles=[4])
+    @crud_permission_required
     def post(self):
         data = Group.parser.parse_args()
         g = GroupServices.create_group(data)
@@ -34,6 +39,9 @@ class Group(Resource):
             return {'message': 'ward not found'}, 404
 
     # Xoá 1 thôn/bản/tdp trong 1 xã/phường khỏi danh sách
+    @jwt_required()
+    @authorized_required(roles=[4])
+    @crud_permission_required
     def delete(self, id):
         group = GroupServices.delete_group(id)
         if group == 0:
@@ -44,6 +52,9 @@ class Group(Resource):
             return {'message': 'Group not found.'}, 404
 
     # Sửa thông tin 1 thôn/bản/tdp
+    @jwt_required()
+    @authorized_required(roles=[4])
+    @crud_permission_required
     def put(self, Wname, Gname):
         data = Group.parser.parse_args()
         w = WardServices.find_name(Wname)
@@ -66,7 +77,10 @@ class Group(Resource):
 
 # Thống kê các thôn/bản/tdp
 class Groups(Resource):
+
     # Tất cả thôn/bản/tdp trong 1 xã/phường
+    @jwt_required()
+    @authorized_required(roles=[4])
     def get(self, ward_id):
         group = GroupServices.list_ward_in_group(ward_id)
         if group == 0:

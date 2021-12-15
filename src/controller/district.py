@@ -1,6 +1,8 @@
 from flask_restful import Resource, reqparse
 from src.services.district import DistrictServices
 from src.services.city import CityServices
+from flask_jwt_extended import jwt_required, get_jwt_identity, get_jwt
+from src.core.auth import crud_permission_required, authorized_required
 
 
 class District(Resource):
@@ -15,6 +17,9 @@ class District(Resource):
         pass
 
     # Thêm mã cho 1 quận/huyện
+    @jwt_required()
+    @authorized_required(roles=[2])
+    @crud_permission_required
     def post(self):
         data = District.parser.parse_args()
         d = DistrictServices.create_district(data)
@@ -32,6 +37,9 @@ class District(Resource):
             return {'message': 'City not found'}, 404
 
     # Xoá 1 quận/huyện trong 1 tỉnh/thành phố khỏi danh sách
+    @jwt_required()
+    @authorized_required(roles=[2])
+    @crud_permission_required
     def delete(self, id):
         d = DistrictServices.delete_district(id)
         if d == 0:
@@ -42,6 +50,9 @@ class District(Resource):
             return {'message': 'district not found.'}, 404
 
     # Sửa thông tin 1 quận/huyện
+    @jwt_required()
+    @authorized_required(roles=[2])
+    @crud_permission_required
     def put(self, id):
         data = District.parser.parse_args()
         d = DistrictServices.exist_district(id)
@@ -61,9 +72,11 @@ class District(Resource):
         return {'message': 'district not found.'}, 404
 
 
-# Tất cả quận/huyện trong tỉnh/thành phố
 class Districts(Resource):
 
+    # Tất cả quận/huyện trong tỉnh/thành phố
+    @jwt_required()
+    @authorized_required(roles=[2])
     def get(self, city_id):
         dist = DistrictServices.list_dictrict_in_city(city_id)
         if dist == 0:

@@ -5,8 +5,13 @@ import re
 regex_id = '^(0[1-9]|[1-9][0-9])$'
 
 
-# so sánh chuỗi với chuỗi regex
 def validate_regex(input_string, regex):
+    """
+        Validate input string based on a given regex
+        :param input_string: string needs to check
+        :param regex: regex pattern
+        :return: True if satisfied
+    """
     pattern = re.compile(regex)
     if pattern.fullmatch(input_string):
         return True
