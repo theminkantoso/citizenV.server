@@ -7,6 +7,10 @@ from src.controller import my_mail
 from flask import url_for, jsonify, request
 from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity, get_jwt
 from flask_mail import Message
+from src.models.cityProvinceDb import CityDb
+from src.models.districtDb import DistrictDb
+from src.models.wardDb import WardDb
+from src.models.residentialGroupDb import GroupDb
 
 import json
 import re
@@ -53,10 +57,34 @@ class Account(Resource):
             return {'message': "Invalid id or password"}, 400
 
         user = AccountDb.find_by_id(id)
+        name = ""
+        if user.roleId == 0:
+            name = "Admin"
+        elif user.roleId == 1:
+            name = "A1"
+        elif user.roleId == 2:
+            name = CityDb.find_by_id(user.roleId).cityProvinceId
+        elif user.roleId == 3:
+            dist = DistrictDb.find_by_id(user.roleId).districtName
+            city = CityDb.find_by_id(user.roleId[0:2]).cicyProvinceName
+            name = city + '-' + dist
+        elif user.roleId == 4:
+            ward = WardDb.find_by_id(user.roleId).wardName
+            dist = DistrictDb.find_by_id(user.roleId[0:4]).districtName
+            city = CityDb.find_by_id(user.roleId[0:2]).cicyProvinceName
+            name = city + '-' + dist + '-' + ward
+
+        elif user.roleId == 5:
+            group = GroupDb.find_by_id(user.roleId).groupName
+            ward = WardDb.find_by_id(user.roleId[0:6]).wardName
+            dist = DistrictDb.find_by_id(user.roleId[0:4]).districtName
+            city = CityDb.find_by_id(user.roleId[0:2]).cicyProvinceName
+            name = city + '-' + dist + '-' + ward + '-' + group
+
         if user is None:
             return {'message': "Incorrect id or password"}, 401
         if check_password_hash(user.password, password):
-            additional_claim = {"role": user.roleId, "isLocked": user.isLocked}
+            additional_claim = {"role": user.roleId, "isLocked": user.isLocked, "name": name}
             access_token = create_access_token(identity=id, additional_claims=additional_claim)
 
             # update time true or not
@@ -73,7 +101,7 @@ class Account(Resource):
             except Exception as e:
                 print(e)
 
-            return jsonify(access_token=access_token.decode('utf-8'))
+            return jsonify(access_token=access_token)
         return {"message": "Incorrect username or password"}, 401
 
     def delete(self):
