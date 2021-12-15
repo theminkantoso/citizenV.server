@@ -1,19 +1,26 @@
 from src.models.cityProvinceDb import CityDb
+import re
+
+# regex to validate Id
+regex_id = '^(0[1-9]|[1-9][0-9])$'
+
+
+# so sánh chuỗi với chuỗi regex
+def validate_regex(input_string, regex):
+    pattern = re.compile(regex)
+    if pattern.fullmatch(input_string):
+        return True
+    return False
 
 
 class CityServices():
 
     # Xem tên tỉnh/Thành phố tồn tại không
     @staticmethod
-    def exist_city(name: str):
-        c = CityDb.find_by_name(name)
-        if c:
-            return c
-        return None
-
-    # Tìm 1 tỉnh/Thành phố qua Id
-    @staticmethod
-    def find_city_by_id(id : int):
+    def exist_city(id: str):
+        # Validate
+        if not validate_regex(id, regex_id):
+            return 0  # Invalid id
         c = CityDb.find_by_id(id)
         if c:
             return c
@@ -24,19 +31,20 @@ class CityServices():
     def create_city(data: dict):
         name = data.get('cityProvinceName')
         id = data.get('cityProvinceId')
+
+        # Validate
+        if not validate_regex(id, regex_id):
+            return 0  # Invalid id
+
         #  Kiểm tra xem name và id có tồn tại hay không
-        if CityDb.find_by_name(name) and CityDb.find_by_id(id):
-            return 1  # name and id exist
-        if CityDb.find_by_name(name):
-            return 2  # name exist
-        if CityDb.find_by_id(id):
-            return 3  # id exist
+        if CityDb.find_by_name(name) or CityDb.find_by_id(id):
+            return 1  # name or id exist
         c = CityDb(**data)
         try:
             c.save_to_db()
         except:
-            return 4  # don't save
-        return 5  # saved
+            return 2  # don't save
+        return 3  # saved
 
     # xoá tỉnh/thành phố
     @staticmethod
@@ -52,16 +60,22 @@ class CityServices():
     def update_city(c: CityDb, data: dict):
         name = data["cityProvinceName"]
         id = data["cityProvinceId"]
-        if (CityDb.find_by_name(name) and (c.cityProvinceName != name))\
-                or (CityDb.find_by_id(id) and (c.cityProvinceId != id)):
+        if (c.cityProvinceId == id) and (c.cityProvinceName == name) and (c.created == data['created']):
             return 0
+        if (CityDb.find_by_name(name) and (c.cityProvinceName != name)) \
+                or (CityDb.find_by_id(id) and (c.cityProvinceId != id)):
+            return 1
+        # Validate
+        if not validate_regex(id, regex_id):
+            return 2  # Invalid id
+
         c.cityProvinceId = id
         c.cityProvinceName = name
         c.created = data["created"]
         try:
             c.save_to_db()
         except:
-            return 1
+            return 3
         return c
 
     # list tỉnh/thành phố
