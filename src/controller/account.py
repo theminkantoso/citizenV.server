@@ -12,7 +12,6 @@ import json
 import re
 import random
 import string
-su = URLSafeTimedSerializer('Thisisasecret!') # reformat later
 
 
 def random_string():
@@ -127,7 +126,7 @@ class Account(Resource):
 
 class Repass(Resource):
     parser = reqparse.RequestParser()
-    parser.add_argument('id', type=int)
+    parser.add_argument('id', type=str)
     parser.add_argument('email', type=str)
 
     def post(self):
