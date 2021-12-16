@@ -54,6 +54,7 @@ class AccountManagement(Resource):
     def get(self):
         id_acc = get_jwt_identity()
         managed_accounts = AccountDb.find_managed_account_by_id(id_acc)
+        # AccountDb.delete_managed_account_hierachy_2(id_acc)
         if managed_accounts:
             return {'Accounts': list(map(lambda x: x.json(), managed_accounts))}, 200
         return {}, 200
