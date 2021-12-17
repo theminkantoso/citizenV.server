@@ -185,6 +185,8 @@ class AccountManagementChange(Resource):
             current_user.endTime = end_date_modify
         if is_locked_modify is not None:
             current_user.isLocked = is_locked_modify
+            current_user.startTime = None
+            current_user.endTime = None
             if is_locked_modify:
                 try:
                     AccountDb.lock_managed_account_hierachy(id_modify)
