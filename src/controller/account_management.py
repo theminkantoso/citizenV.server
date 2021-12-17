@@ -164,7 +164,7 @@ class AccountManagementChange(Resource):
         if parent_user is None:
             return {'message': "something went wrong"}, 500
 
-        # # đảm bảo tài khoản con có thời gian khai báo nằm trong thời gian của cha
+        # đảm bảo tài khoản con có thời gian khai báo nằm trong thời gian của cha
         if parent_user.startTime is not None and parent_user.endTime is not None:
             if parent_user.startTime > start_date_modify or parent_user.endTime < end_date_modify:
                 data_ok = False

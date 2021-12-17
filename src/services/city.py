@@ -37,7 +37,7 @@ class CityServices():
         name = data.get('cityProvinceName')
         id = data.get('cityProvinceId')
 
-        # Validate
+        # Validate đảm bảo 2 ký tự
         if not validate_regex(id, regex_id):
             return 0  # Invalid id
 

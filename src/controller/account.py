@@ -177,7 +177,7 @@ class Repass(Resource):
         try:
             new_password = random_string()
             # gửi mail mật khẩu mới cho người dùng
-            get_user.Password = generate_password_hash(new_password, method='sha256')
+            get_user.password = generate_password_hash(new_password, method='sha256')
             msg = Message('New Password Recovery', sender='phucpb.hrt@gmail.com', recipients=[email.lower()])
             msg.body = 'Your new password is {}'.format(new_password)
             my_mail.send(msg)
