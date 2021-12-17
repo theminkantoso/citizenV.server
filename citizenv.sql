@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Dec 15, 2021 at 02:30 PM
+-- Generation Time: Dec 17, 2021 at 06:31 PM
 -- Server version: 10.4.22-MariaDB
 -- PHP Version: 8.0.13
 
@@ -20,6 +20,8 @@ SET time_zone = "+00:00";
 --
 -- Database: `citizenv`
 --
+CREATE DATABASE IF NOT EXISTS `citizenv` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
+USE `citizenv`;
 
 -- --------------------------------------------------------
 
@@ -95,9 +97,9 @@ CREATE TRIGGER `updateCompletedDistrict` AFTER UPDATE ON `district` FOR EACH ROW
 	DECLARE countCompleted INT DEFAULT 0;
     DECLARE total INT DEFAULT 0;
     SELECT COUNT(*) INTO countCompleted FROM district WHERE cityProvinceId = new.cityProvinceId AND completed = 1;
-    SELECT COUNT(*) INTO total FROM residentialgroup WHERE cityProvinceId = new.cityProvinceId;
+    SELECT COUNT(*) INTO total FROM district WHERE cityProvinceId = new.cityProvinceId;
     IF total = countCompleted THEN
-    	UPDATE cityProvince SET cityprovince.completed = 1 WHERE cityprovince.cityProvinceId = new.cityProvinceId;
+    	UPDATE cityprovince SET cityprovince.completed = 1 WHERE cityprovince.cityProvinceId = new.cityProvinceId;
     ELSEIF total > countCompleted THEN
     	UPDATE cityprovince SET cityprovince.completed = 0 WHERE cityprovince.cityProvinceId = new.cityProvinceId;
     END IF;
@@ -114,27 +116,8 @@ DELIMITER ;
 CREATE TABLE `residentialgroup` (
   `groupId` varchar(8) NOT NULL,
   `groupName` varchar(30) NOT NULL,
-  `wardId` varchar(6) NOT NULL,
-  `completed` tinyint(1) DEFAULT NULL
+  `wardId` varchar(6) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
---
--- Triggers `residentialgroup`
---
-DELIMITER $$
-CREATE TRIGGER `updateCompletedGroup` AFTER UPDATE ON `residentialgroup` FOR EACH ROW BEGIN 
-	DECLARE countCompleted INT DEFAULT 0;
-    DECLARE total INT DEFAULT 0;
-    SELECT COUNT(*) INTO countCompleted FROM residentialgroup WHERE wardId = new.wardId AND completed = 1;
-    SELECT COUNT(*) INTO total FROM residentialgroup WHERE wardId = new.wardId;
-    IF total = countCompleted THEN
-    	UPDATE ward SET ward.completed = 1 WHERE ward.wardId = new.wardId;
-    ELSEIF total > countCompleted THEN
-    	UPDATE ward SET ward.completed = 0 WHERE ward.wardId = new.wardId;
-    END IF;
-END
-$$
-DELIMITER ;
 
 -- --------------------------------------------------------
 
@@ -168,11 +151,11 @@ CREATE TRIGGER `updateCompletedWard` AFTER UPDATE ON `ward` FOR EACH ROW BEGIN
 	DECLARE countCompleted INT DEFAULT 0;
     DECLARE total INT DEFAULT 0;
     SELECT COUNT(*) INTO countCompleted FROM ward WHERE districtId = new.districtId AND completed = 1;
-    SELECT COUNT(*) INTO total FROM residentialgroup WHERE districtId = new.districtId;
+    SELECT COUNT(*) INTO total FROM ward WHERE districtId = new.districtId;
     IF total = countCompleted THEN
     	UPDATE district SET district.completed = 1 WHERE district.districtId = new.districtId;
     ELSEIF total > countCompleted THEN
-    	UPDATE ward SET district.completed = 0 WHERE district.districtId = new.districtId;
+    	UPDATE district SET district.completed = 0 WHERE district.districtId = new.districtId;
     END IF;
 END
 $$
