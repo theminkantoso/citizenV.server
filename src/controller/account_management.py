@@ -54,7 +54,6 @@ class AccountManagement(Resource):
     def get(self):
         id_acc = get_jwt_identity()
         managed_accounts = AccountDb.find_managed_account_by_id(id_acc)
-        # AccountDb.delete_managed_account_hierachy_2(id_acc)
         if managed_accounts:
             return {'Accounts': list(map(lambda x: x.json(), managed_accounts))}, 200
         return {}, 200
@@ -69,14 +68,14 @@ class AccountManagement(Resource):
         id_create = data['id']
         email_create = data['email']
 
-        # validate
+        # validate input
         regex_id = '^[0-9]*$'
         regex_mail = r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b'
         if not validate_regex(id_create, regex_id) or not validate_regex(email_create, regex_mail) \
                 or len(id_create) % 2 != 0:
             return {'message': "Invalid input format"}, 400
 
-        # check chống tạo tk rác, tài khoản không tương ứng với một mã tỉnh thành quận huyện nào đó
+        # prevent creating a trash account where id does not match any location
         id_create_len = len(id_create)
         # NEED TO REMOVE THESE COMMENT LATER
         # if id_create_len == 2:
@@ -95,13 +94,15 @@ class AccountManagement(Resource):
         if id_acc != id_create[0:id_create_len-2]:
             return {'message': "Wrong format <id> plus two digit"}, 400
 
-        # chống tạo tài khoản trùng
+        # prevent duplicate account
         exist_check = AccountDb.find_by_id(accId=id_create)
         if exist_check:
             return {'message': "Account already existed"}, 400
 
         try:
             password = random_string()
+
+            # send email to user, including id and default password
             msg = Message('Your account information', sender='phucpb.hrt@gmail.com', recipients=[email_create.lower()])
             msg.body = 'Your id is {f_id} and your password is {f_pass}'.format(f_id=id_create, f_pass=password)
             my_mail.send(msg)
@@ -147,24 +148,29 @@ class AccountManagementChange(Resource):
         end_date_modify = data['EndDate']
         is_locked_modify = data['isLocked']
 
-        # validate
+        # validate input
         data_ok = True
         if password_modify is not None:
             if not password_modify.isalnum():
                 data_ok = False
+
+        # ensure (!startDate AND !endDate) OR (startDate AND endDate)
         elif ((start_date_modify is not None and end_date_modify is None) or
                 (start_date_modify is None and end_date_modify is not None)):
             data_ok = False
+
+        # ensure startDate <= endDate
         elif start_date_modify is not None and end_date_modify is not None:
             if start_date_modify > end_date_modify:
                 data_ok = False
 
-        # hợp lệ thời gian khai báo với tài khoản cha
+        # ensure CRUD period satisfy with parent's account CRUD period
         parent_user = AccountDb.find_by_id(id_acc)
         if parent_user is None:
             return {'message': "something went wrong"}, 500
 
-        # đảm bảo tài khoản con có thời gian khai báo nằm trong thời gian của cha
+        # ensure CRUD period of child account is valid with this account (parent account)
+        # child.startTime > parent.startTime AND child.endTime < parent.endTime
         if parent_user.startTime is not None and parent_user.endTime is not None:
             if parent_user.startTime > start_date_modify or parent_user.endTime < end_date_modify:
                 data_ok = False
@@ -172,6 +178,7 @@ class AccountManagementChange(Resource):
         if not data_ok:
             return {'message': "invalid input"}, 400
 
+        # prevent one user access other resources
         current_user = AccountDb.find_by_id(id_modify)
         if current_user is None:
             return {'message': "invalid input"}, 400
