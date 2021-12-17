@@ -19,7 +19,7 @@ class DistrictDb(db.Model):
             "districtId": self.districtId,
             "districtName": self.districtName,
             "cityProvinceId": self.cityProvinceId,
-            "created": self.completed
+            "completed": self.completed
         }
 
     @classmethod

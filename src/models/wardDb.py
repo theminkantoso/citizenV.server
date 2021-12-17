@@ -19,7 +19,7 @@ class WardDb(db.Model):
             "wardId": self.wardId,
             "wardName": self.wardName,
             "districtId": self.districtId,
-            "created": self.completed
+            "completed": self.completed
         }
 
     @classmethod

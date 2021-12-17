@@ -1,12 +1,13 @@
 from src.database import db
-from datetime import datetime, date
+from datetime import date
+
 
 class CitizenDb(db.Model):
     __tablename__ = 'citizen'
     CCCD = db.Column(db.String(12), primary_key=True)
     name = db.Column(db.String(50))
     DOB = db.Column(db.Date)
-    sex = db.Column(db.Enum)
+    sex = db.Column(db.String(3))
     maritalStatus = db.Column(db.String(50))
     nation = db.Column(db.String(50))
     religion = db.Column(db.String(50))
@@ -19,37 +20,7 @@ class CitizenDb(db.Model):
     wardId = db.Column(db.String(6), db.ForeignKey("ward.wardId"))
     groupId = db.Column(db.String(8), db.ForeignKey("residentialgroup.groupId"))
 
-    def __init__(self, name, DOB, sex, maritalStatus, nation, religion, CCCD,
-                 permanentResidence, temporaryResidence, educationalLevel, job):
-        self.CCCD = CCCD
-        self.name = name
-        self.DOB = DOB
-        self.sex = sex
-        self.maritalStatus = maritalStatus
-        self.nation = nation
-        self.religion = religion
-        self.permanentResidence = permanentResidence
-        self.temporaryResidence = temporaryResidence
-        self.educationalLevel = educationalLevel
-        self.job = job
-
-    # Trường hợp B1 nhập liệu
-    def __init__(self, name, DOB, sex, maritalStatus, nation, religion, CCCD,
-                 permanentResidence, temporaryResidence, educationalLevel, job, groupId):
-        self.CCCD = CCCD
-        self.name = name
-        self.DOB = DOB
-        self.sex = sex
-        self.maritalStatus = maritalStatus
-        self.nation = nation
-        self.religion = religion
-        self.permanentResidence = permanentResidence
-        self.temporaryResidence = temporaryResidence
-        self.educationalLevel = educationalLevel
-        self.job = job
-        self.groupId = groupId
-
-        # full
+    # full
     def __init__(self, name, DOB, sex, maritalStatus, nation, religion, CCCD, permanentResidence, temporaryResidence,
                  educationalLevel, job, cityProvinceId, districtId, wardId, groupId):
         self.CCCD = CCCD
@@ -93,12 +64,11 @@ class CitizenDb(db.Model):
 
     @classmethod
     def find_by_id(cls, Id):
-        return cls.query.filter_by(citizenId=Id).first()
+        return cls.query.filter_by(CCCD=Id).first()
 
     @classmethod
     def find_all_citizen(cls):
         return cls.query.all()
-
     @classmethod
     def find_all_citizen_in_city(cls, city_id):
         return cls.query.filter_by(cityProvinceId=city_id).all()

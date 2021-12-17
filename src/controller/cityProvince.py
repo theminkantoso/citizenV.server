@@ -1,25 +1,34 @@
 from flask_restful import Resource, reqparse
 from src.services.city import CityServices
-from flask_jwt_extended import jwt_required, get_jwt_identity, get_jwt
+from flask_jwt_extended import jwt_required
 from src.core.auth import crud_permission_required, authorized_required
 
 
 class City(Resource):
-    parser = reqparse.RequestParser()
-    parser.add_argument("cityProvinceId", type=str)
-    parser.add_argument("cityProvinceName", type=str)
-    parser.add_argument("created", type=bool)
 
     # Tìm 1 tỉnh/thành phố
-    def get(self, id):
-        pass
+    @jwt_required()
+    @authorized_required(roles=[1])  # tất cả A1 đều có quyền truy vấn
+    def get(self, city_id):
+        # Kiểm ta city_id tồn tại không
+        city = CityServices.exist_city(city_id)
+        if city == 0:
+            return {'message': "Invalid city_id"}, 400
+        if city:  # city_id tồn tại
+            return city.json(), 200
+        return {'message': 'cityProvince not found.'}, 404
 
     # Thêm mã cho 1 tỉnh/thành phố
     @jwt_required()
-    @authorized_required(roles=[1])
+    @authorized_required(roles=[1])  # tất cả A1 đều có quyền cấp phát
     @crud_permission_required
     def post(self):
-        data = City.parser.parse_args()
+        parser = reqparse.RequestParser()
+        parser.add_argument("cityProvinceId", type=str)
+        parser.add_argument("cityProvinceName", type=str)
+
+        data = parser.parse_args()
+        # create
         c = CityServices.create_city(data)
         if c == 0:
             return {'message': "Invalid id"}, 400
@@ -32,13 +41,14 @@ class City(Resource):
 
     # Xoá 1 tỉnh/thành phố khỏi danh sách
     @jwt_required()
-    @authorized_required(roles=[1])
+    @authorized_required(roles=[1])  # tất cả A1 đều có quyền
     @crud_permission_required
-    def delete(self, id):
-        c = CityServices.exist_city(id)
+    def delete(self, city_id):
+        # Kiểm tra city_id tồn tại không
+        c = CityServices.exist_city(city_id)
         if c == 0:
             return {'message': "Invalid id"}, 400
-        if c:
+        if c:  # city_id tồn tại
             city = CityServices.delete_city(c)
             if city == 1:
                 return {"message": "An error occurred deleting the cityProvince."}, 500
@@ -48,31 +58,34 @@ class City(Resource):
 
     # Sửa thông tin 1 tỉnh/thành phố
     @jwt_required()
-    @authorized_required(roles=[1])
+    @authorized_required(roles=[1])  # tất cả A1 đều có quyền
     @crud_permission_required
-    def put(self, id):
-        data = City.parser.parse_args()
-        c = CityServices.exist_city(id)
+    def put(self, city_id):
+        parser = reqparse.RequestParser()
+        parser.add_argument("cityProvinceName", type=str)
+        data = parser.parse_args()
+
+        # Kiểm tra city_id tồn tại không
+        c = CityServices.exist_city(city_id)
         if c == 0:
             return {'message': "Invalid id"}, 400
-        if c:
+        elif c is None:
+            return {'message': 'cityProvince not found.'}, 404
+        else:  # city_id tồn tại
             city = CityServices.update_city(c, data)
             if city == 0:
-                return {"message": "Not change"}, 200
-            if city == 1:
-                return {"message": "cityProvinceName or cityProvinceId already exists in other cityProvince."}, 400
-            if city == 2:
-                return {'message': "Invalid id"}, 400
-            if city == 3:
+                return {"message": "Not change"}, 400
+            elif city == 1:
+                return {"message": "Name  already exists in other cityProvince."}, 400
+            elif city == 2:
                 return {"message": "An error occurred updating the cityProvince."}, 500
-            return city.json()
-        return {'message': 'cityProvince not found.'}, 404
+            return {'message': 'cityProvince updated.'}, 200
 
 
 # Danh sách các tỉnh/thành phố
 class Cities(Resource):
     @jwt_required()
-    @authorized_required(roles=[1])
+    @authorized_required(roles=[1])  # tất cả A1 đều có quyền
     def get(self):
         cities = CityServices.list_city()
-        return {'Cities': list(map(lambda x: x.json(), cities))}
+        return {'Cities': list(map(lambda x: x.json(), cities))}, 200

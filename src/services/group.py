@@ -1,4 +1,3 @@
-from src.models.wardDb import WardDb
 from src.models.residentialGroupDb import GroupDb
 import re
 
@@ -11,15 +10,17 @@ def validate_regex(input_string, regex):
     return False
 
 
-class GroupServices():
+class GroupServices:
 
     # Tìm 1 thôn/bản/tdp trong 1 xã/phường
     @staticmethod
-    def exist_group(group_id: int):
-        # Validate
+    def exist_group(id_acc: str, group_id: str):
+        # Validate group_id (đầu vào có 8 số)
         regex_id = '^(0[1-9]|[1-9][0-9]){4}$'
         if not validate_regex(group_id, regex_id):
             return 0  # Invalid id
+        if id_acc != group_id[0:6]:
+            return 1  # not authorized
         group = GroupDb.find_by_id(group_id)
         if group:
             return group
@@ -27,82 +28,79 @@ class GroupServices():
 
     # Cấp mã cho 1 thôn/bản/tdp trong 1 xã/phường -> cấp 2 số
     @staticmethod
-    def create_group(data: dict):
-        ward_id = data.get('wardId')
+    def create_group(id_acc: str, data: dict):
         group_id = data["groupId"]
         group_name = data["groupName"]
 
-        # Validate ward_id (6 số)
-        regex_id = '^(0[1-9]|[1-9][0-9]){3}$'
-        if not validate_regex(ward_id, regex_id):
-            return 0  # Invalid dist_id
-
-        # Validate ward_id (đầu vào là 2 số)
+        # Validate group_id (đầu vào là 2 số)
         regex_id = '^(0[1-9]|[1-9][0-9])$'
         if not validate_regex(group_id, regex_id):
-            return 1  # Invalid ward_id
+            return 0  # Invalid group_id
 
-        ward = WardDb.find_by_id(ward_id)
-        if ward:
-            data["groupId"] = ward_id + group_id
-            if GroupDb.find_by_ward_group_name(ward_id, group_name):
-                return 2  # Tên thôn/bản/tdp đã có trong xã/phường
-            if GroupDb.find_by_id(data["groupId"]):
-                return 3  # Id đã được cấp cho thôn/bản/tdp khác
-            g = GroupDb(**data)
-
-            try:
-                g.save_to_db()
-            except:
-                return 4  # error save
-            return 5  # added
-        return 6  # ward not exist
+        # groupId lưu ở database là 4 số
+        data["groupId"] = id_acc + group_id
+        if GroupDb.find_by_ward_group_name(id_acc, group_name):
+            return 1  # Tên thôn/bản/tdp đã có trong xã/phường
+        if GroupDb.find_by_id(data["groupId"]):
+            return 2  # Id đã được cấp cho thôn/bản/tdp khác
+        g = GroupDb(groupId=data["groupId"], groupName=group_name, wardId=id_acc, completed=None)
+        try:
+            g.save_to_db()
+        except:
+            return 3  # error save
+        return 4  # added
 
     # Xoá 1 thôn/bản/tdp khỏi danh sách
     @staticmethod
-    def delete_group(group_id: int):
-        # Validate
-        regex_id = '^(0[1-9]|[1-9][0-9]){4}$'
-        if not validate_regex(group_id, regex_id):
-            return 0  # Invalid id
-        group = GroupDb.find_by_id(group_id)
-        if group:
+    def delete_group(group: GroupDb):
+        try:
             group.delete_from_db()
-            return 1  # deleted
-        return 2  # group not exist
+        except:
+            return 0  # err
+        return 1  # deleted
 
     # Sửa thông tin 1 xã/phường
     @staticmethod
-    def update_group(g: GroupDb, data: dict):
-        WId = data["wardId"]
-        if WardDb.find_by_id(WId):
-            Gname = data["groupName"]
-            GId = data["groupId"]  # Id update (đúng số lượng 2_4_6_8)
-            find = GroupDb.find_by_W_Gname(WId, Gname)
-            if (GroupDb.find_by_id(GId) and (g.groupId != GId)) \
-                    or (((g.groupName != Gname) or (g.wardId != WId)) and (find and len(find) >= 1)):
-                return 1  # can't update
-            if WId != (GId - GId % 100) / 100:
-                return 0
+    def update_group(id_acc: str, group: GroupDb, data: dict):
+        group_name = data["groupName"]
+        if group_name == group.groupName:
+            return 0  # not change
+        elif GroupDb.find_by_ward_group_name(id_acc, group_name):
+            return 1  # Name update already exists in other Group
+        try:
+            group.groupName = group_name
+            group.save_to_db()
+        except:
+            return 2  # error
+        return None  # updated
+
+    # tich tiến độ
+    @staticmethod
+    def completed(id_acc: str, group_id: str, data: dict):
+        # Validate group_id (đầu vào là 8 số)
+        regex_id = '^(0[1-9]|[1-9][0-9]){4}$'
+        if not validate_regex(group_id, regex_id):
+            return 0  # Invalid group_id
+        group = GroupDb.find_by_id(group_id)
+        completed = data["completed"]
+        if group:
+            if id_acc != group_id:
+                return 1  # not authorized
+            elif completed == group.completed:
+                return 2  # not change
             try:
-                g.districtId = GId
-                g.districtName = Gname
-                g.cityProvinceId = WId
-                g.created = data["created"]
-                g.save_to_db()
-            except:
-                return 2  # error
-            return g
-        return 3  # ward not exist
+                group.completed = completed
+                group.save_to_db()
+            except Exception as e:
+                print(e)
+                return 3  # error
+            return None  # updated
+        return 4  # GroupId not found
+
+
 
     # List thôn/bản/tdp
     @staticmethod
     def list_ward_in_group(ward_id):
-        regex_id = '^(0[1-9]|[1-9][0-9]){3}$'
-        if not validate_regex(ward_id, regex_id):
-            return 0  # Invalid dist_id
-        ward = WardDb.find_by_id(ward_id)
-        if ward:
-            groups = GroupDb.find_by_ward_id(ward_id)
-            return groups
-        return None
+        groups = GroupDb.find_by_ward_id(ward_id)
+        return groups

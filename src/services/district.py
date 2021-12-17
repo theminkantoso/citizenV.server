@@ -1,6 +1,6 @@
 from src.models.districtDb import DistrictDb
-from src.models.cityProvinceDb import CityDb
 import re
+
 
 # so sánh chuỗi với chuỗi regex
 def validate_regex(input_string, regex):
@@ -10,98 +10,75 @@ def validate_regex(input_string, regex):
     return False
 
 
-class DistrictServices():
+class DistrictServices:
 
     # Tìm 1 quận/huyện trong 1 tỉnh theo id
     @staticmethod
-    def exist_district(id: str):
-        # Validate
+    def exist_district(id_acc: str, dist_id: str):
+        # Validate dist_id , đầu vào có 4 chữ số
         regex_id = '^(0[1-9]|[1-9][0-9]){2}$'
-        if not validate_regex(id, regex_id):
-            return 0  # Invalid id
-        dist = DistrictDb.find_by_id(id)
+        if not validate_regex(dist_id, regex_id):
+            return 0  # Invalid dist_id
+        # Kiểm tra người dùng có quyền truy vấn không
+        elif id_acc != dist_id[0:2]:
+            return 1  # not authorized
+        dist = DistrictDb.find_by_id(dist_id)
         if dist:
             return dist
         return None  # district not exist
 
     # Cấp mã cho 1 quận/huyện trong 1 tỉnh  -> cấp 2 số
     @staticmethod
-    def create_district(data: dict):
-        city_id = data.get('cityProvinceId')
+    def create_district(id_acc: str, data: dict):
         dist_id = data.get('districtId')
         dist_name = data.get('districtName')
 
-        # Validate city_id vả dist_id (cả 2 đều có 2 số)
+        # Validate dist_id (đầu vào có 2 số)
         regex_id = '^(0[1-9]|[1-9][0-9])$'
-        if (not validate_regex(city_id, regex_id)) or (not validate_regex(dist_id, regex_id)):
-            return 0  # Invalid city_id or dist_id
+        if not validate_regex(dist_id, regex_id):
+            return 0  # Invalid dist_id
 
-        city = CityDb.find_by_id(city_id)
-        if city:
-            data["districtId"] = city_id + dist_id
-            if DistrictDb.find_by_city_dist_name(city_id, dist_name):
-                return 1  # tên quận/huyện đã có trong tỉnh/tp
-            if DistrictDb.find_by_id(data["districtId"]):
-                return 2  # id quận/huyện đã tồn tại
-            d = DistrictDb(**data)
-            try:
-                d.save_to_db()
-            except:
-                return 3  # error save
-            return 4  # added
-        return 5  # city not exist
+        # districtId lưu ở database là 4 số
+        data["districtId"] = id_acc + dist_id
+        if DistrictDb.find_by_city_dist_name(id_acc, dist_name):
+            return 1  # tên quận/huyện đã có trong tỉnh/tp
+        if DistrictDb.find_by_id(data["districtId"]):
+            return 2  # id quận/huyện đã tồn tại
+        d = DistrictDb(districtId=data["districtId"], districtName=dist_name, cityProvinceId=id_acc, completed=None)
+        try:
+            d.save_to_db()
+        except Exception as e:
+            print(e)
+            return 3  # error save
+        return 4  # added
 
     # Xoá 1 quận/huyện trong 1 tỉnh/thành phố khỏi danh sách
     @staticmethod
-    def delete_district(id: str):
-        # Validate
-        regex_id = '^(0[1-9]|[1-9][0-9]){2}$'
-        if not validate_regex(id, regex_id):
-            return 0  # Invalid id
-        dist = DistrictDb.find_by_id(id)
-        if dist:
+    def delete_district(dist: DistrictDb):
+        try:
             dist.delete_from_db()
-            return 1  # deleted
-        return 2  # district not exist
+        except:
+            return 0  # err
+        return 1  # deleted
 
     # Sửa thông tin 1 quận/huyện
     @staticmethod
-    def update_district(d: DistrictDb, data: dict):
-        city_id = data["cityProvinceId"]
-        dist_id = data["districtId"]
+    def update_district(id_acc: str, dist: DistrictDb, data: dict):
         dist_name = data["districtName"]
-        created = data["created"]
-        if (dist_id == d.districtId) and (dist_name == d.districtName) \
-                and (city_id == d.cityProvinceId) and (created == d.created):
-            return 0
-        if CityDb.find_by_id(city_id):
-            Dname = data["districtName"]
-            DId = data["districtId"]  # Id update (đúng số lượng 2_4_6_8)
-            find = DistrictDb.find_by_C_Dname(city_id, Dname)
-            if (DistrictDb.find_by_id(DId) and (d.districtId != DId)) \
-                    or (((d.districtName != Dname) or (d.cityProvinceId != city_id)) and (find and len(find) >= 1)):
-                return 1  # can't update
-            if city_id != (DId - DId % 100) / 100:
-                return 0
-            try:
-                d.districtId = DId
-                d.districtName = Dname
-                d.cityProvinceId = city_id
-                d.created = data["created"]
-                d.save_to_db()
-            except:
-                return 2  # error
-            return d
-        return 3  # city not exist
+        if dist_name == dist.districtName:
+            return 0  # not change
+        elif DistrictDb.find_by_city_dist_name(id_acc, dist_name):
+            return 1  # Name update already exists in other District
+        try:
+            dist.districtName = dist_name
+            dist.save_to_db()
+        except Exception as e:
+            print(e)
+            return 2  # error
+        return None  # updated
 
     # List quận/huyện
     @staticmethod
-    def list_dictrict_in_city(city_id: str):
-        regex_id = '^(0[1-9]|[1-9][0-9])$'
-        if not validate_regex(city_id, regex_id):
-            return 0  # Invalid city_id
-        city = CityDb.find_by_id(city_id)
-        if city:
-            districts = DistrictDb.find_by_city_id(city_id)
-            return districts
-        return None
+    def list_district_in_city(city_id: str):
+        districts = DistrictDb.find_by_city_id(city_id)
+        return districts

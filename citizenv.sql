@@ -1,11 +1,11 @@
 -- phpMyAdmin SQL Dump
--- version 5.1.1
+-- version 5.0.4
 -- https://www.phpmyadmin.net/
 --
--- Host: 127.0.0.1
--- Generation Time: Dec 15, 2021 at 02:30 PM
--- Server version: 10.4.22-MariaDB
--- PHP Version: 8.0.13
+-- Máy chủ: 127.0.0.1
+-- Thời gian đã tạo: Th12 17, 2021 lúc 11:54 AM
+-- Phiên bản máy phục vụ: 10.4.17-MariaDB
+-- Phiên bản PHP: 7.4.15
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -18,13 +18,13 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- Database: `citizenv`
+-- Cơ sở dữ liệu: `citizenv`
 --
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `account`
+-- Cấu trúc bảng cho bảng `account`
 --
 
 CREATE TABLE `account` (
@@ -41,20 +41,20 @@ CREATE TABLE `account` (
 -- --------------------------------------------------------
 
 --
--- Table structure for table `citizen`
+-- Cấu trúc bảng cho bảng `citizen`
 --
 
 CREATE TABLE `citizen` (
   `CCCD` varchar(12) NOT NULL,
-  `name` varchar(50) DEFAULT NULL,
+  `name` varchar(50) NOT NULL,
   `DOB` date NOT NULL,
-  `sex` enum('Nam','Nu') NOT NULL,
+  `sex` varchar(3) NOT NULL,
   `maritalStatus` varchar(50) NOT NULL,
   `nation` varchar(50) NOT NULL,
   `religion` varchar(50) NOT NULL,
   `permanentResidence` varchar(100) DEFAULT NULL,
   `temporaryResidence` varchar(100) DEFAULT NULL,
-  `educationalLevel` varchar(10) DEFAULT NULL,
+  `educationalLevel` varchar(10) NOT NULL,
   `job` varchar(50) DEFAULT NULL,
   `cityProvinceId` varchar(2) NOT NULL,
   `districtId` varchar(4) NOT NULL,
@@ -65,7 +65,7 @@ CREATE TABLE `citizen` (
 -- --------------------------------------------------------
 
 --
--- Table structure for table `cityprovince`
+-- Cấu trúc bảng cho bảng `cityprovince`
 --
 
 CREATE TABLE `cityprovince` (
@@ -77,7 +77,7 @@ CREATE TABLE `cityprovince` (
 -- --------------------------------------------------------
 
 --
--- Table structure for table `district`
+-- Cấu trúc bảng cho bảng `district`
 --
 
 CREATE TABLE `district` (
@@ -88,16 +88,18 @@ CREATE TABLE `district` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
--- Triggers `district`
+-- Bẫy `district`
 --
 DELIMITER $$
 CREATE TRIGGER `updateCompletedDistrict` AFTER UPDATE ON `district` FOR EACH ROW BEGIN 
 	DECLARE countCompleted INT DEFAULT 0;
     DECLARE total INT DEFAULT 0;
+    
     SELECT COUNT(*) INTO countCompleted FROM district WHERE cityProvinceId = new.cityProvinceId AND completed = 1;
-    SELECT COUNT(*) INTO total FROM residentialgroup WHERE cityProvinceId = new.cityProvinceId;
+    SELECT COUNT(*) INTO total FROM district WHERE cityProvinceId = new.cityProvinceId;
+    
     IF total = countCompleted THEN
-    	UPDATE cityProvince SET cityprovince.completed = 1 WHERE cityprovince.cityProvinceId = new.cityProvinceId;
+    	UPDATE cityprovince SET cityprovince.completed = 1 WHERE cityprovince.cityProvinceId = new.cityProvinceId;
     ELSEIF total > countCompleted THEN
     	UPDATE cityprovince SET cityprovince.completed = 0 WHERE cityprovince.cityProvinceId = new.cityProvinceId;
     END IF;
@@ -108,7 +110,7 @@ DELIMITER ;
 -- --------------------------------------------------------
 
 --
--- Table structure for table `residentialgroup`
+-- Cấu trúc bảng cho bảng `residentialgroup`
 --
 
 CREATE TABLE `residentialgroup` (
@@ -119,7 +121,7 @@ CREATE TABLE `residentialgroup` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
--- Triggers `residentialgroup`
+-- Bẫy `residentialgroup`
 --
 DELIMITER $$
 CREATE TRIGGER `updateCompletedGroup` AFTER UPDATE ON `residentialgroup` FOR EACH ROW BEGIN 
@@ -139,7 +141,7 @@ DELIMITER ;
 -- --------------------------------------------------------
 
 --
--- Table structure for table `revoked_tokens`
+-- Cấu trúc bảng cho bảng `revoked_tokens`
 --
 
 CREATE TABLE `revoked_tokens` (
@@ -150,7 +152,7 @@ CREATE TABLE `revoked_tokens` (
 -- --------------------------------------------------------
 
 --
--- Table structure for table `ward`
+-- Cấu trúc bảng cho bảng `ward`
 --
 
 CREATE TABLE `ward` (
@@ -161,36 +163,36 @@ CREATE TABLE `ward` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
--- Triggers `ward`
+-- Bẫy `ward`
 --
 DELIMITER $$
 CREATE TRIGGER `updateCompletedWard` AFTER UPDATE ON `ward` FOR EACH ROW BEGIN 
 	DECLARE countCompleted INT DEFAULT 0;
     DECLARE total INT DEFAULT 0;
     SELECT COUNT(*) INTO countCompleted FROM ward WHERE districtId = new.districtId AND completed = 1;
-    SELECT COUNT(*) INTO total FROM residentialgroup WHERE districtId = new.districtId;
+    SELECT COUNT(*) INTO total FROM ward WHERE districtId = new.districtId;
     IF total = countCompleted THEN
     	UPDATE district SET district.completed = 1 WHERE district.districtId = new.districtId;
     ELSEIF total > countCompleted THEN
-    	UPDATE ward SET district.completed = 0 WHERE district.districtId = new.districtId;
+    	UPDATE district SET district.completed = 0 WHERE district.districtId = new.districtId;
     END IF;
 END
 $$
 DELIMITER ;
 
 --
--- Indexes for dumped tables
+-- Chỉ mục cho các bảng đã đổ
 --
 
 --
--- Indexes for table `account`
+-- Chỉ mục cho bảng `account`
 --
 ALTER TABLE `account`
   ADD PRIMARY KEY (`accountId`),
   ADD KEY `fk_account_account` (`managerAccount`);
 
 --
--- Indexes for table `citizen`
+-- Chỉ mục cho bảng `citizen`
 --
 ALTER TABLE `citizen`
   ADD PRIMARY KEY (`CCCD`),
@@ -200,54 +202,54 @@ ALTER TABLE `citizen`
   ADD KEY `fk_citizen_residentialgroup` (`groupId`);
 
 --
--- Indexes for table `cityprovince`
+-- Chỉ mục cho bảng `cityprovince`
 --
 ALTER TABLE `cityprovince`
   ADD PRIMARY KEY (`cityProvinceId`);
 
 --
--- Indexes for table `district`
+-- Chỉ mục cho bảng `district`
 --
 ALTER TABLE `district`
   ADD PRIMARY KEY (`districtId`),
   ADD KEY `fk_district_cityprovince` (`cityProvinceId`);
 
 --
--- Indexes for table `residentialgroup`
+-- Chỉ mục cho bảng `residentialgroup`
 --
 ALTER TABLE `residentialgroup`
   ADD PRIMARY KEY (`groupId`),
   ADD KEY `fk_residentialgroup_ward` (`wardId`);
 
 --
--- Indexes for table `revoked_tokens`
+-- Chỉ mục cho bảng `revoked_tokens`
 --
 ALTER TABLE `revoked_tokens`
   ADD PRIMARY KEY (`id`);
 
 --
--- Indexes for table `ward`
+-- Chỉ mục cho bảng `ward`
 --
 ALTER TABLE `ward`
   ADD PRIMARY KEY (`wardId`),
   ADD KEY `fk_ward_district` (`districtId`);
 
 --
--- AUTO_INCREMENT for dumped tables
+-- AUTO_INCREMENT cho các bảng đã đổ
 --
 
 --
--- AUTO_INCREMENT for table `revoked_tokens`
+-- AUTO_INCREMENT cho bảng `revoked_tokens`
 --
 ALTER TABLE `revoked_tokens`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
--- Constraints for dumped tables
+-- Các ràng buộc cho các bảng đã đổ
 --
 
 --
--- Constraints for table `citizen`
+-- Các ràng buộc cho bảng `citizen`
 --
 ALTER TABLE `citizen`
   ADD CONSTRAINT `fk_citizen_cityprovince` FOREIGN KEY (`cityProvinceId`) REFERENCES `cityprovince` (`cityProvinceId`) ON UPDATE CASCADE,
@@ -256,19 +258,19 @@ ALTER TABLE `citizen`
   ADD CONSTRAINT `fk_citizen_ward` FOREIGN KEY (`wardId`) REFERENCES `ward` (`wardId`) ON UPDATE CASCADE;
 
 --
--- Constraints for table `district`
+-- Các ràng buộc cho bảng `district`
 --
 ALTER TABLE `district`
   ADD CONSTRAINT `fk_district_cityprovince` FOREIGN KEY (`cityProvinceId`) REFERENCES `cityprovince` (`cityProvinceId`) ON UPDATE CASCADE;
 
 --
--- Constraints for table `residentialgroup`
+-- Các ràng buộc cho bảng `residentialgroup`
 --
 ALTER TABLE `residentialgroup`
   ADD CONSTRAINT `fk_residentialgroup_ward` FOREIGN KEY (`wardId`) REFERENCES `ward` (`wardId`) ON UPDATE CASCADE;
 
 --
--- Constraints for table `ward`
+-- Các ràng buộc cho bảng `ward`
 --
 ALTER TABLE `ward`
   ADD CONSTRAINT `fk_ward_district` FOREIGN KEY (`districtId`) REFERENCES `district` (`districtId`) ON UPDATE CASCADE;

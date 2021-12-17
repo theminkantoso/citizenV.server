@@ -19,7 +19,7 @@ class GroupDb(db.Model):
             "groupId": self.groupId,
             "groupName": self.groupName,
             "wardId": self.wardId,
-            "created": self.completed
+            "completed": self.completed
         }
 
     @classmethod

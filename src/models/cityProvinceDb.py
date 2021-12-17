@@ -16,7 +16,7 @@ class CityDb(db.Model):
         return {
             "cityProvinceId": self.cityProvinceId,
             "cityProvinceName": self.cityProvinceName,
-            "created": self.completed
+            "completed": self.completed
         }
 
     @classmethod
