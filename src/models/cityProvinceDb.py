@@ -16,7 +16,7 @@ class CityDb(db.Model):
         return {
             "cityProvinceId": self.cityProvinceId,
             "cityProvinceName": self.cityProvinceName,
-            "created": self.completed
+            "completed": self.completed
         }
 
     @classmethod
@@ -26,6 +26,10 @@ class CityDb(db.Model):
     @classmethod
     def find_by_id(cls, id):
         return cls.query.filter_by(cityProvinceId=id).first()
+
+    @classmethod
+    def find_all(cls):
+        return cls.query.all()
 
     def save_to_db(self):
         db.session.add(self)

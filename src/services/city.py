@@ -88,3 +88,7 @@ class CityServices():
     def list_city():
         cities = CityDb.query.all()
         return cities
+
+    @staticmethod
+    def list_city_db():
+        return CityDb.find_all()

@@ -17,10 +17,11 @@ import random
 import string
 
 
-def random_string():
+def random_string() -> str:
     """
     Generate a random password
     :return: a random string
+    :return:
     """
     str1 = ''.join((random.choice(string.ascii_letters) for x in range(6)))
     str1 += ''.join((random.choice(string.digits) for x in range(6)))
@@ -31,7 +32,7 @@ def random_string():
     return final_string
 
 
-def validate_regex(input_string, regex):
+def validate_regex(input_string, regex) -> bool:
     """
     Validate input string with a given regular expression
     :param input_string: the string that needed to be checked

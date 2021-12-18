@@ -19,7 +19,7 @@ class DistrictDb(db.Model):
             "districtId": self.districtId,
             "districtName": self.districtName,
             "cityProvinceId": self.cityProvinceId,
-            "created": self.completed
+            "completed": self.completed
         }
 
     @classmethod
@@ -37,6 +37,11 @@ class DistrictDb(db.Model):
     @classmethod
     def find_by_city_id(cls, Id):
         return cls.query.filter_by(cityProvinceId=Id).all()
+
+    @classmethod
+    def find_by_id_like(cls, Id):
+        search = "{}%".format(Id)
+        return cls.query.filter(cls.districtId.like(search)).all()
 
     def save_to_db(self):
         db.session.add(self)
