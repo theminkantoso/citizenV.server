@@ -111,3 +111,19 @@ class CityServices():
         :return: query result
         """
         return CityDb.find_join_account_specific(id)
+
+    @staticmethod
+    def count_completed_cities():
+        """
+        count total completed cities
+        :return: query result
+        """
+        return CityDb.count_completed()
+
+    @staticmethod
+    def count_total_cities():
+        """
+        count total cities
+        :return: query result
+        """
+        return CityDb.count_total()

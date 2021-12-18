@@ -1,0 +1,56 @@
+class ProgressServices():
+    @staticmethod
+    def convert_to_json_dict_progress(arr):
+        """
+        create dictionary type of array elements
+        :param arr: array in
+        :return: dictionary format
+        """
+        complete = arr[2]
+        end_time = arr[3]
+        if complete is None:
+            complete = ""
+        if end_time is None:
+            end_time = ""
+        return {
+            "id": arr[0],
+            "name": arr[1],
+            "completed": complete,
+            "endTime": end_time
+        }
+
+    @staticmethod
+    def convert_to_json_progress_specific(arr, count_completed, count_total):
+        """
+        create dictionary type of array elements and values
+        :param arr: input array
+        :param count_completed: input int
+        :param count_total: input int
+        :return: dictionary format
+        """
+        complete = arr[2]
+        end_time = arr[3]
+        if complete is None:
+            complete = ""
+        if end_time is None:
+            end_time = ""
+        return {
+            "id": arr[0],
+            "name": arr[1],
+            "completed": complete,
+            "endTime": end_time,
+            "countCompleted": count_completed,
+            "total": count_total
+        }
+
+    @staticmethod
+    def convert_to_list_dict(arr):
+        """
+        append arrays element to create a json output
+        :param arr: input array
+        :return: json dictionary type
+        """
+        list_out = []
+        for i in range(len(arr)):
+            list_out.append(ProgressServices.convert_to_json_dict_progress(arr[i]))
+        return list_out

@@ -127,3 +127,21 @@ class WardServices():
         :return: query result
         """
         return WardDb.find_join_account_specific(id_acc, id_req)
+
+    @staticmethod
+    def count_completed_wards(id_district):
+        """
+        count total completed ward given a specific district
+        :param id_district: id district
+        :return: query result
+        """
+        return WardDb.count_completed(id_district)
+
+    @staticmethod
+    def count_total_wards(id_district):
+        """
+        count total ward given a specific district
+        :param id_district: id district
+        :return: query result
+        """
+        return WardDb.count_total(id_district)

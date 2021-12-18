@@ -129,3 +129,21 @@ class DistrictServices():
         """
         return DistrictDb.find_join_account_specific(id_account, id_district)
 
+    @staticmethod
+    def count_completed_districts(id_province):
+        """
+        count total completed district given a specific province
+        :param id_province: id province
+        :return: query result
+        """
+        return DistrictDb.count_completed(id_province)
+
+    @staticmethod
+    def count_total_districts(id_province):
+        """
+        count total district given a specific province
+        :param id_province: id province
+        :return: query result
+        """
+        return DistrictDb.count_total(id_province)
+

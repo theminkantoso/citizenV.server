@@ -46,7 +46,7 @@ class Citizen(Resource):
         if citizen == 2:
             return {"message": "An error occurred inserting the cityProvince."}, 500
         elif citizen == 3:
-            return {"Message": "cityProvince added. "}, 201
+            return {"Message": "cityProvince added. "}, 200
 
     # Xoá 1 citizen  khỏi danh sách
     # @jwt_required()

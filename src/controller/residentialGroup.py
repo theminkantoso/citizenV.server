@@ -34,7 +34,7 @@ class Group(Resource):
         elif g == 4:
             return {"message": "An error occurred inserting the group."}, 500
         elif g == 5:
-            return {"Message": "group added. "}, 201
+            return {"Message": "group added. "}, 200
         else:
             return {'message': 'ward not found'}, 404
 
