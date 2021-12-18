@@ -36,6 +36,12 @@ class CityDb(db.Model):
         # return db.session.query(CityDb.cityProvinceName, CitizenDb.name).join(CitizenDb).\
         #     filter(CityDb.cityProvinceId == CitizenDb.cityProvinceId).filter(CityDb.cityProvinceId == 29).all()
 
+    @staticmethod
+    def find_join_account_specific(id):
+        return db.session.query(CityDb.cityProvinceId, CityDb.cityProvinceName, CityDb.completed, AccountDb.endTime). \
+            join(AccountDb).filter(CityDb.cityProvinceId == AccountDb.accountId).\
+            filter(CityDb.cityProvinceId == id).first()
+
     @classmethod
     def find_all(cls):
         return cls.query.all()

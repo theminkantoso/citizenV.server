@@ -41,3 +41,25 @@ class Progress(Resource):
             return {"progress": convert_to_list_dict(location)}, 200
         return {}, 200
 
+
+class ProgressSpecific(Resource):
+
+    @jwt_required()
+    @authorized_required([1, 2, 3])
+    def get(self, id):
+        id_acc = get_jwt_identity()
+        claims = get_jwt()
+        role = claims["role"]
+        id_acc_len = len(id_acc)
+        id_request = id
+        if role == 1:
+            location = CityServices.list_city_progress_specific(id_request)
+        elif id_acc_len == 2:
+            location = DistrictServices.list_district_progress_specific(id_acc, id_request)
+        elif id_acc_len == 4:
+            location = WardServices.list_ward_progress_specific(id_acc, id_request)
+        else:
+            return {"message": "No location like that or invalid input"}, 404
+        if location:
+            return Services.convert_to_json_dict(location), 200
+        return {}, 200

@@ -49,6 +49,13 @@ class DistrictDb(db.Model):
                                 AccountDb.endTime).join(AccountDb).\
             filter(DistrictDb.districtId == AccountDb.accountId).filter(DistrictDb.cityProvinceId == id).all()
 
+    @staticmethod
+    def find_join_account_specific(id_acc, id_dis):
+        return db.session.query(DistrictDb.districtId, DistrictDb.districtName, DistrictDb.completed,
+                                AccountDb.endTime).join(AccountDb). \
+            filter(DistrictDb.districtId == AccountDb.accountId).filter(DistrictDb.cityProvinceId == id_acc).\
+            filter(DistrictDb.districtId == id_dis).first()
+
     def save_to_db(self):
         db.session.add(self)
         db.session.commit()

@@ -9,6 +9,7 @@ from src.controller.ward import Ward, Wards
 from src.controller.residentialGroup import Group, Groups
 from src.controller.account_management import AccountManagement, AccountManagementChange
 from src.controller.citizen import Citizen, all_Citizen
+from src.controller.progress import Progress, ProgressSpecific
 
 from src import controller
 
@@ -50,12 +51,18 @@ api.add_resource(AccountManagementChange, '/accounts/<string:id>')
 api.add_resource(Citizen, '/citizen', '/citizen/<int:id>')
 api.add_resource(all_Citizen, '/citizens')
 
+# Progress
+api.add_resource(Progress, '/progress')
+api.add_resource(ProgressSpecific, '/progress/<string::id>')
+
 # @controller.jwt_manager.token_in_blacklist_loader
 # def check_if_token_in_blacklist(decrypted_token):
 #
 #     jti = decrypted_token['jti']
 #
 #     return controller.account.RevokedTokenModel.is_jti_blacklisted(jti)
+
+
 @controller.jwt_manager.token_in_blocklist_loader
 def check_if_token_revoked(jwt_header, jwt_payload):
     jti = jwt_payload["jti"]

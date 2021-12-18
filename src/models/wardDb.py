@@ -45,6 +45,12 @@ class WardDb(db.Model):
                                 AccountDb.endTime).join(AccountDb). \
             filter(WardDb.wardId == AccountDb.accountId).filter(WardDb.districtId == id).all()
 
+    @staticmethod
+    def find_join_account_specific(id_acc, id_request):
+        return db.session.query(WardDb.wardId, WardDb.wardName, WardDb.completed,
+                                AccountDb.endTime).join(AccountDb). \
+            filter(WardDb.wardId == AccountDb.accountId).filter(WardDb.districtId == id_acc).\
+            filter(WardDb.wardId == id_request).first()
 
     def save_to_db(self):
         db.session.add(self)
