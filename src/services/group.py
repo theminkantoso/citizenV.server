@@ -1,4 +1,6 @@
 from src.models.residentialGroupDb import GroupDb
+from src.models.accountDb import AccountDb
+from src.models.citizenDb import CitizenDb
 import re
 
 
@@ -26,6 +28,12 @@ class GroupServices:
             return group
         return None  # group not exist
 
+    #  Tổng số dân ở 1 thôn/bản/tdp
+    @staticmethod
+    def sum_citizen_in_group(group_id: str):
+        sum_citizen = CitizenDb.sum_all_citizen_in_group(group_id)
+        return sum_citizen
+
     # Cấp mã cho 1 thôn/bản/tdp trong 1 xã/phường -> cấp 2 số
     @staticmethod
     def create_group(id_acc: str, data: dict):
@@ -52,10 +60,12 @@ class GroupServices:
 
     # Xoá 1 thôn/bản/tdp khỏi danh sách
     @staticmethod
-    def delete_group(group: GroupDb):
+    def delete_group(group: GroupDb, group_id: str):
         try:
             group.delete_from_db()
-        except:
+            AccountDb.delete_account_by_delete_area(group_id)
+        except Exception as e:
+            print(e)
             return 0  # err
         return 1  # deleted
 
@@ -73,31 +83,6 @@ class GroupServices:
         except:
             return 2  # error
         return None  # updated
-
-    # tich tiến độ
-    @staticmethod
-    def completed(id_acc: str, group_id: str, data: dict):
-        # Validate group_id (đầu vào là 8 số)
-        regex_id = '^(0[1-9]|[1-9][0-9]){4}$'
-        if not validate_regex(group_id, regex_id):
-            return 0  # Invalid group_id
-        group = GroupDb.find_by_id(group_id)
-        completed = data["completed"]
-        if group:
-            if id_acc != group_id:
-                return 1  # not authorized
-            elif completed == group.completed:
-                return 2  # not change
-            try:
-                group.completed = completed
-                group.save_to_db()
-            except Exception as e:
-                print(e)
-                return 3  # error
-            return None  # updated
-        return 4  # GroupId not found
-
-
 
     # List thôn/bản/tdp
     @staticmethod

@@ -69,6 +69,7 @@ class CitizenDb(db.Model):
     @classmethod
     def find_all_citizen(cls):
         return cls.query.all()
+
     @classmethod
     def find_all_citizen_in_city(cls, city_id):
         return cls.query.filter_by(cityProvinceId=city_id).all()
@@ -84,6 +85,11 @@ class CitizenDb(db.Model):
     @classmethod
     def find_all_citizen_in_group(cls, group_id):
         return cls.query.filter_by(groupId=group_id).all()
+
+    @classmethod
+    def sum_all_citizen_in_group(cls, group_id):
+        query = db.session.query(db.func.count(CitizenDb.CCCD)).filter_by(groupId=group_id)
+        return query.scalar()
 
     def save_to_db(self):
         db.session.add(self)

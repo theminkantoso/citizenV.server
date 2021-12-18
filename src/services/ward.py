@@ -1,4 +1,5 @@
 from src.models.wardDb import WardDb
+from src.models.accountDb import AccountDb
 import re
 
 
@@ -52,9 +53,10 @@ class WardServices:
 
     # Xoá 1 xã/phường khỏi danh sách
     @staticmethod
-    def delete_ward(ward: WardDb):
+    def delete_ward(ward: WardDb, ward_id: str):
         try:
             ward.delete_from_db()
+            AccountDb.delete_account_by_delete_area(ward_id)
         except:
             return 1  # err
         return 0  # deleted
@@ -74,6 +76,28 @@ class WardServices:
         except:
             return 2  # error
         return None  # updated
+
+    # cập nhật tiến độ
+    @staticmethod
+    def completed(id_acc: str, ward_id: str, data: dict):
+        # Validate group_id (đầu vào là 6 số)
+        regex_id = '^(0[1-9]|[1-9][0-9]){3}$'
+        if not validate_regex(ward_id, regex_id):
+            return 0  # Invalid group_id
+        ward = WardDb.find_by_id(ward_id)
+        completed = data["completed"]
+        if ward:
+            if id_acc != ward_id:
+                return 1  # not authorized
+            elif completed == ward.completed:
+                return 2  # not change
+            try:
+                ward.completed = completed
+                ward.save_to_db()
+            except:
+                return 3  # error
+            return None  # updated
+        return 4  # wardId not found
 
     # List xã/phường
     @staticmethod

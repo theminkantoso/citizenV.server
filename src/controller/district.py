@@ -60,7 +60,7 @@ class District(Resource):
         elif d is None:
             return {'message': 'district not found.'}, 404
         elif d: # Kiểm tra dist_id có tồn tại và người dùng có quyền không
-            dist = DistrictServices.delete_district(d)
+            dist = DistrictServices.delete_district(d, dist_id)
             if dist == 1:
                 return {'message': 'District deleted.'}, 200
             else:

@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Máy chủ: 127.0.0.1
--- Thời gian đã tạo: Th12 17, 2021 lúc 11:54 AM
+-- Thời gian đã tạo: Th12 18, 2021 lúc 02:49 PM
 -- Phiên bản máy phục vụ: 10.4.17-MariaDB
 -- Phiên bản PHP: 7.4.15
 
@@ -116,27 +116,8 @@ DELIMITER ;
 CREATE TABLE `residentialgroup` (
   `groupId` varchar(8) NOT NULL,
   `groupName` varchar(30) NOT NULL,
-  `wardId` varchar(6) NOT NULL,
-  `completed` tinyint(1) DEFAULT NULL
+  `wardId` varchar(6) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
---
--- Bẫy `residentialgroup`
---
-DELIMITER $$
-CREATE TRIGGER `updateCompletedGroup` AFTER UPDATE ON `residentialgroup` FOR EACH ROW BEGIN 
-	DECLARE countCompleted INT DEFAULT 0;
-    DECLARE total INT DEFAULT 0;
-    SELECT COUNT(*) INTO countCompleted FROM residentialgroup WHERE wardId = new.wardId AND completed = 1;
-    SELECT COUNT(*) INTO total FROM residentialgroup WHERE wardId = new.wardId;
-    IF total = countCompleted THEN
-    	UPDATE ward SET ward.completed = 1 WHERE ward.wardId = new.wardId;
-    ELSEIF total > countCompleted THEN
-    	UPDATE ward SET ward.completed = 0 WHERE ward.wardId = new.wardId;
-    END IF;
-END
-$$
-DELIMITER ;
 
 -- --------------------------------------------------------
 
@@ -252,28 +233,22 @@ ALTER TABLE `revoked_tokens`
 -- Các ràng buộc cho bảng `citizen`
 --
 ALTER TABLE `citizen`
-  ADD CONSTRAINT `fk_citizen_cityprovince` FOREIGN KEY (`cityProvinceId`) REFERENCES `cityprovince` (`cityProvinceId`) ON UPDATE CASCADE,
-  ADD CONSTRAINT `fk_citizen_district` FOREIGN KEY (`districtId`) REFERENCES `district` (`districtId`) ON UPDATE CASCADE,
-  ADD CONSTRAINT `fk_citizen_residentialgroup` FOREIGN KEY (`groupId`) REFERENCES `residentialgroup` (`groupId`) ON UPDATE CASCADE,
-  ADD CONSTRAINT `fk_citizen_ward` FOREIGN KEY (`wardId`) REFERENCES `ward` (`wardId`) ON UPDATE CASCADE;
-
---
--- Các ràng buộc cho bảng `district`
---
-ALTER TABLE `district`
-  ADD CONSTRAINT `fk_district_cityprovince` FOREIGN KEY (`cityProvinceId`) REFERENCES `cityprovince` (`cityProvinceId`) ON UPDATE CASCADE;
+  ADD CONSTRAINT `fk_citizen_cityprovince` FOREIGN KEY (`cityProvinceId`) REFERENCES `cityprovince` (`cityProvinceId`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `fk_citizen_district` FOREIGN KEY (`districtId`) REFERENCES `district` (`districtId`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `fk_citizen_residentialgroup` FOREIGN KEY (`groupId`) REFERENCES `residentialgroup` (`groupId`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `fk_citizen_ward` FOREIGN KEY (`wardId`) REFERENCES `ward` (`wardId`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Các ràng buộc cho bảng `residentialgroup`
 --
 ALTER TABLE `residentialgroup`
-  ADD CONSTRAINT `fk_residentialgroup_ward` FOREIGN KEY (`wardId`) REFERENCES `ward` (`wardId`) ON UPDATE CASCADE;
+  ADD CONSTRAINT `fk_residentialgroup_ward` FOREIGN KEY (`wardId`) REFERENCES `ward` (`wardId`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Các ràng buộc cho bảng `ward`
 --
 ALTER TABLE `ward`
-  ADD CONSTRAINT `fk_ward_district` FOREIGN KEY (`districtId`) REFERENCES `district` (`districtId`) ON UPDATE CASCADE;
+  ADD CONSTRAINT `fk_ward_district` FOREIGN KEY (`districtId`) REFERENCES `district` (`districtId`) ON DELETE CASCADE ON UPDATE CASCADE;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

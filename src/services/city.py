@@ -1,4 +1,5 @@
 from src.models.cityProvinceDb import CityDb
+from src.models.accountDb import AccountDb
 import re
 
 # regex to validate Id: 2 số
@@ -53,9 +54,10 @@ class CityServices:
 
     # xoá tỉnh/thành phố
     @staticmethod
-    def delete_city(c: CityDb):
+    def delete_city(c: CityDb, city_id: str):
         try:
             c.delete_from_db()
+            AccountDb.delete_account_by_delete_area(city_id)
         except:
             return 1  # error
         return 2  # deleted

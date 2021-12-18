@@ -5,8 +5,8 @@ from flask import Flask
 from src.controller.account import Account, Repass, ChangePass, UserLogoutAccess
 from src.controller.cityProvince import City, Cities
 from src.controller.district import District, Districts
-from src.controller.ward import Ward, Wards
-from src.controller.residentialGroup import Group, Groups, GroupCompleted
+from src.controller.ward import Ward, Wards, WardCompleted
+from src.controller.residentialGroup import Group, Groups
 from src.controller.account_management import AccountManagement, AccountManagementChange
 from src.controller.citizen import Citizen, add_Citizen, all_Citizen
 
@@ -37,11 +37,11 @@ api.add_resource(Districts, '/districts')
 # Xã/phường
 api.add_resource(Ward, '/ward', '/ward/<string:ward_id>')
 api.add_resource(Wards, '/wards')
+api.add_resource(WardCompleted, '/wardCompleted/<string:ward_id>')
 
 # Thôn/bản/tdp
 api.add_resource(Group, '/group', '/group/<string:group_id>')
 api.add_resource(Groups, '/groups')
-api.add_resource(GroupCompleted, '/groupCompleted/<string:group_id>')
 
 # Màn hình quản lý tài khoản
 api.add_resource(AccountManagement, '/accounts')

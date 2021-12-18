@@ -2,9 +2,8 @@ from flask_restful import Resource, reqparse
 from src.models.accountDb import AccountDb, RevokedTokenModel
 from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import date
-from itsdangerous import URLSafeTimedSerializer, SignatureExpired
 from src.controller import my_mail
-from flask import url_for, jsonify, request
+from flask import jsonify
 from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity, get_jwt
 from flask_mail import Message
 from src.models.cityProvinceDb import CityDb
@@ -12,7 +11,6 @@ from src.models.districtDb import DistrictDb
 from src.models.wardDb import WardDb
 from src.models.residentialGroupDb import GroupDb
 
-import json
 import re
 import random
 import string
@@ -62,7 +60,7 @@ class Account(Resource):
 
         # validate
         regex_id = '^[0-9]*$'
-        if not validate_regex(id, regex_id) or not password.isalnum() or len(id) % 2 != 0:
+        if not validate_regex(id, regex_id) or not password.isalnum():
             return {'message': "Invalid id or password"}, 400
 
         user = AccountDb.find_by_id(id)
@@ -80,19 +78,19 @@ class Account(Resource):
         elif user.roleId == 3:
             dist = DistrictDb.find_by_id(user.accountId).districtName
             city = CityDb.find_by_id(user.accountId[0:2]).cityProvinceName
-            name = city + '-' + dist
+            name = dist + ',' + city
         elif user.roleId == 4:
             ward = WardDb.find_by_id(user.accountId).wardName
             dist = DistrictDb.find_by_id(user.accountId[0:4]).districtName
             city = CityDb.find_by_id(user.accountId[0:2]).cityProvinceName
-            name = city + '-' + dist + '-' + ward
+            name = ward + ',' + dist + ',' + city
 
         elif user.roleId == 5:
             group = GroupDb.find_by_id(user.accountId).groupName
             ward = WardDb.find_by_id(user.accountId[0:6]).wardName
             dist = DistrictDb.find_by_id(user.accountId[0:4]).districtName
             city = CityDb.find_by_id(user.accountId[0:2]).cityProvinceName
-            name = city + '-' + dist + '-' + ward + '-' + group
+            name = group + ',' + ward + ',' + dist + ',' + city
         if check_password_hash(user.password, password):
             additional_claim = {"role": user.roleId, "isLocked": user.isLocked, "name": name}
             access_token = create_access_token(identity=id, additional_claims=additional_claim)
@@ -167,8 +165,7 @@ class Repass(Resource):
         regex_id = '^[0-9]*$'
         regex_mail = r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b'
         if not validate_regex(input_string=email.lower(), regex=regex_mail) \
-                or not validate_regex(input_string=id, regex=regex_id) \
-                or len(id) % 2 != 0:
+                or not validate_regex(input_string=id, regex=regex_id):
             return {'message': "Check your id or email"}, 400
 
         get_user = AccountDb.find_by_email(email, id)
@@ -177,7 +174,7 @@ class Repass(Resource):
         try:
             new_password = random_string()
             # gửi mail mật khẩu mới cho người dùng
-            get_user.Password = generate_password_hash(new_password, method='sha256')
+            get_user.password = generate_password_hash(new_password, method='sha256')
             msg = Message('New Password Recovery', sender='phucpb.hrt@gmail.com', recipients=[email.lower()])
             msg.body = 'Your new password is {}'.format(new_password)
             my_mail.send(msg)

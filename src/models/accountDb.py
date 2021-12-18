@@ -1,4 +1,8 @@
-from datetime import datetime, date
+from datetime import date
+from src.models.cityProvinceDb import CityDb
+from src.models.districtDb import DistrictDb
+from src.models.wardDb import WardDb
+from src.models.residentialGroupDb import GroupDb
 from src.database import db
 
 
@@ -45,6 +49,32 @@ class AccountDb(db.Model):
                 "endTime": endTime_json, "isLocked": self.isLocked}
 
     @classmethod
+    def json1(cls, acc, areaId):
+        if acc is None:
+            return {
+                "areaId": areaId,
+                "accountId": "",
+                "email": "",
+                "roleId": "",
+                "managerAccount": "",
+                "startTime": "",
+                "endTime": "",
+                "isLocked": ""
+            }
+        else:
+            if isinstance(acc.startTime, date):
+                startTime_json = acc.startTime.isoformat()
+            else:
+                startTime_json = ''
+            if isinstance(acc.endTime, date):
+                endTime_json = acc.endTime.isoformat()
+            else:
+                endTime_json = ''
+            return {"areaId": areaId, "accountId": acc.accountId, "email": acc.email, "roleId": acc.roleId,
+                    "managerAccount": acc.managerAccount, "startTime": startTime_json,
+                    "endTime": endTime_json, "isLocked": acc.isLocked}
+
+    @classmethod
     def find_account(cls, accId, passWord):
         return cls.query.filter_by(accountId=accId, password=passWord).first()
 
@@ -63,7 +93,7 @@ class AccountDb(db.Model):
     @classmethod
     def lock_managed_account_hierachy(cls, accId):
         search = "{}%".format(accId)
-        cls.query.filter(cls.managerAccount.like(search)).update({"isLocked": 1}, synchronize_session='fetch')
+        cls.query.filter(cls.AccountId.like(search)).update({"isLocked": 1}, synchronize_session='fetch')
         db.session.commit()
 
     @classmethod

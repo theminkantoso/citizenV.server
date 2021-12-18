@@ -60,7 +60,7 @@ class Ward(Resource):
         elif w is None:
             return {'message': 'ward not found.'}, 404
         else:  # ward_id tồn tại và người dùng có quyền
-            ward = WardServices.delete_ward(w)
+            ward = WardServices.delete_ward(w, ward_id)
             if ward == 1:
                 return {'message': 'An error occurred delete the ward.'}, 500
             else:
@@ -95,6 +95,33 @@ class Ward(Resource):
                 return {"message": "An error occurred update the ward."}, 500
             else:
                 return {'message': 'Ward updated.'}, 200
+
+
+class WardCompleted(Resource):
+
+    # Cập nhật tiến độ
+    @jwt_required()
+    @authorized_required(roles=[4])  # B1
+    @crud_permission_required
+    def put(self, ward_id):
+        parser = reqparse.RequestParser()
+        parser.add_argument("completed", type=bool)
+        data = parser.parse_args()
+
+        id_acc = get_jwt_identity()
+        # Cập nhật tiến độ
+        ward = WardServices.completed(id_acc, ward_id, data)
+        if ward == 0:
+            return {'message': "Invalid id"}, 400
+        elif ward == 1:
+            return {"message": "not authorized"}, 403
+        elif ward == 2:
+            return {"message": "Not change"}, 400
+        elif ward == 3:
+            return {'message': "An error occurred update the ward."}, 500
+        elif ward == 4:
+            return {'message': 'ward not found.'}, 404
+        return {'message': 'Ward updated.'}, 200
 
 
 # Thống kê các xã/phường

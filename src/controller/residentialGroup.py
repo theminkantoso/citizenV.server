@@ -19,7 +19,9 @@ class Group(Resource):
             return {"message": "not authorized"}, 403
         elif group is None:
             return {'message': 'group not found.'}, 404
-        return group.json(), 200
+        else:
+            sum_citizen = GroupServices.sum_citizen_in_group(group_id)
+            return group.json_1(), 200
 
     # Thêm mã cho 1 thôn/bản/tdp
     @jwt_required()
@@ -61,7 +63,7 @@ class Group(Resource):
             return {'message': 'group not found.'}, 404
         else:
             # Kiểm tra group_id có tồn tại và người dùng có quyền không
-            group = GroupServices.delete_group(g)
+            group = GroupServices.delete_group(g, group_id)
             if group == 1:
                 return {'message': 'Group deleted.'}, 200
             else:
@@ -95,35 +97,6 @@ class Group(Resource):
             if group == 2:
                 return {'message': "An error occurred update the group."}, 500
             return {'message': 'Group updated.'}, 200
-
-
-class GroupCompleted(Resource):
-
-    # Cập nhật tiến độ
-    @jwt_required()
-    @authorized_required(roles=[5])  # B2
-    @crud_permission_required
-    def put(self, group_id):
-        parser = reqparse.RequestParser()
-        parser.add_argument("completed", type=bool)
-        data = parser.parse_args()
-
-        id_acc = get_jwt_identity()
-        # Cập nhật tiến độ
-        group = GroupServices.completed(id_acc, group_id, data)
-        if group == 0:
-            return {'message': "Invalid id"}, 400
-        elif group == 1:
-            return {"message": "not authorized"}, 403
-        elif group == 2:
-            return {"message": "Not change"}, 400
-        elif group == 3:
-            return {'message': "An error occurred update the group."}, 500
-        elif group == 4:
-            return {'message': 'group not found.'}, 404
-        elif group == 5:
-            return {'message': "Invalid completed"}, 400
-        return {'message': 'Group updated.'}, 200
 
 
 # Thống kê các thôn/bản/tdp

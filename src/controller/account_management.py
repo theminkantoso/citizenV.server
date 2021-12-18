@@ -1,14 +1,9 @@
 from flask_restful import Resource, reqparse
 from src.models.accountDb import AccountDb
-from src.models.cityProvinceDb import CityDb
-from src.models.districtDb import DistrictDb
-from src.models.wardDb import WardDb
-from src.models.residentialGroupDb import GroupDb
 from src.core.auth import crud_permission_required, authorized_required
 from werkzeug.security import generate_password_hash
 from datetime import datetime
 from src.controller import my_mail
-from flask import url_for, jsonify
 from flask_jwt_extended import jwt_required, get_jwt_identity, get_jwt
 from flask_mail import Message
 
@@ -53,9 +48,26 @@ class AccountManagement(Resource):
     @authorized_required(roles=[0, 1, 2, 3, 4])
     def get(self):
         id_acc = get_jwt_identity()
-        managed_accounts = AccountDb.find_managed_account_by_id(id_acc)
+        acc = AccountDb.find_by_id(id_acc)
+        managed_accounts = AccountDb.find_managed_account_by_id(id_acc)  # Tất cả người dùng dưới quyền quản lý
         if managed_accounts:
-            return {'Accounts': list(map(lambda x: x.json(), managed_accounts))}, 200
+            k = []
+            if acc.roleId == 0:  # Tất cả người dùng A1
+                return {'Accounts': list(map(lambda x: x.json(), managed_accounts))}, 200
+            # Cho A1, A2, A3, B1
+            acc_join = AccountDb.join_areaId(acc.roleId)   # join để lấy id của các vùng
+            for i in range(len(acc_join)):
+                areaId = ""
+                if acc.roleId == 1:
+                    areaId = acc_join[i][0].cityProvinceId  # Id của các thành phố
+                elif acc.roleId == 2:
+                    areaId = acc_join[i][0].districtId  # Id của các quận/huyện
+                elif acc.roleId == 3:
+                    areaId = acc_join[i][0].wardId  # Id của các xã/phường
+                elif acc.roleId == 4:
+                    areaId = acc_join[i][0].groupId  # Id của các thôn/bản/tdp
+                k.append(AccountDb.json1(acc_join[i][1], areaId))
+            return {"areas": k}, 200
         return {}, 200
 
     @jwt_required()
@@ -91,7 +103,7 @@ class AccountManagement(Resource):
         #     return {'message': "This is a trash account"}, 400
 
         # check tk phải có id đúng format <tkcha> + <2 ký tự>
-        if id_acc != id_create[0:id_create_len-2]:
+        if id_acc != id_create[0:id_create_len - 2]:
             return {'message': "Wrong format <id> plus two digit"}, 400
 
         # chống tạo tài khoản trùng
@@ -152,7 +164,7 @@ class AccountManagementChange(Resource):
             if not password_modify.isalnum():
                 data_ok = False
         elif ((start_date_modify is not None and end_date_modify is None) or
-                (start_date_modify is None and end_date_modify is not None)):
+              (start_date_modify is None and end_date_modify is not None)):
             data_ok = False
         elif start_date_modify is not None and end_date_modify is not None:
             if start_date_modify > end_date_modify:
@@ -221,8 +233,3 @@ class AccountManagementChange(Resource):
         except Exception as e:
             print(e)
             return {"message": "something wrong"}, 500
-
-
-
-
-
