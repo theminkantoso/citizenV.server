@@ -18,34 +18,6 @@ import random
 import string
 
 
-def random_string() -> str:
-    """
-    Generate a random password
-    :return: a random string
-    :return:
-    """
-    str1 = ''.join((random.choice(string.ascii_letters) for x in range(6)))
-    str1 += ''.join((random.choice(string.digits) for x in range(6)))
-
-    sam_list = list(str1)
-    random.shuffle(sam_list)
-    final_string = ''.join(sam_list)
-    return final_string
-
-
-def validate_regex(input_string, regex) -> bool:
-    """
-    Validate input string with a given regular expression
-    :param input_string: the string that needed to be checked
-    :param regex: regex pattern
-    :return: True if satisfy and vice versa
-    """
-    pattern = re.compile(regex)
-    if pattern.fullmatch(input_string):
-        return True
-    return False
-
-
 class AccountManagement(Resource):
     parser = reqparse.RequestParser()
     parser.add_argument('id', type=str)
@@ -98,7 +70,7 @@ class AccountManagement(Resource):
             return {'message': "Account already existed"}, 400
 
         try:
-            password = random_string()
+            password = AccountService.random_string()
 
             # send email to user, including id and default password
             msg = Message('Your account information', sender='phucpb.hrt@gmail.com', recipients=[email_create.lower()])

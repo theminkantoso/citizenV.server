@@ -1,5 +1,7 @@
 from src.models.accountDb import AccountDb
 import re
+import random
+import string
 
 
 def validate_regex(input_string, regex):
@@ -78,6 +80,21 @@ class AccountService:
         if startDate > endDate:
             return False
         return True
+
+    @staticmethod
+    def random_string():
+        """
+        Generate a random password
+        :return: a random string
+        :return:
+        """
+        str1 = ''.join((random.choice(string.ascii_letters) for x in range(6)))
+        str1 += ''.join((random.choice(string.digits) for x in range(6)))
+
+        sam_list = list(str1)
+        random.shuffle(sam_list)
+        final_string = ''.join(sam_list)
+        return final_string
 
 
 

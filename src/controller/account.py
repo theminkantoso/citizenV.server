@@ -12,23 +12,6 @@ from src.models.districtDb import DistrictDb
 from src.models.wardDb import WardDb
 from src.models.residentialGroupDb import GroupDb
 
-import random
-import string
-
-
-def random_string():
-    """
-    Generate a random password
-    :return: a random string with 6 letters and 6 numbers
-    """
-    str1 = ''.join((random.choice(string.ascii_letters) for x in range(6)))
-    str1 += ''.join((random.choice(string.digits) for x in range(6)))
-
-    sam_list = list(str1)
-    random.shuffle(sam_list)
-    final_string = ''.join(sam_list)
-    return final_string
-
 
 class Account(Resource):
     parser = reqparse.RequestParser()
@@ -164,7 +147,7 @@ class Repass(Resource):
         if get_user is None:
             return {'message': "No account with this email and id"}, 400
         try:
-            new_password = random_string()
+            new_password = AccountService.random_string()
             # send new password to user
             get_user.password = generate_password_hash(new_password, method='sha256')
             msg = Message('New Password Recovery', sender='phucpb.hrt@gmail.com', recipients=[email.lower()])
