@@ -4,6 +4,7 @@ from src.models.cityProvinceDb import CityDb
 from src.models.districtDb import DistrictDb
 from src.models.wardDb import WardDb
 from src.models.residentialGroupDb import GroupDb
+from src.services.accountService import AccountService
 from src.core.auth import crud_permission_required, authorized_required
 from werkzeug.security import generate_password_hash
 from datetime import datetime
@@ -70,10 +71,7 @@ class AccountManagement(Resource):
         email_create = data['email']
 
         # validate input
-        regex_id = '^[0-9]*$'
-        regex_mail = r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b'
-        if not validate_regex(id_create, regex_id) or not validate_regex(email_create, regex_mail) \
-                or len(id_create) % 2 != 0:
+        if not AccountService.validate_input_id_email_create(id_create, email_create):
             return {'message': "Invalid input format"}, 400
 
         # prevent creating a trash account where id does not match any location
@@ -92,12 +90,11 @@ class AccountManagement(Resource):
         #     return {'message': "This is a trash account"}, 400
 
         # check tk phải có id đúng format <tkcha> + <2 ký tự>
-        if id_acc != id_create[0:id_create_len-2]:
+        if not AccountService.check_format_id_plus_2(id_acc, id_create, id_create_len):
             return {'message': "Wrong format <id> plus two digit"}, 400
 
         # prevent duplicate account
-        exist_check = AccountDb.find_by_id(accId=id_create)
-        if exist_check:
+        if not AccountService.find_duplicate(id_create):
             return {'message': "Account already existed"}, 400
 
         try:
@@ -152,18 +149,18 @@ class AccountManagementChange(Resource):
         # validate input
         data_ok = True
         if password_modify is not None:
-            if not password_modify.isalnum():
-                data_ok = False
+            data_ok = AccountService.check_password(password_modify)
 
         # ensure (!startDate AND !endDate) OR (startDate AND endDate)
-        elif ((start_date_modify is not None and end_date_modify is None) or
+        if ((start_date_modify is not None and end_date_modify is None) or
                 (start_date_modify is None and end_date_modify is not None)):
             data_ok = False
 
-        # ensure startDate <= endDate
-        elif start_date_modify is not None and end_date_modify is not None:
-            if start_date_modify > end_date_modify:
-                data_ok = False
+        if not data_ok:
+            return {'message': "invalid input"}, 400
+
+        if start_date_modify is not None and end_date_modify is not None:
+            data_ok = AccountService.validate_period(start_date_modify, end_date_modify)
 
         # ensure CRUD period satisfy with parent's account CRUD period
         parent_user = AccountDb.find_by_id(id_acc)
@@ -177,7 +174,7 @@ class AccountManagementChange(Resource):
                 data_ok = False
 
         if not data_ok:
-            return {'message': "invalid input"}, 400
+            return {'message': "Check your CRUD period again"}, 400
 
         # prevent one user access other resources
         current_user = AccountDb.find_by_id(id_modify)

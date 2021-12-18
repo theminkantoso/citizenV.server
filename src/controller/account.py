@@ -6,6 +6,7 @@ from src.controller import my_mail
 from flask import url_for, jsonify, request
 from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity, get_jwt
 from flask_mail import Message
+from src.services.accountService import AccountService
 from src.models.cityProvinceDb import CityDb
 from src.models.districtDb import DistrictDb
 from src.models.wardDb import WardDb
@@ -30,19 +31,6 @@ def random_string():
     return final_string
 
 
-def validate_regex(input_string, regex):
-    """
-    Validate input string based on a given regex
-    :param input_string: string needs to check
-    :param regex: regex pattern
-    :return: True if satisfied
-    """
-    pattern = re.compile(regex)
-    if pattern.fullmatch(input_string):
-        return True
-    return False
-
-
 class Account(Resource):
     parser = reqparse.RequestParser()
     parser.add_argument('id', type=str)
@@ -59,8 +47,7 @@ class Account(Resource):
         password = data['password']
 
         # validate input
-        regex_id = '^[0-9]*$'
-        if not validate_regex(id, regex_id) or not password.isalnum() or len(id) % 2 != 0:
+        if not AccountService.validate_input_id_pass(id, password):
             return {'message': "Invalid id or password"}, 400
 
         user = AccountDb.find_by_id(id)
@@ -165,11 +152,7 @@ class Repass(Resource):
         email = data['email']
 
         # validate input
-        regex_id = '^[0-9]*$'
-        regex_mail = r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b'
-        if not validate_regex(input_string=email.lower(), regex=regex_mail) \
-                or not validate_regex(input_string=id, regex=regex_id) \
-                or len(id) == 0:
+        if not AccountService.validate_input_id_email(id, email):
             return {'message': "Check your id or email"}, 400
 
         get_user = AccountDb.find_by_email(email, id)
@@ -200,7 +183,7 @@ class ChangePass(Resource):
         new_password = data['newpassword']
 
         # validate input
-        if not password.isalnum() or not new_password.isalnum() or len(new_password) == 0:
+        if not AccountService.validate_input_pass_newpass(password, new_password):
             return {'message': "Wrong input format"}, 400
 
         id = get_jwt_identity()
