@@ -1,4 +1,5 @@
 from src.database import db
+from src.models.accountDb import AccountDb
 
 
 class WardDb(db.Model):
@@ -38,10 +39,12 @@ class WardDb(db.Model):
     def find_by_dist_ward_name(cls, dist_id, ward_name):
         return cls.query.filter_by(districtId=dist_id, wardName=ward_name).first()
 
-    @classmethod
-    def find_by_id_like(cls, Id):
-        search = "{}%".format(Id)
-        return cls.query.filter(cls.wardId.like(search)).all()
+    @staticmethod
+    def find_join_account(id):
+        return db.session.query(WardDb.wardId, WardDb.wardName, WardDb.completed,
+                                AccountDb.endTime).join(AccountDb). \
+            filter(WardDb.wardId == AccountDb.accountId).filter(WardDb.districtId == id).all()
+
 
     def save_to_db(self):
         db.session.add(self)

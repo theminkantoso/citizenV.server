@@ -1,4 +1,6 @@
 from src.database import db
+from src.models.citizenDb import CitizenDb
+from src.models.accountDb import AccountDb
 
 
 class CityDb(db.Model):
@@ -26,6 +28,13 @@ class CityDb(db.Model):
     @classmethod
     def find_by_id(cls, id):
         return cls.query.filter_by(cityProvinceId=id).first()
+
+    @staticmethod
+    def find_join_account():
+        return db.session.query(CityDb.cityProvinceId, CityDb.cityProvinceName, CityDb.completed, AccountDb.endTime).\
+            join(AccountDb).filter(CityDb.cityProvinceId == AccountDb.accountId).all()
+        # return db.session.query(CityDb.cityProvinceName, CitizenDb.name).join(CitizenDb).\
+        #     filter(CityDb.cityProvinceId == CitizenDb.cityProvinceId).filter(CityDb.cityProvinceId == 29).all()
 
     @classmethod
     def find_all(cls):

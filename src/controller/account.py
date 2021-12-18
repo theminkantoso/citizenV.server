@@ -12,7 +12,6 @@ from src.models.districtDb import DistrictDb
 from src.models.wardDb import WardDb
 from src.models.residentialGroupDb import GroupDb
 
-import re
 import random
 import string
 
@@ -40,6 +39,13 @@ class Account(Resource):
         pass
         # args = request.args
         # print(args['a'])  # For debugging
+        # a = CityDb.find_join_account()
+        # k = []
+        # for i in range(len(a)):
+        #     print(type(CityDb.json2(a[i])))
+        #     k.append(CityDb.json2(a[i]))
+        # print(k)
+        # return {"a": k}, 200
 
     def post(self):
         data = Account.parser.parse_args()
@@ -150,7 +156,6 @@ class Repass(Resource):
         data = Repass.parser.parse_args()
         id = data['id']
         email = data['email']
-
         # validate input
         if not AccountService.validate_input_id_email(id, email):
             return {'message': "Check your id or email"}, 400

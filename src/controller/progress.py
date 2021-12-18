@@ -4,7 +4,20 @@ from src.core.auth import crud_permission_required, authorized_required
 from src.services.city import CityServices
 from src.services.district import DistrictServices
 from src.services.ward import WardServices
-from src.models.accountDb import AccountDb
+from src.services.coreService import Services
+from src.services.accountService import AccountService
+
+
+def convert_to_list_dict(arr):
+    """
+    append arrays element to create a json output
+    :param arr: input array
+    :return: json dictionary type
+    """
+    list_out = []
+    for i in range(len(arr)):
+        list_out.append(Services.convert_to_json_dict(arr[i]))
+    return list_out
 
 
 class Progress(Resource):
@@ -13,16 +26,18 @@ class Progress(Resource):
     @authorized_required([1, 2, 3])
     def get(self):
         id_acc = get_jwt_identity()
+        claims = get_jwt()
+        role = claims["role"]
         id_acc_len = len(id_acc)
-        if id_acc_len == 2:
-            location = CityServices.list_city_db()
+        if role == 1:
+            location = CityServices.list_city_progress()
+        elif id_acc_len == 2:
+            location = DistrictServices.list_district_progress(id_acc)
         elif id_acc_len == 4:
-            location = DistrictServices.list_district_managed(id_acc)
-        elif id_acc_len == 6:
-            location = WardServices.list_ward_managed(id_acc)
+            location = WardServices.list_ward_progress(id_acc)
         else:
-            location = None
             return {"message": "Something went wrong"}, 404
-
-        return
+        if location:
+            return {"progress": convert_to_list_dict(location)}, 200
+        return {}, 200
 

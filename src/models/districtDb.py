@@ -1,5 +1,5 @@
 from src.database import db
-
+from src.models.accountDb import AccountDb
 
 class DistrictDb(db.Model):
     __tablename__ = 'district'
@@ -39,9 +39,15 @@ class DistrictDb(db.Model):
         return cls.query.filter_by(cityProvinceId=Id).all()
 
     @classmethod
-    def find_by_id_like(cls, Id):
-        search = "{}%".format(Id)
+    def find_by_id_like(cls, id):
+        search = "{}%".format(id)
         return cls.query.filter(cls.districtId.like(search)).all()
+
+    @staticmethod
+    def find_join_account(id):
+        return db.session.query(DistrictDb.districtId, DistrictDb.districtName, DistrictDb.completed,
+                                AccountDb.endTime).join(AccountDb).\
+            filter(DistrictDb.districtId == AccountDb.accountId).filter(DistrictDb.cityProvinceId == id).all()
 
     def save_to_db(self):
         db.session.add(self)
