@@ -6,20 +6,17 @@ class GroupDb(db.Model):
     groupId = db.Column(db.String(8), primary_key=True)
     groupName = db.Column(db.String(30))
     wardId = db.Column(db.String(6), db.ForeignKey("ward.wardId"))
-    completed = db.Column(db.Boolean)
 
-    def __init__(self, groupId, groupName, wardId, completed):
+    def __init__(self, groupId, groupName, wardId):
         self.groupId = groupId
         self.groupName = groupName
         self.wardId = wardId
-        self.completed = completed
 
     def json(self):
         return {
             "groupId": self.groupId,
             "groupName": self.groupName,
             "wardId": self.wardId,
-            "created": self.completed
         }
 
     @classmethod
