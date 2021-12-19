@@ -24,6 +24,7 @@ class GroupDb(db.Model):
             "groupId": self.groupId,
             "groupName": self.groupName,
             "sumCitizen": sum_citizen
+            "wardId": self.wardId,
         }
 
     @classmethod

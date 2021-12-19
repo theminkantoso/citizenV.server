@@ -46,6 +46,8 @@ class Group(Resource):
             return {"message": "An error occurred inserting the group."}, 500
         elif g == 4:
             return {"Message": "group added. "}, 200
+        else:
+            return {'message': 'ward not found'}, 404
 
     # Xoá 1 thôn/bản/tdp trong 1 xã/phường khỏi danh sách
     @jwt_required()
