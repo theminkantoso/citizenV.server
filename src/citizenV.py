@@ -9,9 +9,8 @@ from src.controller.ward import Ward, Wards, WardCompleted
 from src.controller.residentialGroup import Group, Groups
 from src.controller.account_management import AccountManagement, AccountManagementChange
 from src.controller.citizen import Citizen, add_Citizen, all_Citizen
-from src.controller.progress import Progress, ProgressSpecific
 
-from src import services, controller
+from src import controller
 
 app = Flask(__name__)
 # CORS(app)
@@ -20,7 +19,7 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config.from_pyfile('core/config.py')
 
 api = Api(app)
-services.init_app(app)
+controller.init_app(app)
 
 api.add_resource(Account, '/login')
 api.add_resource(Repass, '/repass')
@@ -53,9 +52,6 @@ api.add_resource(Citizen, '/citizen', '/citizen/<string:citizen_id>')
 api.add_resource(add_Citizen, '/citizen/<string:group_id>')
 api.add_resource(all_Citizen, '/citizens')
 
-# Progress
-api.add_resource(Progress, '/progress')
-api.add_resource(ProgressSpecific, '/progress/<string:id>')
 
 # @controller.jwt_manager.token_in_blacklist_loader
 # def check_if_token_in_blacklist(decrypted_token):
@@ -63,9 +59,7 @@ api.add_resource(ProgressSpecific, '/progress/<string:id>')
 #     jti = decrypted_token['jti']
 #
 #     return controller.account.RevokedTokenModel.is_jti_blacklisted(jti)
-
-
-@services.jwt_manager.token_in_blocklist_loader
+@controller.jwt_manager.token_in_blocklist_loader
 def check_if_token_revoked(jwt_header, jwt_payload):
     jti = jwt_payload["jti"]
     token = db.session.query(controller.account.RevokedTokenModel.id).filter_by(jti=jti).scalar()

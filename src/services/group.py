@@ -51,7 +51,7 @@ class GroupServices:
             return 1  # Tên thôn/bản/tdp đã có trong xã/phường
         if GroupDb.find_by_id(data["groupId"]):
             return 2  # Id đã được cấp cho thôn/bản/tdp khác
-        g = GroupDb(groupId=data["groupId"], groupName=group_name, wardId=id_acc)
+        g = GroupDb(groupId=data["groupId"], groupName=group_name, wardId=id_acc, completed=None)
         try:
             g.save_to_db()
         except:

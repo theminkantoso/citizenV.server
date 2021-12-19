@@ -32,22 +32,6 @@ class Citizen(Resource):
             return citizen.json()
         return {'message': 'citizen not found.'}, 404
 
-    # Nhập liệu 1 citizen
-    # @jwt_required()
-    # @authorized_required(roles=[4, 5])
-    # @crud_permission_required
-    def post(self):
-        # id_acc = get_jwt_identity()  # Là B1 hoặc B2
-        # Giả sử người nhập liệu là B2
-        id_acc = '38010101'
-
-        data = Citizen.parser.parse_args()
-        citizen = CitizenServices.create_citizen(data, id_acc)
-        if citizen == 2:
-            return {"message": "An error occurred inserting the cityProvince."}, 500
-        elif citizen == 3:
-            return {"Message": "cityProvince added. "}, 200
-
     # Xoá 1 citizen  khỏi danh sách
     @jwt_required()
     @authorized_required(roles=[4, 5])  # B1 và B2

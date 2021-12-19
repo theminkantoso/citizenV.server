@@ -46,8 +46,6 @@ class Group(Resource):
             return {"message": "An error occurred inserting the group."}, 500
         elif g == 4:
             return {"Message": "group added. "}, 200
-        else:
-            return {'message': 'ward not found'}, 404
 
     # Xoá 1 thôn/bản/tdp trong 1 xã/phường khỏi danh sách
     @jwt_required()
@@ -110,4 +108,4 @@ class Groups(Resource):
     def get(self):
         id_acc = get_jwt_identity()
         group = GroupServices.list_ward_in_group(id_acc)
-        return {"Groups in '{}'".format(id_acc): list(map(lambda x: x.json(), group))}, 200
+        return {"Areas": list(map(lambda x: x.json(), group))}, 200

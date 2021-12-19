@@ -23,8 +23,7 @@ class GroupDb(db.Model):
         return {
             "groupId": self.groupId,
             "groupName": self.groupName,
-            "sumCitizen": sum_citizen,
-            "wardId": self.wardId,
+            "sumCitizen": sum_citizen
         }
 
     @classmethod

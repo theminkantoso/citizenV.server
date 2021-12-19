@@ -103,4 +103,4 @@ class Districts(Resource):
     def get(self):
         id_acc = get_jwt_identity()
         dist = DistrictServices.list_district_in_city(id_acc)
-        return {"Districts in '{}'".format(id_acc): list(map(lambda x: x.json(), dist))}, 200
+        return {"Areas": list(map(lambda x: x.json(), dist))}, 200

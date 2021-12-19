@@ -37,7 +37,7 @@ class City(Resource):
         elif c == 2:
             return {"message": "An error occurred inserting the cityProvince."}, 500
         else:
-            return {"Message": "cityProvince added. "}, 200
+            return {"Message": "cityProvince added. "}, 201
 
     # Xoá 1 tỉnh/thành phố khỏi danh sách
     @jwt_required()
@@ -88,4 +88,4 @@ class Cities(Resource):
     @authorized_required(roles=[1])  # tất cả A1 đều có quyền
     def get(self):
         cities = CityServices.list_city()
-        return {'Cities': list(map(lambda x: x.json(), cities))}, 200
+        return {'Areas': list(map(lambda x: x.json(), cities))}, 200

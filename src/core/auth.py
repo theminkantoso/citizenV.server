@@ -1,4 +1,4 @@
-from flask_jwt_extended import jwt_required, current_user, get_jwt_identity, get_jwt
+from flask_jwt_extended import jwt_required, get_jwt_identity
 from functools import wraps
 from ..models.accountDb import AccountDb
 
@@ -29,7 +29,6 @@ def authorized_required(roles):
                 for x in roles:
                     if user.roleId == x:
                         ok = True
-                        break
                 if not ok:
                     raise Exception()
             except:

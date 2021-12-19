@@ -133,4 +133,4 @@ class Wards(Resource):
     def get(self):
         id_acc = get_jwt_identity()
         ward = WardServices.list_ward_in_district(id_acc)
-        return {"Wards in '{}'".format(id_acc): list(map(lambda x: x.json(), ward))}, 200
+        return {"Areas": list(map(lambda x: x.json(), ward))}, 200
