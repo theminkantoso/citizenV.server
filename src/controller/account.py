@@ -50,31 +50,32 @@ class Account(Resource):
             return {'message': "Incorrect id or password"}, 401
 
         # SAU NÀY LÀM SẠCH LẠI ĐOẠN CODE NÀY ĐI, CHỌC VÀO SERVICE CHỨ KHÔNG PHẢI MODELS
-        # name = ""
-        # if user.roleId == 0:
-        #     name = "Admin"
-        # elif user.roleId == 1:
-        #     name = "A1"
-        # elif user.roleId == 2:
-        #     name = CityDb.find_by_id(user.accountId).cityProvinceName
-        # elif user.roleId == 3:
-        #     dist = DistrictDb.find_by_id(user.accountId).districtName
-        #     city = CityDb.find_by_id(user.accountId[0:2]).cityProvinceName
-        #     name = dist + ',' + city
-        # elif user.roleId == 4:
-        #     ward = WardDb.find_by_id(user.accountId).wardName
-        #     dist = DistrictDb.find_by_id(user.accountId[0:4]).districtName
-        #     city = CityDb.find_by_id(user.accountId[0:2]).cityProvinceName
-        #     name = ward + ',' + dist + ',' + city
-        #
-        # elif user.roleId == 5:
-        #     group = GroupDb.find_by_id(user.accountId).groupName
-        #     ward = WardDb.find_by_id(user.accountId[0:6]).wardName
-        #     dist = DistrictDb.find_by_id(user.accountId[0:4]).districtName
-        #     city = CityDb.find_by_id(user.accountId[0:2]).cityProvinceName
-        #     name = group + ',' + ward + ',' + dist + ',' + city
+        name = ""
+        if user.roleId == 0:
+            name = "Admin"
+        elif user.roleId == 1:
+            name = "A1"
+        elif user.roleId == 2:
+            name = CityDb.find_by_id(user.accountId).cityProvinceName
+        elif user.roleId == 3:
+            dist = DistrictDb.find_by_id(user.accountId).districtName
+            city = CityDb.find_by_id(user.accountId[0:2]).cityProvinceName
+            name = dist + ',' + city
+        elif user.roleId == 4:
+            ward = WardDb.find_by_id(user.accountId).wardName
+            dist = DistrictDb.find_by_id(user.accountId[0:4]).districtName
+            city = CityDb.find_by_id(user.accountId[0:2]).cityProvinceName
+            name = ward + ',' + dist + ',' + city
+
+        elif user.roleId == 5:
+            group = GroupDb.find_by_id(user.accountId).groupName
+            ward = WardDb.find_by_id(user.accountId[0:6]).wardName
+            dist = DistrictDb.find_by_id(user.accountId[0:4]).districtName
+            city = CityDb.find_by_id(user.accountId[0:2]).cityProvinceName
+            name = group + ',' + ward + ',' + dist + ',' + city
         if check_password_hash(user.password, password):
-            additional_claim = {"role": user.roleId, "isLocked": user.isLocked}#, "name": name}
+            # additional_claim = {"role": user.roleId, "isLocked": user.isLocked}
+            additional_claim = {"role": user.roleId, "isLocked": user.isLocked, "name": name}
             access_token = create_access_token(identity=id, additional_claims=additional_claim)
 
             # Update lock CRUD permission
