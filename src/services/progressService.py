@@ -84,6 +84,30 @@ class ProgressServices():
     def count_total_wards(id_acc):
         return int(WardServices.count_total_wards(id_acc))
 
+    @staticmethod
+    def list_city_progress():
+        return CityServices.list_city_progress()
+
+    @staticmethod
+    def list_city_progress_specific(id_request):
+        return CityServices.list_city_progress_specific(id_request)
+
+    @staticmethod
+    def list_district_progress(id_acc):
+        return DistrictServices.list_district_progress(id_acc)
+
+    @staticmethod
+    def list_district_progress_specific(id_acc, id_request):
+        return DistrictServices.list_district_progress_specific(id_acc, id_request)
+
+    @staticmethod
+    def list_ward_progress(id_acc):
+        return WardServices.list_ward_progress(id_acc)
+
+    @staticmethod
+    def list_ward_progress_specific(id_acc, id_request):
+        return WardServices.list_ward_progress_specific(id_acc, id_request)
+
     # @staticmethod
     # def send_mail(arr):
 
