@@ -21,7 +21,7 @@ class Group(Resource):
             return {'message': 'group not found.'}, 404
         else:
             sum_citizen = GroupServices.sum_citizen_in_group(group_id)
-            return group.json_1(), 200
+            return group.json1(sum_citizen), 200
 
     # Thêm mã cho 1 thôn/bản/tdp
     @jwt_required()

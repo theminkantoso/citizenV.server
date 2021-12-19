@@ -52,21 +52,23 @@ class AccountManagement(Resource):
         managed_accounts = AccountDb.find_managed_account_by_id(id_acc)  # Tất cả người dùng dưới quyền quản lý
         if managed_accounts:
             k = []
-            if acc.roleId == 0:  # Tất cả người dùng A1
+            if acc["role"] == 0:  # Tất cả người dùng A1
                 return {'Accounts': list(map(lambda x: x.json(), managed_accounts))}, 200
             # Cho A1, A2, A3, B1
-            acc_join = AccountDb.join_areaId(acc.roleId)   # join để lấy id của các vùng
+            acc_join = AccountDb.join_areaId(acc["role"], id_acc)   # join để lấy id của các vùng
             for i in range(len(acc_join)):
                 areaId = ""
-                if acc.roleId == 1:
+                if acc["role"] == 1:
                     areaId = acc_join[i][0].cityProvinceId  # Id của các thành phố
-                elif acc.roleId == 2:
+                elif acc["role"] == 2:
                     areaId = acc_join[i][0].districtId  # Id của các quận/huyện
-                elif acc.roleId == 3:
+                elif acc["role"] == 3:
                     areaId = acc_join[i][0].wardId  # Id của các xã/phường
-                elif acc.roleId == 4:
+                elif acc["role"] == 4:
                     areaId = acc_join[i][0].groupId  # Id của các thôn/bản/tdp
-                k.append(AccountDb.json1(acc_join[i][1], areaId))
+                len_areaId = len(areaId)
+                if areaId[0:len_areaId-2] == id_acc:
+                    k.append(AccountDb.json1(acc_join[i][1], areaId))
             return {"areas": k}, 200
         return {}, 200
 
@@ -83,8 +85,7 @@ class AccountManagement(Resource):
         # validate
         regex_id = '^[0-9]*$'
         regex_mail = r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b'
-        if not validate_regex(id_create, regex_id) or not validate_regex(email_create, regex_mail) \
-                or len(id_create) % 2 != 0:
+        if not validate_regex(id_create, regex_id) or not validate_regex(email_create, regex_mail):
             return {'message': "Invalid input format"}, 400
 
         # check chống tạo tk rác, tài khoản không tương ứng với một mã tỉnh thành quận huyện nào đó

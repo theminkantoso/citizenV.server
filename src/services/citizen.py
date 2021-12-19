@@ -1,5 +1,7 @@
 from datetime import date
 
+from flask_jwt_extended import get_jwt
+
 from src.models.citizenDb import CitizenDb
 from src.models.accountDb import AccountDb
 from src.models.cityProvinceDb import CityDb
@@ -177,18 +179,19 @@ class CitizenServices:
     @staticmethod
     def all_citizen_by_acc(id_acc: str):
         # A1
-        if AccountDb.find_by_id(id_acc).roleId == '1':
+        role = get_jwt()['role']
+        if role == 1:
             citizens = CitizenDb.find_all_citizen()
             return citizens
-        elif len(id_acc) == 2:  # A2
+        elif role == 2:  # A2
             citizens = CitizenDb.find_all_citizen_in_city(id_acc)
             return citizens
-        elif len(id_acc) == 4:  # A3
+        elif role == 3:  # A3
             citizens = CitizenDb.find_all_citizen_in_dist(id_acc)
             return citizens
-        elif len(id_acc) == 6:  # B1
+        elif role == 4:  # B1
             citizens = CitizenDb.find_all_citizen_in_ward(id_acc)
             return citizens
-        elif len(id_acc) == 8:  # B2
+        elif role == 5:  # B2
             citizens = CitizenDb.find_all_citizen_in_group(id_acc)
             return citizens

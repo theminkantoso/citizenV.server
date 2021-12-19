@@ -29,7 +29,7 @@ class Citizen(Resource):
         elif citizen == 1:
             return {"message": "not authorized"}, 403
         elif citizen:
-            return citizen.json()
+            return citizen.json(), 200
         return {'message': 'citizen not found.'}, 404
 
     # Xoá 1 citizen  khỏi danh sách
@@ -89,7 +89,7 @@ class Citizen(Resource):
                 elif citizen == 1:
                     return {"message": "An error occurred inserting the citizen."}, 500
                 else:
-                    return {"Message": "cityProvince updated. "}, 201
+                    return {"Message": "cityProvince updated. "}, 200
 
 
 class add_Citizen(Resource):
@@ -143,13 +143,14 @@ class add_Citizen(Resource):
                 elif citizen == 2:
                     return {"message": "An error occurred inserting the citzem."}, 500
                 else:
-                    return {"Message": "cityProvince added. "}, 201
+                    return {"Message": "cityProvince added. "}, 200
 
 
 class all_Citizen(Resource):
 
     @jwt_required()
+    @authorized_required(roles=[1, 2, 3, 4, 5])
     def get(self):
         id_acc = get_jwt_identity()
-        cities = CitizenServices.all_citizen_by_acc(id_acc)
-        return {'Citizens': list(map(lambda x: x.json(), cities))}
+        citizens = CitizenServices.all_citizen_by_acc(id_acc)
+        return {'Citizens': list(map(lambda x: x.json(), citizens))}
