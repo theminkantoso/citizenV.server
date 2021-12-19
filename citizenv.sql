@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Dec 17, 2021 at 06:31 PM
+-- Generation Time: Dec 19, 2021 at 03:59 AM
 -- Server version: 10.4.22-MariaDB
 -- PHP Version: 8.0.13
 
@@ -20,8 +20,6 @@ SET time_zone = "+00:00";
 --
 -- Database: `citizenv`
 --
-CREATE DATABASE IF NOT EXISTS `citizenv` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
-USE `citizenv`;
 
 -- --------------------------------------------------------
 

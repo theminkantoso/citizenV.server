@@ -29,6 +29,7 @@ class Account(Resource):
         #     k.append(CityDb.json2(a[i]))
         # print(k)
         # return {"a": k}, 200
+        # print(CityDb.count_total(), CityDb.count_completed())
 
     def post(self):
         data = Account.parser.parse_args()

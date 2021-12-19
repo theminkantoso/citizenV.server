@@ -52,14 +52,14 @@ class WardDb(db.Model):
             filter(WardDb.wardId == AccountDb.accountId).filter(WardDb.districtId == id_acc).\
             filter(WardDb.wardId == id_request).first()
 
-    @staticmethod
-    def count_completed(id_district):
-        return db.session.query.filter(WardDb.districtId == id_district).filter(WardDb.completed == True). \
+    @classmethod
+    def count_completed(cls, id_district):
+        return cls.query.filter(WardDb.districtId == id_district).filter(WardDb.completed == True). \
             count()
 
-    @staticmethod
-    def count_total(id_district):
-        return db.session.query.filter(WardDb.districtId == id_district).count()
+    @classmethod
+    def count_total(cls, id_district):
+        return cls.query.filter(WardDb.districtId == id_district).count()
 
     def save_to_db(self):
         db.session.add(self)

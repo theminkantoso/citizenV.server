@@ -42,13 +42,13 @@ class CityDb(db.Model):
             join(AccountDb).filter(CityDb.cityProvinceId == AccountDb.accountId).\
             filter(CityDb.cityProvinceId == id).first()
 
-    @staticmethod
-    def count_completed():
-        return db.session.query.filter(CityDb.completed == True).count()
+    @classmethod
+    def count_completed(cls):
+        return cls.query.filter(CityDb.completed == True).count()
 
-    @staticmethod
-    def count_total():
-        return db.session.query.count()
+    @classmethod
+    def count_total(cls):
+        return cls.query.count()
 
     @classmethod
     def find_all(cls):

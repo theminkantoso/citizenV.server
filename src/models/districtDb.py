@@ -56,14 +56,14 @@ class DistrictDb(db.Model):
             filter(DistrictDb.districtId == AccountDb.accountId).filter(DistrictDb.cityProvinceId == id_acc).\
             filter(DistrictDb.districtId == id_dis).first()
 
-    @staticmethod
-    def count_completed(id_province):
-        return db.session.query.filter(DistrictDb.cityProvinceId == id_province).filter(DistrictDb.completed == True).\
+    @classmethod
+    def count_completed(cls, id_province):
+        return cls.query.filter(DistrictDb.cityProvinceId == id_province).filter(DistrictDb.completed == True).\
             count()
 
-    @staticmethod
-    def count_total(id_province):
-        return db.session.query.filter(DistrictDb.cityProvinceId == id_province).count()
+    @classmethod
+    def count_total(cls, id_province):
+        return cls.query.filter(DistrictDb.cityProvinceId == id_province).count()
 
     def save_to_db(self):
         db.session.add(self)

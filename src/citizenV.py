@@ -53,7 +53,7 @@ api.add_resource(all_Citizen, '/citizens')
 
 # Progress
 api.add_resource(Progress, '/progress')
-api.add_resource(ProgressSpecific, '/progress/<string::id>')
+api.add_resource(ProgressSpecific, '/progress/<string:id>')
 
 # @controller.jwt_manager.token_in_blacklist_loader
 # def check_if_token_in_blacklist(decrypted_token):

@@ -24,11 +24,11 @@ class Progress(Resource):
         elif id_acc_len == 2:
             location = DistrictServices.list_district_progress(id_acc)
             count_complete = int(DistrictServices.count_completed_districts(id_acc))
-            count_total = int(DistrictServices.count_completed_districts(id_acc))
+            count_total = int(DistrictServices.count_total_districts(id_acc))
         elif id_acc_len == 4:
             location = WardServices.list_ward_progress(id_acc)
             count_complete = int(WardServices.count_completed_wards(id_acc))
-            count_total = int(WardServices.count_completed_wards(id_acc))
+            count_total = int(WardServices.count_total_wards(id_acc))
         else:
             return {"message": "Something went wrong"}, 404
         if location:
