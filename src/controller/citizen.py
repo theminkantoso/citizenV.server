@@ -113,12 +113,11 @@ class add_Citizen(Resource):
     def post(self, group_id):
         id_acc = get_jwt_identity()
         data = add_Citizen.parser.parse_args()
-        print(data)
         # Kiểm tra group_id tồn tại không
         g = GroupServices.exist_group(id_acc, group_id)
         if g == 0:
             return {'message': "Invalid group_id"}, 400
-        elif g == 1:
+        elif g == 1 or (id_acc != group_id and len(id_acc) == 8):
             return {'message': "not authorized"}
         elif g is None:
             return {'message': 'groupId not found.'}, 404

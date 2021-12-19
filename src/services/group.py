@@ -28,6 +28,20 @@ class GroupServices:
             return group
         return None  # group not exist
 
+    # Tìm 1 thôn/bản/tdp trong 1 xã/phường
+    @staticmethod
+    def exist_group(id_acc: str, group_id: str):
+        # Validate group_id (đầu vào có 8 số)
+        regex_id = '^(0[1-9]|[1-9][0-9]){4}$'
+        if not validate_regex(group_id, regex_id):
+            return 0  # Invalid id
+        if id_acc != group_id[0:6]:
+            return 1  # not authorized
+        group = GroupDb.find_by_id(group_id)
+        if group:
+            return group
+        return None  # group not exist
+
     #  Tổng số dân ở 1 thôn/bản/tdp
     @staticmethod
     def sum_citizen_in_group(group_id: str):
