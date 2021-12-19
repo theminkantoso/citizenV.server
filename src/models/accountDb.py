@@ -102,6 +102,35 @@ class AccountDb(db.Model):
         cls.query.filter(cls.managerAccount.like(search)).delete(synchronize_session='fetch')
         db.session.commit()
 
+    # @classmethod
+    # def delete_managed_account_hierachy_2(cls, accId):
+    #     search = "{}%".format(accId)
+    #     print(cls.query.filter(cls.managerAccount.like(search)).count())
+
+    @classmethod
+    def delete_account_by_delete_area(cls, areaId):
+        search = "{}%".format(areaId)
+        cls.query.filter(cls.accountId.like(search)).delete(synchronize_session='fetch')
+        db.session.commit()
+
+    @classmethod
+    def join_areaId(cls, roleId):
+        query = None
+        if roleId == 1:
+            query = db.session.query(CityDb, AccountDb). \
+                outerjoin(AccountDb, AccountDb.accountId == CityDb.cityProvinceId).all()
+        elif roleId == 2:
+            query = db.session.query(DistrictDb, AccountDb) \
+                .outerjoin(AccountDb, AccountDb.accountId == DistrictDb.districtId).all()
+        elif roleId == 3:
+            query = db.session.query(WardDb, AccountDb) \
+                .outerjoin(AccountDb, AccountDb.accountId == WardDb.wardId).all()
+        elif roleId == 4:
+            query = db.session.query(GroupDb, AccountDb) \
+                .outerjoin(AccountDb, AccountDb.accountId == GroupDb.groupId).all()
+        print(query)
+        return query
+
     def save_to_db(self):
         db.session.add(self)
         db.session.commit()
