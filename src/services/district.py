@@ -1,3 +1,4 @@
+from src.models.cityProvinceDb import CityDb
 from src.models.districtDb import DistrictDb
 from src.models.accountDb import AccountDb
 import re
