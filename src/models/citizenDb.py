@@ -7,7 +7,7 @@ class CitizenDb(db.Model):
     CCCD = db.Column(db.String(12), primary_key=True)
     name = db.Column(db.String(50))
     DOB = db.Column(db.Date)
-    sex = db.Column(db.String(3))
+    sex = db.Column(db.Enum('Nam', 'Nu'))
     maritalStatus = db.Column(db.String(50))
     nation = db.Column(db.String(50))
     religion = db.Column(db.String(50))

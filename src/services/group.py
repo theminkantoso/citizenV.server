@@ -21,7 +21,7 @@ class GroupServices:
         regex_id = '^(0[1-9]|[1-9][0-9]){4}$'
         if not validate_regex(group_id, regex_id):
             return 0  # Invalid id
-        if id_acc != group_id[0:6]:
+        if (id_acc != group_id[0:6] and len(id_acc) == 6) or (id_acc != group_id and len(id_acc) == 8):
             return 1  # not authorized
         group = GroupDb.find_by_id(group_id)
         if group:

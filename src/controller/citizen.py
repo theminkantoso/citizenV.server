@@ -96,6 +96,7 @@ class add_Citizen(Resource):
     parser = reqparse.RequestParser()
     parser.add_argument("CCCD", type=str)  # CCCD = citizenId
     parser.add_argument("name", type=str)
+    parser.add_argument("CCCD", type=str)
     parser.add_argument("DOB", type=str)
     parser.add_argument("sex", type=str)
     parser.add_argument("maritalStatus", type=str)
@@ -111,16 +112,19 @@ class add_Citizen(Resource):
     @crud_permission_required
     def post(self, group_id):
         id_acc = get_jwt_identity()
-
+        data = add_Citizen.parser.parse_args()
+        print(data)
         # Kiểm tra group_id tồn tại không
         g = GroupServices.exist_group(id_acc, group_id)
         if g == 0:
             return {'message': "Invalid group_id"}, 400
+        elif g == 1:
+            return {'message': "not authorized"}
         elif g is None:
             return {'message': 'groupId not found.'}, 404
         else:
             # Nếu group_id tồn tại
-            data = Citizen.parser.parse_args()
+            # print(data['CCCD'])
             # kiểm tra hợp lệ giá trị đầu vào
             if not CitizenServices.cccd(data["CCCD"]):
                 return {'message': "Invalid CCCD"}, 400

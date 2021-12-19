@@ -52,55 +52,55 @@ class AccountManagement(Resource):
     @jwt_required()
     @authorized_required(roles=[0, 1, 2, 3, 4])
     def get(self):
-        id_acc = get_jwt_identity()
-        acc = AccountDb.find_by_id(id_acc)
-        managed_accounts = AccountDb.find_managed_account_by_id(id_acc)  # Tất cả người dùng dưới quyền quản lý
-        if managed_accounts:
-            k = []
-            if acc.roleId == 0:  # Tất cả người dùng A1
-                return {'Accounts': list(map(lambda x: x.json(), managed_accounts))}, 200
-            # Cho A1, A2, A3, B1
-            acc_join = AccountDb.join_areaId(acc.roleId)   # join để lấy id của các vùng
-            for i in range(len(acc_join)):
-                areaId = ""
-                if acc.roleId == 1:
-                    areaId = acc_join[i][0].cityProvinceId  # Id của các thành phố
-                elif acc.roleId == 2:
-                    areaId = acc_join[i][0].districtId  # Id của các quận/huyện
-                elif acc.roleId == 3:
-                    areaId = acc_join[i][0].wardId  # Id của các xã/phường
-                elif acc.roleId == 4:
-                    areaId = acc_join[i][0].groupId  # Id của các thôn/bản/tdp
-                k.append(AccountDb.json1(acc_join[i][1], areaId))
-            return {"areas": k}, 200
-        return {}, 200
         # id_acc = get_jwt_identity()
-        # acc = get_jwt()
+        # acc = AccountDb.find_by_id(id_acc)
         # managed_accounts = AccountDb.find_managed_account_by_id(id_acc)  # Tất cả người dùng dưới quyền quản lý
         # if managed_accounts:
         #     k = []
-        #     if acc["role"] == 0:  # Tất cả người dùng A1
+        #     if acc.roleId == 0:  # Tất cả người dùng A1
         #         return {'Accounts': list(map(lambda x: x.json(), managed_accounts))}, 200
         #     # Cho A1, A2, A3, B1
-        #     acc_join = AccountDb.join_areaId(acc["role"])   # join để lấy id của các vùng
+        #     acc_join = AccountDb.join_areaId(acc.roleId)   # join để lấy id của các vùng
         #     for i in range(len(acc_join)):
         #         areaId = ""
-        #         if acc["role"] == 1:
+        #         if acc.roleId == 1:
         #             areaId = acc_join[i][0].cityProvinceId  # Id của các thành phố
-        #         elif acc["role"] == 2:
+        #         elif acc.roleId == 2:
         #             areaId = acc_join[i][0].districtId  # Id của các quận/huyện
-        #         elif acc["role"] == 3:
+        #         elif acc.roleId == 3:
         #             areaId = acc_join[i][0].wardId  # Id của các xã/phường
-        #         elif acc["role"] == 4:
+        #         elif acc.roleId == 4:
         #             areaId = acc_join[i][0].groupId  # Id của các thôn/bản/tdp
-        #         len_areaId = len(areaId)
-        #         if areaId[0:len_areaId-2] == id_acc:
-        #             k.append(AccountDb.json1(acc_join[i][1], areaId))
+        #         k.append(AccountDb.json1(acc_join[i][1], areaId))
         #     return {"areas": k}, 200
-        # managed_accounts = AccountDb.find_managed_account_by_id(id_acc)
-        # if managed_accounts:
-        #     return {'Accounts': list(map(lambda x: x.json(), managed_accounts))}, 200
         # return {}, 200
+        id_acc = get_jwt_identity()
+        acc = get_jwt()
+        managed_accounts = AccountDb.find_managed_account_by_id(id_acc)  # Tất cả người dùng dưới quyền quản lý
+        if managed_accounts:
+            k = []
+            if acc["role"] == 0:  # Tất cả người dùng A1
+                return {'Accounts': list(map(lambda x: x.json(), managed_accounts))}, 200
+            # Cho A1, A2, A3, B1
+            acc_join = AccountDb.join_areaId(acc["role"])   # join để lấy id của các vùng
+            for i in range(len(acc_join)):
+                areaId = ""
+                if acc["role"] == 1:
+                    areaId = acc_join[i][0].cityProvinceId  # Id của các thành phố
+                elif acc["role"] == 2:
+                    areaId = acc_join[i][0].districtId  # Id của các quận/huyện
+                elif acc["role"] == 3:
+                    areaId = acc_join[i][0].wardId  # Id của các xã/phường
+                elif acc["role"] == 4:
+                    areaId = acc_join[i][0].groupId  # Id của các thôn/bản/tdp
+                len_areaId = len(areaId)
+                if areaId[0:len_areaId-2] == id_acc:
+                    k.append(AccountDb.json1(acc_join[i][1], areaId))
+            return {"areas": k}, 200
+        managed_accounts = AccountDb.find_managed_account_by_id(id_acc)
+        if managed_accounts:
+            return {'Accounts': list(map(lambda x: x.json(), managed_accounts))}, 200
+        return {}, 200
 
     @jwt_required()
     @authorized_required(roles=[0, 1, 2, 3, 4])
