@@ -3,7 +3,7 @@ from src.services.district import DistrictServices
 from src.services.ward import WardServices
 from src.services.accountService import AccountService
 from flask_mail import Message
-# from src.controller import my_mail
+from src.services import my_mail
 
 
 class ProgressServices():
@@ -117,10 +117,17 @@ class ProgressServices():
         return str(mail[0])
 
     @staticmethod
-    def send_mail(email):
+    def send_mail(email, id_acc):
         status = 1
-        # try:
-        #     msg = Message('New Password Recovery', sender='phucpb.hrt@gmail.com', recipients=[email.lower()])
-        #     msg.body = 'Your new password is {}'.format(new_password)
-        #     my_mail.send(msg)
+        try:
+            msg = Message('Đẩy nhanh tiến độ', sender='phucpb.hrt@gmail.com', recipients=[email.lower()])
+            msg.body = 'Sắp đến hạn kết thúc khai báo, ' \
+                       'cấp trên {} yêu cầu đơn vị nhanh chóng hoàn thành công tác điều tra!'.format(id_acc)
+            my_mail.send(msg)
+        except Exception as e:
+            print(e)
+            status = 0
+        finally:
+            return status
+
 

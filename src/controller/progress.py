@@ -74,20 +74,18 @@ class ProgressSpecific(Resource):
     def post(self, id):
         id_acc = get_jwt_identity()
         claims = get_jwt()
-        role = claims["role"]
-        id_acc_len = len(id_acc)
         id_request = id
         if not AccountService.validate_input_id(id_request):
             return {"message": "bad request"}, 400
 
-        # if role == 1:
-        #     email = ProgressServices.get_email_managed(id_acc, id_request)
-        #
-        #
-        # elif id_acc_len == 2:
-        #
-        # elif id_acc_len == 4:
-        #
-        # else:
-        #     return {"message": "Something went wrong"}, 404
+        email = ProgressServices.get_email_managed(id_acc, id_request)
+        if email:
+            status = ProgressServices.send_mail(email, id_acc)
+            if status == 1:
+                return {"message": "email sent"}, 200
+            else:
+                return {"message": "something went wrong"}, 500
+        else:
+            return {"message": "something went wrong"}, 500
+
 
