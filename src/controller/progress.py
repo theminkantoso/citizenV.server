@@ -81,7 +81,9 @@ class ProgressSpecific(Resource):
             return {"message": "bad request"}, 400
 
         if role == 1:
-            email = str()
+            email = ProgressServices.get_email_managed(id_acc, id_request)
+
+
         elif id_acc_len == 2:
 
         elif id_acc_len == 4:

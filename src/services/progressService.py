@@ -1,6 +1,9 @@
 from src.services.city import CityServices
 from src.services.district import DistrictServices
 from src.services.ward import WardServices
+from src.services.accountService import AccountService
+from flask_mail import Message
+# from src.controller import my_mail
 
 
 class ProgressServices():
@@ -108,6 +111,16 @@ class ProgressServices():
     def list_ward_progress_specific(id_acc, id_request):
         return WardServices.list_ward_progress_specific(id_acc, id_request)
 
-    # @staticmethod
-    # def send_mail(arr):
+    @staticmethod
+    def get_email_managed(id_acc, id_request):
+        mail = AccountService.get_email_from_manager(id_acc, id_request)
+        return str(mail[0])
+
+    @staticmethod
+    def send_mail(email):
+        status = 1
+        # try:
+        #     msg = Message('New Password Recovery', sender='phucpb.hrt@gmail.com', recipients=[email.lower()])
+        #     msg.body = 'Your new password is {}'.format(new_password)
+        #     my_mail.send(msg)
 

@@ -104,8 +104,8 @@ class AccountService:
         return final_string
 
     @staticmethod
-    def get_email_from_manager(id_manager):
-        return AccountDb.get_email_user_manager(id_manager)
+    def get_email_from_manager(id_manager, id_in):
+        return AccountDb.get_email_user_manager(id_manager, id_in)
 
 
 
