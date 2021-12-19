@@ -2,7 +2,7 @@ from flask_restful import Resource, reqparse
 from src.models.accountDb import AccountDb, RevokedTokenModel
 from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import date
-from src.controller import my_mail
+from src.services import my_mail
 from flask import url_for, jsonify, request
 from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity, get_jwt
 from flask_mail import Message
@@ -159,7 +159,8 @@ class Repass(Resource):
             msg.body = 'Your new password is {}'.format(new_password)
             my_mail.send(msg)
             get_user.commit_to_db()
-        except:
+        except Exception as e:
+            print(e)
             return {'message': "Unable to send confirmation mail"}, 400
         return {'message': "New password sent to your mailbox!"}, 200
 

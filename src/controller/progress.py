@@ -80,14 +80,14 @@ class ProgressSpecific(Resource):
         if not AccountService.validate_input_id(id_request):
             return {"message": "bad request"}, 400
 
-        if role == 1:
-            email = ProgressServices.get_email_managed(id_acc, id_request)
-
-
-        elif id_acc_len == 2:
-
-        elif id_acc_len == 4:
-
-        else:
-            return {"message": "Something went wrong"}, 404
+        # if role == 1:
+        #     email = ProgressServices.get_email_managed(id_acc, id_request)
+        #
+        #
+        # elif id_acc_len == 2:
+        #
+        # elif id_acc_len == 4:
+        #
+        # else:
+        #     return {"message": "Something went wrong"}, 404
 

@@ -8,14 +8,10 @@ from src.services.accountService import AccountService
 from src.core.auth import crud_permission_required, authorized_required
 from werkzeug.security import generate_password_hash
 from datetime import datetime
-from src.controller import my_mail
+from src.services import my_mail
 from flask import url_for, jsonify
 from flask_jwt_extended import jwt_required, get_jwt_identity, get_jwt
 from flask_mail import Message
-
-import re
-import random
-import string
 
 
 class AccountManagement(Resource):
