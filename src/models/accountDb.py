@@ -9,8 +9,8 @@ class AccountDb(db.Model):
     email = db.Column(db.String)
     roleId = db.Column(db.Integer)  # ENUM: 0-Admin, 1-A1, 2-A2, 3-A3, 4-B1, 5-B2
     managerAccount = db.Column(db.String)
-    startTime = db.Column(db.Date)
-    endTime = db.Column(db.Date)
+    startDate = db.Column(db.Date)
+    endDate = db.Column(db.Date)
     isLocked = db.Column(db.Boolean)
 
     # def __init__(self, AccountId, email, Password, RoleId, managerAccount, startTime, endTime, isLocked):
@@ -32,43 +32,43 @@ class AccountDb(db.Model):
         self.isLocked = isLocked
 
     def json(self):
-        if isinstance(self.startTime, date):
-            startTime_json = self.startTime.isoformat()
+        if isinstance(self.startDate, date):
+            startDate_json = self.startDate.isoformat()
         else:
-            startTime_json = ''
-        if isinstance(self.endTime, date):
-            endTime_json = self.endTime.isoformat()
+            startDate_json = ''
+        if isinstance(self.endDate, date):
+            endDate_json = self.endDate.isoformat()
         else:
-            endTime_json = ''
+            endDate_json = ''
         return {"accountId": self.accountId, "email": self.email, "roleId": self.roleId,
-                "managerAccount": self.managerAccount, "startTime": startTime_json,
-                "endTime": endTime_json, "isLocked": self.isLocked}
+                "managerAccount": self.managerAccount, "startDate": startDate_json,
+                "endDate": endDate_json, "isLocked": self.isLocked}
 
-    @classmethod
-    def json1(cls, acc, areaId):
-        if acc is None:
-            return {
-                "areaId": areaId,
-                "accountId": "",
-                "email": "",
-                "roleId": "",
-                "managerAccount": "",
-                "startTime": "",
-                "endTime": "",
-                "isLocked": ""
-            }
-        else:
-            if isinstance(acc.startTime, date):
-                startTime_json = acc.startTime.isoformat()
-            else:
-                startTime_json = ''
-            if isinstance(acc.endTime, date):
-                endTime_json = acc.endTime.isoformat()
-            else:
-                endTime_json = ''
-            return {"areaId": areaId, "accountId": acc.accountId, "email": acc.email, "roleId": acc.roleId,
-                    "managerAccount": acc.managerAccount, "startTime": startTime_json,
-                    "endTime": endTime_json, "isLocked": acc.isLocked}
+    # @classmethod
+    # def json1(cls, acc, areaId):
+    #     if acc is None:
+    #         return {
+    #             "areaId": areaId,
+    #             "accountId": "",
+    #             "email": "",
+    #             "roleId": "",
+    #             "managerAccount": "",
+    #             "startDate": "",
+    #             "endDate": "",
+    #             "isLocked": ""
+    #         }
+    #     else:
+    #         if isinstance(acc.startDate, date):
+    #             startDate_json = acc.startDate.isoformat()
+    #         else:
+    #             startDate_json = ''
+    #         if isinstance(acc.endDate, date):
+    #             endDate_json = acc.endDate.isoformat()
+    #         else:
+    #             endDate_json = ''
+    #         return {"areaId": areaId, "accountId": acc.accountId, "email": acc.email, "roleId": acc.roleId,
+    #                 "managerAccount": acc.managerAccount, "startDate": startDate_json,
+    #                 "endDate": endDate_json, "isLocked": acc.isLocked}
 
     @classmethod
     def find_account(cls, accId, passWord):
@@ -90,7 +90,7 @@ class AccountDb(db.Model):
     def lock_managed_account_hierachy(cls, accId):
         search = "{}%".format(accId)
         cls.query.filter(cls.managerAccount.like(search)).\
-            update({"isLocked": 1, "startTime": None, "endTime": None}, synchronize_session='fetch')
+            update({"isLocked": 1, "startDate": None, "endDate": None}, synchronize_session='fetch')
         db.session.commit()
 
     @classmethod

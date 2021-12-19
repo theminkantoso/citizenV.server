@@ -1,9 +1,9 @@
 from flask_restful import Resource, reqparse
 from src.models.accountDb import AccountDb
-from src.models.cityProvinceDb import CityDb
-from src.models.districtDb import DistrictDb
-from src.models.wardDb import WardDb
-from src.models.residentialGroupDb import GroupDb
+# from src.models.cityProvinceDb import CityDb
+# from src.models.districtDb import DistrictDb
+# from src.models.wardDb import WardDb
+# from src.models.residentialGroupDb import GroupDb
 from src.services.accountService import AccountService
 from src.core.auth import crud_permission_required, authorized_required
 from werkzeug.security import generate_password_hash
@@ -22,27 +22,32 @@ class AccountManagement(Resource):
     @jwt_required()
     @authorized_required(roles=[0, 1, 2, 3, 4])
     def get(self):
+        # id_acc = get_jwt_identity()
+        # acc = AccountDb.find_by_id(id_acc)
+        # managed_accounts = AccountDb.find_managed_account_by_id(id_acc)  # Tất cả người dùng dưới quyền quản lý
+        # if managed_accounts:
+        #     k = []
+        #     if acc.roleId == 0:  # Tất cả người dùng A1
+        #         return {'Accounts': list(map(lambda x: x.json(), managed_accounts))}, 200
+        #     # Cho A1, A2, A3, B1
+        #     acc_join = AccountDb.join_areaId(acc.roleId)   # join để lấy id của các vùng
+        #     for i in range(len(acc_join)):
+        #         areaId = ""
+        #         if acc.roleId == 1:
+        #             areaId = acc_join[i][0].cityProvinceId  # Id của các thành phố
+        #         elif acc.roleId == 2:
+        #             areaId = acc_join[i][0].districtId  # Id của các quận/huyện
+        #         elif acc.roleId == 3:
+        #             areaId = acc_join[i][0].wardId  # Id của các xã/phường
+        #         elif acc.roleId == 4:
+        #             areaId = acc_join[i][0].groupId  # Id của các thôn/bản/tdp
+        #         k.append(AccountDb.json1(acc_join[i][1], areaId))
+        #     return {"areas": k}, 200
+        # return {}, 200
         id_acc = get_jwt_identity()
-        acc = AccountDb.find_by_id(id_acc)
-        managed_accounts = AccountDb.find_managed_account_by_id(id_acc)  # Tất cả người dùng dưới quyền quản lý
+        managed_accounts = AccountDb.find_managed_account_by_id(id_acc)
         if managed_accounts:
-            k = []
-            if acc.roleId == 0:  # Tất cả người dùng A1
-                return {'Accounts': list(map(lambda x: x.json(), managed_accounts))}, 200
-            # Cho A1, A2, A3, B1
-            acc_join = AccountDb.join_areaId(acc.roleId)   # join để lấy id của các vùng
-            for i in range(len(acc_join)):
-                areaId = ""
-                if acc.roleId == 1:
-                    areaId = acc_join[i][0].cityProvinceId  # Id của các thành phố
-                elif acc.roleId == 2:
-                    areaId = acc_join[i][0].districtId  # Id của các quận/huyện
-                elif acc.roleId == 3:
-                    areaId = acc_join[i][0].wardId  # Id của các xã/phường
-                elif acc.roleId == 4:
-                    areaId = acc_join[i][0].groupId  # Id của các thôn/bản/tdp
-                k.append(AccountDb.json1(acc_join[i][1], areaId))
-            return {"areas": k}, 200
+            return {'Accounts': list(map(lambda x: x.json(), managed_accounts))}, 200
         return {}, 200
 
     @jwt_required()
@@ -102,8 +107,9 @@ class AccountManagement(Resource):
 class AccountManagementChange(Resource):
     parser = reqparse.RequestParser()
     parser.add_argument('password', type=str)
-    parser.add_argument('StartDate', type=datetime)
-    parser.add_argument('EndDate', type=datetime)
+    parser.add_argument('email', type=str)
+    parser.add_argument('StartDate')
+    parser.add_argument('EndDate')
     parser.add_argument('isLocked', type=bool)
 
     @jwt_required()
@@ -127,14 +133,23 @@ class AccountManagementChange(Resource):
         id_acc = get_jwt_identity()
         id_modify = id
         password_modify = data['password']
-        start_date_modify = data['StartDate']
-        end_date_modify = data['EndDate']
+        email_modify = data['email']
         is_locked_modify = data['isLocked']
+        try:
+            start_date_modify = datetime.strptime(data['StartDate'], '%Y-%m-%d').date()
+            # start_date_modify = data['StartDate']
+            end_date_modify = datetime.strptime(data['EndDate'], '%Y-%m-%d').date()
+            # end_date_modify = data['EndDate']
+        except:
+            return {'message': "invalid input"}, 400
 
         # validate input
         data_ok = True
         if password_modify is not None:
             data_ok = AccountService.check_password(password_modify)
+
+        if email_modify is not None:
+            data_ok = AccountService.validate_email(email_modify)
 
         # ensure (!startDate AND !endDate) OR (startDate AND endDate)
         if ((start_date_modify is not None and end_date_modify is None) or
@@ -153,9 +168,9 @@ class AccountManagementChange(Resource):
             return {'message': "something went wrong"}, 500
 
         # ensure CRUD period of child account is valid with this account (parent account)
-        # child.startTime > parent.startTime AND child.endTime < parent.endTime
-        if parent_user.startTime is not None and parent_user.endTime is not None:
-            if parent_user.startTime > start_date_modify or parent_user.endTime < end_date_modify:
+        # child.startDate > parent.startDate AND child.endDate < parent.endDate
+        if parent_user.startDate is not None and parent_user.endDate is not None:
+            if parent_user.startDate > start_date_modify or parent_user.endDate < end_date_modify:
                 data_ok = False
 
         if not data_ok:
@@ -170,13 +185,15 @@ class AccountManagementChange(Resource):
 
         if password_modify is not None:
             current_user.password = generate_password_hash(password_modify, method='sha256')
+        if email_modify is not None:
+            current_user.email = email_modify
         if start_date_modify is not None:
-            current_user.startTime = start_date_modify
-            current_user.endTime = end_date_modify
+            current_user.startDate = start_date_modify
+            current_user.endDate = end_date_modify
         if is_locked_modify is not None:
             current_user.isLocked = is_locked_modify
-            current_user.startTime = None
-            current_user.endTime = None
+            current_user.startDate = None
+            current_user.endDate = None
             if is_locked_modify:
                 try:
                     AccountDb.lock_managed_account_hierachy(id_modify)
@@ -185,7 +202,7 @@ class AccountManagementChange(Resource):
                     return {"message": "something wrong"}, 500
 
         try:
-            # current_user.commit_to_db() # need to recheck
+            current_user.commit_to_db() # need to recheck
             return {"message": "done"}, 200
         except:
             return {"message": "something wrong"}, 500

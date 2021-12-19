@@ -77,6 +77,13 @@ class AccountService:
         return True
 
     @staticmethod
+    def validate_email(email):
+        regex_mail = r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b'
+        if not validate_regex(email, regex_mail):
+            return False
+        return True
+
+    @staticmethod
     def validate_period(startDate, endDate):
         """
         ensure startDate <= endDate

@@ -83,8 +83,8 @@ class Account(Resource):
             # This means the system does not lock CRUD permission automatically, but check when logging in and lock
             # if necessary.
             today = date.today()
-            if user.startTime is not None and user.endTime is not None:
-                if user.startTime <= today <= user.endTime:
+            if user.startDate is not None and user.endDate is not None:
+                if user.startDate <= today <= user.endDate:
                     user.isLocked = False
                     user.commit_to_db()
                 else:
