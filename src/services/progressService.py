@@ -4,6 +4,7 @@ from src.services.ward import WardServices
 from src.services.accountService import AccountService
 from flask_mail import Message
 from src.services import my_mail
+from datetime import date
 
 
 class ProgressServices():
@@ -20,6 +21,8 @@ class ProgressServices():
             complete = ""
         if end_time is None:
             end_time = ""
+        elif isinstance(end_time, date):
+            end_time = end_time.isoformat()
         return {
             "id": arr[0],
             "name": arr[1],
@@ -42,6 +45,8 @@ class ProgressServices():
             complete = ""
         if end_time is None:
             end_time = ""
+        elif isinstance(end_time, date):
+            end_time = end_time.isoformat()
         return {
             "id": arr[0],
             "name": arr[1],

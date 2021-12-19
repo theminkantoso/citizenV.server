@@ -73,7 +73,6 @@ class ProgressSpecific(Resource):
     @authorized_required([1, 2, 3])
     def post(self, id):
         id_acc = get_jwt_identity()
-        claims = get_jwt()
         id_request = id
         if not AccountService.validate_input_id(id_request):
             return {"message": "bad request"}, 400

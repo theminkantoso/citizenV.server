@@ -1,6 +1,6 @@
 from flask_restful import Api
 from flask import Flask
-# from flask_cors import CORS
+from flask_cors import CORS
 
 from src.controller.account import Account, Repass, ChangePass, UserLogoutAccess
 from src.controller.cityProvince import City, Cities
@@ -10,15 +10,16 @@ from src.controller.residentialGroup import Group, Groups
 from src.controller.account_management import AccountManagement, AccountManagementChange
 from src.controller.citizen import Citizen, add_Citizen, all_Citizen
 
-from src import controller
+from src import controller, services
 
 app = Flask(__name__)
-# CORS(app)
+CORS(app)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://root:''@localhost/citizenv'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config.from_pyfile('core/config.py')
 
 api = Api(app)
+services.init_app(app)
 controller.init_app(app)
 
 api.add_resource(Account, '/login')
@@ -59,6 +60,8 @@ api.add_resource(all_Citizen, '/citizens')
 #     jti = decrypted_token['jti']
 #
 #     return controller.account.RevokedTokenModel.is_jti_blacklisted(jti)
+
+
 @controller.jwt_manager.token_in_blocklist_loader
 def check_if_token_revoked(jwt_header, jwt_payload):
     jti = jwt_payload["jti"]

@@ -38,6 +38,32 @@ class DistrictDb(db.Model):
     def find_by_city_id(cls, Id):
         return cls.query.filter_by(cityProvinceId=Id).all()
 
+    @classmethod
+    def find_by_id_like(cls, id):
+        search = "{}%".format(id)
+        return cls.query.filter(cls.districtId.like(search)).all()
+
+    @staticmethod
+    def find_join_account(id):
+        return db.session.query(DistrictDb.districtId, DistrictDb.districtName, DistrictDb.completed,
+                                AccountDb.endDate).select_from(DistrictDb).\
+            join(AccountDb, DistrictDb.districtId == AccountDb.accountId).filter(DistrictDb.cityProvinceId == id).all()
+
+    @staticmethod
+    def find_join_account_specific(id_acc, id_dis):
+        return db.session.query(DistrictDb.districtId, DistrictDb.districtName, DistrictDb.completed,
+                                AccountDb.endDate).select_from(DistrictDb).\
+            join(AccountDb, DistrictDb.districtId == AccountDb.accountId).filter(DistrictDb.cityProvinceId == id_acc).\
+            filter(DistrictDb.districtId == id_dis).first()
+
+    @classmethod
+    def count_completed(cls, id_province):
+        return cls.query.filter_by(cityProvinceId=id_province).filter_by(completed=True).count()
+
+    @classmethod
+    def count_total(cls, id_province):
+        return cls.query.filter_by(cityProvinceId=id_province).count()
+
     def save_to_db(self):
         db.session.add(self)
         db.session.commit()

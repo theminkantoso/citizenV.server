@@ -92,6 +92,7 @@ class Account(Resource):
             city = CityDb.find_by_id(user.accountId[0:2]).cityProvinceName
             name = group + ',' + ward + ',' + dist + ',' + city
         if check_password_hash(user.password, password):
+            # additional_claim = {"role": user.roleId, "isLocked": user.isLocked}
             additional_claim = {"role": user.roleId, "isLocked": user.isLocked, "name": name}
             access_token = create_access_token(identity=id, additional_claims=additional_claim)
 
@@ -99,8 +100,8 @@ class Account(Resource):
             # do server không phải chạy 24/24 nên khi đăng nhập server sẽ kiểm tra có khóa tài khoản không
             # kiểm tra thời gian hiện tại với thời gian tài khoản được thêm sửa xóa
             today = date.today()
-            if user.startTime is not None and user.endTime is not None:
-                if user.startTime <= today <= user.endTime:
+            if user.startDate is not None and user.endDate is not None:
+                if user.startDate <= today <= user.endDate:
                     user.isLocked = False
                     user.commit_to_db()
                 else:

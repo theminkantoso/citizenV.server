@@ -38,6 +38,27 @@ class WardDb(db.Model):
     def find_by_dist_ward_name(cls, dist_id, ward_name):
         return cls.query.filter_by(districtId=dist_id, wardName=ward_name).first()
 
+    @staticmethod
+    def find_join_account(id):
+        return db.session.query(WardDb.wardId, WardDb.wardName, WardDb.completed,
+                                AccountDb.endDate).select_from(WardDb).\
+            join(AccountDb, WardDb.wardId == AccountDb.accountId).filter(WardDb.districtId == id).all()
+
+    @staticmethod
+    def find_join_account_specific(id_acc, id_request):
+        return db.session.query(WardDb.wardId, WardDb.wardName, WardDb.completed,
+                                AccountDb.endDate).select_from(WardDb).\
+            join(AccountDb, WardDb.wardId == AccountDb.accountId).filter(WardDb.districtId == id_acc).\
+            filter(WardDb.wardId == id_request).first()
+
+    @classmethod
+    def count_completed(cls, id_district):
+        return cls.query.filter_by(districtId=id_district).filter_by(completed=True).count()
+
+    @classmethod
+    def count_total(cls, id_district):
+        return cls.query.filter_by(districtId=id_district).count()
+
     def save_to_db(self):
         db.session.add(self)
         db.session.commit()
