@@ -21,6 +21,7 @@ app.config.from_pyfile('core/config.py')
 
 api = Api(app)
 services.init_app(app)
+controller.init_app(app)
 
 api.add_resource(Account, '/login')
 api.add_resource(Repass, '/repass')
@@ -65,7 +66,7 @@ api.add_resource(ProgressSpecific, '/progress/<string:id>')
 #     return controller.account.RevokedTokenModel.is_jti_blacklisted(jti)
 
 
-@services.jwt_manager.token_in_blocklist_loader
+@controller.jwt_manager.token_in_blocklist_loader
 def check_if_token_revoked(jwt_header, jwt_payload):
     jti = jwt_payload["jti"]
     token = db.session.query(controller.account.RevokedTokenModel.id).filter_by(jti=jti).scalar()
