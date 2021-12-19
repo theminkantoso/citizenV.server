@@ -42,14 +42,14 @@ class WardDb(db.Model):
     @staticmethod
     def find_join_account(id):
         return db.session.query(WardDb.wardId, WardDb.wardName, WardDb.completed,
-                                AccountDb.endTime).join(AccountDb). \
-            filter(WardDb.wardId == AccountDb.accountId).filter(WardDb.districtId == id).all()
+                                AccountDb.endDate).select_from(WardDb).\
+            join(AccountDb, WardDb.wardId == AccountDb.accountId).filter(WardDb.districtId == id).all()
 
     @staticmethod
     def find_join_account_specific(id_acc, id_request):
         return db.session.query(WardDb.wardId, WardDb.wardName, WardDb.completed,
-                                AccountDb.endTime).join(AccountDb). \
-            filter(WardDb.wardId == AccountDb.accountId).filter(WardDb.districtId == id_acc).\
+                                AccountDb.endDate).select_from(WardDb).\
+            join(AccountDb, WardDb.wardId == AccountDb.accountId).filter(WardDb.districtId == id_acc).\
             filter(WardDb.wardId == id_request).first()
 
     @classmethod

@@ -46,14 +46,14 @@ class DistrictDb(db.Model):
     @staticmethod
     def find_join_account(id):
         return db.session.query(DistrictDb.districtId, DistrictDb.districtName, DistrictDb.completed,
-                                AccountDb.endTime).join(AccountDb).\
-            filter(DistrictDb.districtId == AccountDb.accountId).filter(DistrictDb.cityProvinceId == id).all()
+                                AccountDb.endDate).select_from(DistrictDb).\
+            join(AccountDb, DistrictDb.districtId == AccountDb.accountId).filter(DistrictDb.cityProvinceId == id).all()
 
     @staticmethod
     def find_join_account_specific(id_acc, id_dis):
         return db.session.query(DistrictDb.districtId, DistrictDb.districtName, DistrictDb.completed,
-                                AccountDb.endTime).join(AccountDb). \
-            filter(DistrictDb.districtId == AccountDb.accountId).filter(DistrictDb.cityProvinceId == id_acc).\
+                                AccountDb.endDate).select_from(DistrictDb).\
+            join(AccountDb, DistrictDb.districtId == AccountDb.accountId).filter(DistrictDb.cityProvinceId == id_acc).\
             filter(DistrictDb.districtId == id_dis).first()
 
     @classmethod
