@@ -1,6 +1,6 @@
 from flask_restful import Api
 from flask import Flask
-# from flask_cors import CORS
+from flask_cors import CORS
 
 from src.controller.account import Account, Repass, ChangePass, UserLogoutAccess
 from src.controller.cityProvince import City, Cities
@@ -14,7 +14,7 @@ from src.controller.progress import Progress, ProgressSpecific
 from src import services, controller
 
 app = Flask(__name__)
-# CORS(app)
+CORS(app)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://root:''@localhost/citizenv'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config.from_pyfile('core/config.py')
