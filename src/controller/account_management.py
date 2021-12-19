@@ -55,7 +55,7 @@ class AccountManagement(Resource):
             if acc["role"] == 0:  # Tất cả người dùng A1
                 return {'Accounts': list(map(lambda x: x.json(), managed_accounts))}, 200
             # Cho A1, A2, A3, B1
-            acc_join = AccountDb.join_areaId(acc["role"], id_acc)   # join để lấy id của các vùng
+            acc_join = AccountDb.join_areaId(acc["role"])   # join để lấy id của các vùng
             for i in range(len(acc_join)):
                 areaId = ""
                 if acc["role"] == 1:
