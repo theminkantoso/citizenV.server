@@ -1,8 +1,4 @@
 from datetime import date
-from src.models.cityProvinceDb import CityDb
-from src.models.districtDb import DistrictDb
-from src.models.wardDb import WardDb
-from src.models.residentialGroupDb import GroupDb
 from src.database import db
 
 
