@@ -1,3 +1,8 @@
+from src.services.city import CityServices
+from src.services.district import DistrictServices
+from src.services.ward import WardServices
+
+
 class ProgressServices():
     @staticmethod
     def convert_to_json_dict_progress(arr):
@@ -54,3 +59,31 @@ class ProgressServices():
         for i in range(len(arr)):
             list_out.append(ProgressServices.convert_to_json_dict_progress(arr[i]))
         return list_out
+
+    @staticmethod
+    def count_completed_cities():
+        return int(CityServices.count_completed_cities())
+
+    @staticmethod
+    def count_total_cities():
+        return int(CityServices.count_total_cities())
+
+    @staticmethod
+    def count_completed_districts(id_acc):
+        return int(DistrictServices.count_completed_districts(id_acc))
+
+    @staticmethod
+    def count_total_districts(id_acc):
+        return int(DistrictServices.count_total_districts(id_acc))
+
+    @staticmethod
+    def count_completed_wards(id_acc):
+        return int(WardServices.count_completed_wards(id_acc))
+
+    @staticmethod
+    def count_total_wards(id_acc):
+        return int(WardServices.count_total_wards(id_acc))
+
+    # @staticmethod
+    # def send_mail(arr):
+

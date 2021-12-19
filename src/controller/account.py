@@ -30,6 +30,10 @@ class Account(Resource):
         # print(k)
         # return {"a": k}, 200
         # print(CityDb.count_total(), CityDb.count_completed())
+        # print(WardDb.count_completed('2901'), WardDb.count_total('2901'))
+        # print(DistrictDb.count_completed('29'), DistrictDb.count_total('29'))
+        # ak = AccountDb.get_email_user_manager('00','0003')
+        # print(ak[0])
 
     def post(self):
         data = Account.parser.parse_args()

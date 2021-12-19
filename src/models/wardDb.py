@@ -54,12 +54,11 @@ class WardDb(db.Model):
 
     @classmethod
     def count_completed(cls, id_district):
-        return cls.query.filter(WardDb.districtId == id_district).filter(WardDb.completed == True). \
-            count()
+        return cls.query.filter_by(districtId=id_district).filter_by(completed=True).count()
 
     @classmethod
     def count_total(cls, id_district):
-        return cls.query.filter(WardDb.districtId == id_district).count()
+        return cls.query.filter_by(districtId=id_district).count()
 
     def save_to_db(self):
         db.session.add(self)

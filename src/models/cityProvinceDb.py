@@ -44,7 +44,7 @@ class CityDb(db.Model):
 
     @classmethod
     def count_completed(cls):
-        return cls.query.filter(CityDb.completed == True).count()
+        return cls.query.filter_by(completed=True).count()
 
     @classmethod
     def count_total(cls):

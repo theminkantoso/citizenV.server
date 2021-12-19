@@ -19,16 +19,16 @@ class Progress(Resource):
         id_acc_len = len(id_acc)
         if role == 1:
             location = CityServices.list_city_progress()
-            count_complete = int(CityServices.count_completed_cities())
-            count_total = int(CityServices.count_total_cities())
+            count_complete = ProgressServices.count_completed_cities()
+            count_total = ProgressServices.count_total_cities()
         elif id_acc_len == 2:
             location = DistrictServices.list_district_progress(id_acc)
-            count_complete = int(DistrictServices.count_completed_districts(id_acc))
-            count_total = int(DistrictServices.count_total_districts(id_acc))
+            count_complete = ProgressServices.count_completed_districts(id_acc)
+            count_total = ProgressServices.count_total_districts(id_acc)
         elif id_acc_len == 4:
             location = WardServices.list_ward_progress(id_acc)
-            count_complete = int(WardServices.count_completed_wards(id_acc))
-            count_total = int(WardServices.count_total_wards(id_acc))
+            count_complete = ProgressServices.count_completed_wards(id_acc)
+            count_total = ProgressServices.count_total_wards(id_acc)
         else:
             return {"message": "Something went wrong"}, 404
         if location:
@@ -47,18 +47,21 @@ class ProgressSpecific(Resource):
         role = claims["role"]
         id_acc_len = len(id_acc)
         id_request = id
+        if not AccountService.validate_input_id(id_request):
+            return {"message": "bad request"}, 400
+
         if role == 1:
             location = CityServices.list_city_progress_specific(id_request)
-            count_complete = int(DistrictServices.count_completed_districts(id_request))
-            count_total = int(DistrictServices.count_total_districts(id_request))
+            count_complete = ProgressServices.count_completed_districts(id_request)
+            count_total = ProgressServices.count_total_districts(id_request)
             if location:
                 return ProgressServices.convert_to_json_progress_specific(location, count_complete, count_total), 200
             else:
                 return {"message": "No location like that or invalid input"}, 404
         elif id_acc_len == 2:
             location = DistrictServices.list_district_progress_specific(id_acc, id_request)
-            count_complete = int(WardServices.count_completed_wards(id_request))
-            count_total = int(WardServices.count_total_wards(id_request))
+            count_complete = ProgressServices.count_completed_wards(id_request)
+            count_total = ProgressServices.count_total_wards(id_request)
             if location:
                 return ProgressServices.convert_to_json_progress_specific(location, count_complete, count_total), 200
             else:
@@ -77,15 +80,11 @@ class ProgressSpecific(Resource):
         role = claims["role"]
         id_acc_len = len(id_acc)
         id_request = id
+        if not AccountService.validate_input_id(id_request):
+            return {"message": "bad request"}, 400
+
         if role == 1:
-            location = CityServices.list_city_progress_specific(id_request)
-            count_complete = int(DistrictServices.count_completed_districts(id_request))
-            count_total = int(DistrictServices.count_total_districts(id_request))
-            if location:
-                return ProgressServices.convert_to_json_progress_specific(location, count_complete,
-                                                                          count_total), 200
-            else:
-                return {"message": "No location like that or invalid input"}, 404
+            email = str()
         elif id_acc_len == 2:
             location = DistrictServices.list_district_progress_specific(id_acc, id_request)
             count_complete = int(WardServices.count_completed_wards(id_request))

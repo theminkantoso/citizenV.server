@@ -73,6 +73,11 @@ class AccountDb(db.Model):
         cls.query.filter(cls.managerAccount.like(search)).delete(synchronize_session='fetch')
         db.session.commit()
 
+    @staticmethod
+    def get_email_user_manager(id_manager, id_in):
+        return db.session.query(AccountDb.email).filter(AccountDb.managerAccount == id_manager).filter(AccountDb.accountId == id_in)\
+            .first()
+
     # @classmethod
     # def delete_managed_account_hierachy_2(cls, accId):
     #     search = "{}%".format(accId)

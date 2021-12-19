@@ -26,6 +26,13 @@ class AccountService:
         return True
 
     @staticmethod
+    def validate_input_id(id):
+        regex_id = '^[0-9]*$'
+        if not validate_regex(id, regex_id):
+            return False
+        return True
+
+    @staticmethod
     def validate_input_id_email(id, email):
         regex_id = '^[0-9]*$'
         regex_mail = r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b'
@@ -95,6 +102,10 @@ class AccountService:
         random.shuffle(sam_list)
         final_string = ''.join(sam_list)
         return final_string
+
+    @staticmethod
+    def get_email_from_manager(id_manager):
+        return AccountDb.get_email_user_manager(id_manager)
 
 
 
