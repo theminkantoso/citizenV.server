@@ -48,31 +48,31 @@ class AccountDb(db.Model):
                 "managerAccount": self.managerAccount, "startDate": startDate_json,
                 "endDate": endDate_json, "isLocked": self.isLocked}
 
-    # @classmethod
-    # def json1(cls, acc, areaId):
-    #     if acc is None:
-    #         return {
-    #             "areaId": areaId,
-    #             "accountId": "",
-    #             "email": "",
-    #             "roleId": "",
-    #             "managerAccount": "",
-    #             "startDate": "",
-    #             "endDate": "",
-    #             "isLocked": ""
-    #         }
-    #     else:
-    #         if isinstance(acc.startDate, date):
-    #             startDate_json = acc.startDate.isoformat()
-    #         else:
-    #             startDate_json = ''
-    #         if isinstance(acc.endDate, date):
-    #             endDate_json = acc.endDate.isoformat()
-    #         else:
-    #             endDate_json = ''
-    #         return {"areaId": areaId, "accountId": acc.accountId, "email": acc.email, "roleId": acc.roleId,
-    #                 "managerAccount": acc.managerAccount, "startDate": startDate_json,
-    #                 "endDate": endDate_json, "isLocked": acc.isLocked}
+    @classmethod
+    def json1(cls, acc, areaId):
+        if acc is None:
+            return {
+                "areaId": areaId,
+                "accountId": "",
+                "email": "",
+                "roleId": "",
+                "managerAccount": "",
+                "startDate": "",
+                "endDate": "",
+                "isLocked": ""
+            }
+        else:
+            if isinstance(acc.startDate, date):
+                startDate_json = acc.startDate.isoformat()
+            else:
+                startDate_json = ''
+            if isinstance(acc.endDate, date):
+                endDate_json = acc.endDate.isoformat()
+            else:
+                endDate_json = ''
+            return {"areaId": areaId, "accountId": acc.accountId, "email": acc.email, "roleId": acc.roleId,
+                    "managerAccount": acc.managerAccount, "startDate": startDate_json,
+                    "endDate": endDate_json, "isLocked": acc.isLocked}
 
     @classmethod
     def find_account(cls, accId, passWord):
@@ -129,7 +129,6 @@ class AccountDb(db.Model):
         elif roleId == 4:
             query = db.session.query(GroupDb, AccountDb) \
                 .outerjoin(AccountDb, AccountDb.accountId == GroupDb.groupId).all()
-        print(query)
         return query
 
     def save_to_db(self):

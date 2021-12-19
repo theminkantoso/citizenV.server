@@ -2,7 +2,7 @@ from flask_restful import Resource, reqparse
 from src.models.accountDb import AccountDb, RevokedTokenModel
 from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import date
-from src.controller import my_mail
+from src.services import my_mail
 from flask import jsonify
 from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity, get_jwt
 from flask_mail import Message
