@@ -86,6 +86,7 @@ class CitizenServices:
         # validate cccd
         if not validate_regex(cccd, regex_cccd):
             return False  # Invalid cccd
+        return True
 
     # Validate request
     @staticmethod
