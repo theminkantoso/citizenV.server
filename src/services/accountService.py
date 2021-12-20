@@ -59,6 +59,8 @@ class AccountService:
 
     @staticmethod
     def check_format_id_plus_2(id_acc, id_create, id_create_length):
+        if len(id_create) <= len(id_acc):
+            return False
         if id_acc != id_create[0:id_create_length - 2]:
             return False
         return True

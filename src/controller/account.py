@@ -31,10 +31,10 @@ class Account(Resource):
         #     k.append(CityDb.json2(a[i]))
         # print(k)
         # return {"a": k}, 200
-        ar = CitizenDb.get_stats_sex_entire()
-        a = {}
-        a.update({ar[0][0]: ar[0][1]})
-        print(a)
+        # ar = CitizenDb.get_stats_sex_entire()
+        # a = {}
+        # a.update({ar[0][0]: ar[0][1]})
+        # print(a)
         # print(WardDb.count_completed('2901'), WardDb.count_total('2901'))
         # print(DistrictDb.count_completed('29'), DistrictDb.count_total('29'))
         # ak = AccountDb.get_email_user_manager('00','0003')
@@ -114,31 +114,6 @@ class Account(Resource):
 
     def put(self):
         return {'message': 'Not allowed'}, 404
-
-
-# class Register(Resource):
-#     parser = reqparse.RequestParser()
-#     parser.add_argument('email', type=str)
-#     parser.add_argument('password', type=str)
-#
-#
-#     def get(self):
-#         pass
-#
-#     def post(self):
-#         data = Register.parser.parse_args()
-#         email = data['email']
-#         password = data['password']
-#         user = AccountDb(AccountId=email, Password=generate_password_hash(password, method='sha256'), RoleId=0,
-#                          isLocked=0)
-#         user.save_to_db()
-#         return {'message': "Login success"}, 200
-#
-#     def delete(self):
-#         return {'message': 'Not allowed'}, 404
-#
-#     def put(self):
-#         return {'message': 'Not allowed'}, 404
 
 
 class Repass(Resource):

@@ -13,6 +13,8 @@ class StatisticsService():
             return int(CitizenServices.get_population_district(id))
         elif role == 4:
             return int(CitizenServices.get_population_ward(id))
+        elif role == 5:
+            return int(CitizenServices.get_population_group(id))
 
     @staticmethod
     def stat_sex(id, role):
@@ -24,6 +26,8 @@ class StatisticsService():
             return CitizenServices.get_stats_sex_district(id)
         elif role == 4:
             return CitizenServices.get_stats_sex_ward(id)
+        elif role == 5:
+            return CitizenServices.get_stats_sex_group(id)
 
     @staticmethod
     def stat_edu(id, role):
@@ -35,6 +39,8 @@ class StatisticsService():
             return CitizenServices.get_stats_edu_district(id)
         elif role == 4:
             return CitizenServices.get_stats_edu_ward(id)
+        elif role == 5:
+            return CitizenServices.get_stats_edu_district(id)
 
     @staticmethod
     def stat_marital(id, role):
@@ -46,6 +52,8 @@ class StatisticsService():
             return CitizenServices.get_marital_status_district(id)
         elif role == 4:
             return CitizenServices.get_marital_status_ward(id)
+        elif role == 5:
+            return CitizenServices.get_marital_status_group(id)
 
     @staticmethod
     def convert_to_dict_sex(arr):
@@ -70,3 +78,28 @@ class StatisticsService():
         for i in range(len(arr)):
             dict_out.update({arr[int(i)][0]: arr[int(i)][1]})
         return dict_out
+
+    @staticmethod
+    def check_valid_request(id_acc, id_req):
+        if len(id_req) <= len(id_acc):
+            return False
+        id_req_cut = id_req[0:len(id_acc)]
+        if id_req_cut != id_acc:
+            return False
+        return True
+
+    @staticmethod
+    def check_request_two_digit(id_req):
+        return len(id_req) % 2 == 0 and 8 >= len(id_req) >= 2
+
+    @staticmethod
+    def gen_index_request(id_req):
+        req_len = len(id_req)
+        if req_len == 2:
+            return 2
+        elif req_len == 4:
+            return 3
+        elif req_len == 6:
+            return 4
+        elif req_len == 8:
+            return 5

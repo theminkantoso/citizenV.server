@@ -135,13 +135,16 @@ class AccountManagementChange(Resource):
         password_modify = data['password']
         email_modify = data['email']
         is_locked_modify = data['isLocked']
-        try:
-            start_date_modify = datetime.strptime(data['StartDate'], '%Y-%m-%d').date()
-            # start_date_modify = data['StartDate']
-            end_date_modify = datetime.strptime(data['EndDate'], '%Y-%m-%d').date()
-            # end_date_modify = data['EndDate']
-        except:
-            return {'message': "invalid input"}, 400
+        start_date_modify = data['StartDate']
+        end_date_modify = data['EndDate']
+        if data['StartDate'] and data['EndDate']:
+            try:
+                start_date_modify = datetime.strptime(data['StartDate'], '%Y-%m-%d').date()
+                # start_date_modify = data['StartDate']
+                end_date_modify = datetime.strptime(data['EndDate'], '%Y-%m-%d').date()
+                # end_date_modify = data['EndDate']
+            except:
+                return {'message': "invalid input"}, 400
 
         # validate input
         data_ok = True

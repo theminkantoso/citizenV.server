@@ -10,7 +10,7 @@ from src.controller.residentialGroup import Group, Groups
 from src.controller.account_management import AccountManagement, AccountManagementChange
 from src.controller.citizen import Citizen, add_Citizen, all_Citizen
 from src.controller.progress import Progress, ProgressSpecific
-from src.controller.statistics import Statistics
+from src.controller.statistics import Statistics, StatisticsSpecific
 
 from src import services, controller
 
@@ -61,6 +61,7 @@ api.add_resource(ProgressSpecific, '/progress/<string:id>')
 
 # Statistics
 api.add_resource(Statistics, '/statistics')
+api.add_resource(StatisticsSpecific, '/statistics/<string:id>')
 
 # @controller.jwt_manager.token_in_blacklist_loader
 # def check_if_token_in_blacklist(decrypted_token):
