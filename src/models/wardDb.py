@@ -60,6 +60,10 @@ class WardDb(db.Model):
     def count_total(cls, id_district):
         return cls.query.filter_by(districtId=id_district).count()
 
+    @staticmethod
+    def find_ward_name(id):
+        return db.session.query(WardDb.wardName).filter_by(wardId=id).first()
+
     def save_to_db(self):
         db.session.add(self)
         db.session.commit()

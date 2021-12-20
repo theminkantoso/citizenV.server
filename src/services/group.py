@@ -89,3 +89,7 @@ class GroupServices:
     def list_ward_in_group(ward_id):
         groups = GroupDb.find_by_ward_id(ward_id)
         return groups
+
+    @staticmethod
+    def get_group_name(id):
+        return str(GroupDb.find_group_name(id)[0])

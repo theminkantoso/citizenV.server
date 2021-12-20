@@ -43,6 +43,10 @@ class GroupDb(db.Model):
     def find_by_ward_group_name(cls, ward_id, group_name):
         return cls.query.filter_by(wardId=ward_id, groupName=group_name).first()
 
+    @staticmethod
+    def find_group_name(id):
+        return db.session.query(GroupDb.groupName).filter_by(groupId=id).first()
+
     def save_to_db(self):
         db.session.add(self)
         db.session.commit()

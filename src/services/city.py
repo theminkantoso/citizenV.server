@@ -121,3 +121,7 @@ class CityServices:
         :return: query result
         """
         return CityDb.count_total()
+
+    @staticmethod
+    def get_city_name(id):
+        return str(CityDb.find_city_name(id)[0])

@@ -133,3 +133,7 @@ class DistrictServices:
         """
         return DistrictDb.count_total(id_province)
 
+    @staticmethod
+    def get_district_name(id):
+        return str(DistrictDb.find_district_name(id)[0])
+

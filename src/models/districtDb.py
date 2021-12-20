@@ -64,6 +64,10 @@ class DistrictDb(db.Model):
     def count_total(cls, id_province):
         return cls.query.filter_by(cityProvinceId=id_province).count()
 
+    @staticmethod
+    def find_district_name(id):
+        return db.session.query(DistrictDb.districtName).filter_by(districtId=id).first()
+
     def save_to_db(self):
         db.session.add(self)
         db.session.commit()

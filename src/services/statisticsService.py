@@ -1,4 +1,8 @@
 from src.services.citizen import CitizenServices
+from src.services.city import CityServices
+from src.services.district import DistrictServices
+from src.services.ward import WardServices
+from src.services.group import GroupServices
 
 
 class StatisticsService():
@@ -54,6 +58,17 @@ class StatisticsService():
             return CitizenServices.get_marital_status_ward(id)
         elif role == 5:
             return CitizenServices.get_marital_status_group(id)
+
+    @staticmethod
+    def get_name(id, role):
+        if role == 2:
+            return CityServices.get_city_name(id)
+        elif role == 3:
+            return DistrictServices.get_district_name(id)
+        elif role == 4:
+            return WardServices.get_ward_name(id)
+        elif role == 5:
+            return GroupServices.get_group_name(id)
 
     @staticmethod
     def convert_to_dict_sex(arr):
