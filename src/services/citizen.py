@@ -192,3 +192,83 @@ class CitizenServices:
         elif len(id_acc) == 8:  # B2
             citizens = CitizenDb.find_all_citizen_in_group(id_acc)
             return citizens
+
+    @staticmethod
+    def get_population_entire():
+        return CitizenDb.get_population_entire()
+
+    @staticmethod
+    def get_population_city(id):
+        return CitizenDb.get_population_city(id)
+
+    @staticmethod
+    def get_population_district(id):
+        return CitizenDb.get_population_district(id)
+
+    @staticmethod
+    def get_population_ward(id):
+        return CitizenDb.get_population_ward(id)
+
+    @staticmethod
+    def get_population_group(id):
+        return CitizenDb.get_population_group(id)
+
+    @staticmethod
+    def get_stats_sex_entire():
+        return CitizenDb.get_stats_sex_entire()
+
+    @staticmethod
+    def get_stats_sex_city(id):
+        return CitizenDb.get_stats_sex_city(id)
+
+    @staticmethod
+    def get_stats_sex_district(id):
+        return CitizenDb.get_stats_sex_district(id)
+
+    @staticmethod
+    def get_stats_sex_ward(id):
+        return CitizenDb.get_stats_sex_ward(id)
+
+    @staticmethod
+    def get_stats_sex_group(id):
+        return CitizenDb.get_stats_sex_group(id)
+
+    @staticmethod
+    def get_stats_edu_entire():
+        return CitizenDb.get_stats_edu_entire()
+
+    @staticmethod
+    def get_stats_edu_city(id):
+        return CitizenDb.get_stats_edu_city(id)
+
+    @staticmethod
+    def get_stats_edu_district(id):
+        return CitizenDb.get_stats_edu_district(id)
+
+    @staticmethod
+    def get_stats_edu_ward(id):
+        return CitizenDb.get_stats_edu_ward(id)
+
+    @staticmethod
+    def get_stats_edu_group(id):
+        return CitizenDb.get_stats_edu_district(id)
+
+    @staticmethod
+    def get_marital_status_entire():
+        return CitizenDb.get_marital_status_entire()
+
+    @staticmethod
+    def get_stats_edu_city(id):
+        return CitizenDb.get_stats_edu_city(id)
+
+    @staticmethod
+    def get_marital_status_district(id):
+        return CitizenDb.get_marital_status_district(id)
+
+    @staticmethod
+    def get_marital_status_ward(id):
+        return CitizenDb.get_marital_status_ward(id)
+
+    @staticmethod
+    def get_marital_status_group(id):
+        return CitizenDb.get_marital_status_group(id)
