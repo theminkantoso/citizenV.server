@@ -3,9 +3,9 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Dec 19, 2021 at 03:42 PM
+-- Generation Time: Dec 20, 2021 at 10:24 AM
 -- Server version: 10.4.22-MariaDB
--- PHP Version: 8.0.13
+-- PHP Version: 8.1.0
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -20,6 +20,8 @@ SET time_zone = "+00:00";
 --
 -- Database: `citizenv`
 --
+CREATE DATABASE IF NOT EXISTS `citizenv` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
+USE `citizenv`;
 
 -- --------------------------------------------------------
 
@@ -27,6 +29,7 @@ SET time_zone = "+00:00";
 -- Table structure for table `account`
 --
 
+DROP TABLE IF EXISTS `account`;
 CREATE TABLE `account` (
   `accountId` varchar(100) NOT NULL,
   `password` varchar(10000) NOT NULL,
@@ -44,12 +47,13 @@ CREATE TABLE `account` (
 -- Table structure for table `citizen`
 --
 
+DROP TABLE IF EXISTS `citizen`;
 CREATE TABLE `citizen` (
   `CCCD` varchar(12) NOT NULL,
   `name` varchar(50) DEFAULT NULL,
   `DOB` date NOT NULL,
   `sex` enum('Nam','Nu') NOT NULL,
-  `maritalStatus` varchar(50) NOT NULL,
+  `maritalStatus` enum('Chua ket hon','Da ket hon','Ly hon','') NOT NULL,
   `nation` varchar(50) NOT NULL,
   `religion` varchar(50) NOT NULL,
   `permanentResidence` varchar(100) DEFAULT NULL,
@@ -68,6 +72,7 @@ CREATE TABLE `citizen` (
 -- Table structure for table `cityprovince`
 --
 
+DROP TABLE IF EXISTS `cityprovince`;
 CREATE TABLE `cityprovince` (
   `cityProvinceId` varchar(2) NOT NULL,
   `cityProvinceName` varchar(30) NOT NULL,
@@ -80,6 +85,7 @@ CREATE TABLE `cityprovince` (
 -- Table structure for table `district`
 --
 
+DROP TABLE IF EXISTS `district`;
 CREATE TABLE `district` (
   `districtId` varchar(4) NOT NULL,
   `districtName` varchar(30) NOT NULL,
@@ -90,6 +96,7 @@ CREATE TABLE `district` (
 --
 -- Triggers `district`
 --
+DROP TRIGGER IF EXISTS `updateCompletedDistrict`;
 DELIMITER $$
 CREATE TRIGGER `updateCompletedDistrict` AFTER UPDATE ON `district` FOR EACH ROW BEGIN 
 	DECLARE countCompleted INT DEFAULT 0;
@@ -111,6 +118,7 @@ DELIMITER ;
 -- Table structure for table `residentialgroup`
 --
 
+DROP TABLE IF EXISTS `residentialgroup`;
 CREATE TABLE `residentialgroup` (
   `groupId` varchar(8) NOT NULL,
   `groupName` varchar(30) NOT NULL,
@@ -123,6 +131,7 @@ CREATE TABLE `residentialgroup` (
 -- Table structure for table `revoked_tokens`
 --
 
+DROP TABLE IF EXISTS `revoked_tokens`;
 CREATE TABLE `revoked_tokens` (
   `id` int(11) NOT NULL,
   `jti` varchar(120) NOT NULL
@@ -134,6 +143,7 @@ CREATE TABLE `revoked_tokens` (
 -- Table structure for table `ward`
 --
 
+DROP TABLE IF EXISTS `ward`;
 CREATE TABLE `ward` (
   `wardId` varchar(6) NOT NULL,
   `wardName` varchar(30) NOT NULL,
@@ -144,6 +154,7 @@ CREATE TABLE `ward` (
 --
 -- Triggers `ward`
 --
+DROP TRIGGER IF EXISTS `updateCompletedWard`;
 DELIMITER $$
 CREATE TRIGGER `updateCompletedWard` AFTER UPDATE ON `ward` FOR EACH ROW BEGIN 
 	DECLARE countCompleted INT DEFAULT 0;
