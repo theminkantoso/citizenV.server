@@ -73,7 +73,6 @@ class StatisticsService():
     @staticmethod
     def convert_to_dict_sex(arr):
         dict_out = {"Nam": 0, "Nu": 0}
-        print(arr[0][0], arr[0][1])
         for i in range(len(arr)):
             dict_out.update({arr[int(i)][0]: arr[int(i)][1]})
         return dict_out
