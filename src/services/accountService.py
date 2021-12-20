@@ -21,7 +21,7 @@ class AccountService:
     @staticmethod
     def validate_input_id_pass(id, password):
         regex_id = '^[0-9]*$'
-        if not validate_regex(id, regex_id) or not password.isalnum() or len(id) % 2 != 0:
+        if not validate_regex(id, regex_id) or not password.isalnum() or len(id) == 0:
             return False
         return True
 
