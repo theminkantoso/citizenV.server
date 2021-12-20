@@ -41,7 +41,7 @@ class StatisticsService():
         if id == 'A1' and role == 1:
             return CitizenServices.get_marital_status_entire()
         elif role == 2:
-            return CitizenServices.get_stats_edu_city(id)
+            return CitizenServices.get_marital_status_city(id)
         elif role == 3:
             return CitizenServices.get_marital_status_district(id)
         elif role == 4:

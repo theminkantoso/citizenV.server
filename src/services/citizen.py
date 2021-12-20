@@ -258,8 +258,8 @@ class CitizenServices:
         return CitizenDb.get_marital_status_entire()
 
     @staticmethod
-    def get_stats_edu_city(id):
-        return CitizenDb.get_stats_edu_city(id)
+    def get_marital_status_city(id):
+        return CitizenDb.get_marital_status_city(id)
 
     @staticmethod
     def get_marital_status_district(id):
