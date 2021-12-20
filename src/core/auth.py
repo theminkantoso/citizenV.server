@@ -29,6 +29,7 @@ def authorized_required(roles):
                 for x in roles:
                     if user.roleId == x:
                         ok = True
+                        break
                 if not ok:
                     raise Exception()
             except:

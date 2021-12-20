@@ -91,6 +91,17 @@ class CitizenDb(db.Model):
         query = db.session.query(db.func.count(CitizenDb.CCCD)).filter_by(groupId=group_id)
         return query.scalar()
 
+    @classmethod
+    def find_all_citizen_by_list_area(cls, areas, len_areaId):
+        if len_areaId == 2:
+            return cls.query.filter(CitizenDb.cityProvinceId.in_(areas)).all()
+        elif len_areaId == 4:
+            return cls.query.filter(CitizenDb.districtId.in_(areas)).all()
+        elif len_areaId == 6:
+            return cls.query.filter(CitizenDb.wardId.in_(areas)).all()
+        elif len_areaId == 8:
+            return cls.query.filter(CitizenDb.groupId.in_(areas)).all()
+
     def save_to_db(self):
         db.session.add(self)
         db.session.commit()

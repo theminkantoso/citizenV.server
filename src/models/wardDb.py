@@ -1,4 +1,5 @@
 from src.database import db
+from src.models.accountDb import AccountDb
 
 
 class WardDb(db.Model):
@@ -58,6 +59,12 @@ class WardDb(db.Model):
     @classmethod
     def count_total(cls, id_district):
         return cls.query.filter_by(districtId=id_district).count()
+
+    @classmethod
+    def join_areaId(cls):
+        query = db.session.query(WardDb, AccountDb) \
+            .outerjoin(AccountDb, AccountDb.accountId == WardDb.wardId).all()
+        return query
 
     def save_to_db(self):
         db.session.add(self)

@@ -1,4 +1,6 @@
 from src.database import db
+from src.models.accountDb import AccountDb
+from src.models.citizenDb import CitizenDb
 
 
 class CityDb(db.Model):
@@ -26,6 +28,37 @@ class CityDb(db.Model):
     @classmethod
     def find_by_id(cls, id):
         return cls.query.filter_by(cityProvinceId=id).first()
+
+    @staticmethod
+    def find_join_account():
+        return db.session.query(CityDb.cityProvinceId, CityDb.cityProvinceName, CityDb.completed, AccountDb.endTime). \
+            join(AccountDb).filter(CityDb.cityProvinceId == AccountDb.accountId).all()
+        # return db.session.query(CityDb.cityProvinceName, CitizenDb.name).join(CitizenDb).\
+        #     filter(CityDb.cityProvinceId == CitizenDb.cityProvinceId).filter(CityDb.cityProvinceId == 29).all()
+
+    @staticmethod
+    def find_join_account_specific(id):
+        return db.session.query(CityDb.cityProvinceId, CityDb.cityProvinceName, CityDb.completed, AccountDb.endTime). \
+            join(AccountDb).filter(CityDb.cityProvinceId == AccountDb.accountId). \
+            filter(CityDb.cityProvinceId == id).first()
+
+    @classmethod
+    def count_completed(cls):
+        return cls.query.filter_by(completed=True).count()
+
+    @classmethod
+    def count_total(cls):
+        return cls.query.count()
+
+    @classmethod
+    def find_all(cls):
+        return cls.query.all()
+
+    @classmethod
+    def join_areaId(cls):
+        query = db.session.query(CityDb, AccountDb). \
+            outerjoin(AccountDb, AccountDb.accountId == CityDb.cityProvinceId).all()
+        return query
 
     def save_to_db(self):
         db.session.add(self)

@@ -87,5 +87,5 @@ class Cities(Resource):
     @jwt_required()
     @authorized_required(roles=[1])  # tất cả A1 đều có quyền
     def get(self):
-        cities = CityServices.list_city()
+        cities = CityServices.list_city_db()
         return {'Areas': list(map(lambda x: x.json(), cities))}, 200

@@ -86,6 +86,6 @@ class GroupServices:
 
     # List thôn/bản/tdp
     @staticmethod
-    def list_ward_in_group(ward_id):
+    def list_group_in_ward(ward_id):
         groups = GroupDb.find_by_ward_id(ward_id)
         return groups

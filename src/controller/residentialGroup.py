@@ -107,5 +107,9 @@ class Groups(Resource):
     @authorized_required(roles=[4])  # B1
     def get(self):
         id_acc = get_jwt_identity()
-        group = GroupServices.list_ward_in_group(id_acc)
-        return {"Areas": list(map(lambda x: x.json(), group))}, 200
+        groups = GroupServices.list_group_in_ward(id_acc)
+        k = []
+        for group in groups:
+            sum_citizen = GroupServices.sum_citizen_in_group(group.groupId)
+            k.append(group.json1(sum_citizen))
+        return {"Areas": k}, 200

@@ -1,4 +1,5 @@
 from src.database import db
+from src.models.accountDb import AccountDb
 
 
 class GroupDb(db.Model):
@@ -23,6 +24,7 @@ class GroupDb(db.Model):
         return {
             "groupId": self.groupId,
             "groupName": self.groupName,
+            "wardId": self.wardId,
             "sumCitizen": sum_citizen
         }
 
@@ -41,6 +43,12 @@ class GroupDb(db.Model):
     @classmethod
     def find_by_ward_group_name(cls, ward_id, group_name):
         return cls.query.filter_by(wardId=ward_id, groupName=group_name).first()
+
+    @classmethod
+    def join_areaId(cls):
+        query = db.session.query(GroupDb, AccountDb) \
+            .outerjoin(AccountDb, AccountDb.accountId == GroupDb.groupId).all()
+        return query
 
     def save_to_db(self):
         db.session.add(self)

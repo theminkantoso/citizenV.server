@@ -4,16 +4,13 @@ from flask_jwt_extended import get_jwt
 
 from src.models.citizenDb import CitizenDb
 from src.models.accountDb import AccountDb
-from src.models.cityProvinceDb import CityDb
-from src.models.districtDb import DistrictDb
-from src.models.wardDb import WardDb
-from src.models.residentialGroupDb import GroupDb
 import re
 
 # regex_validate
 regex_group_id = '^(0[1-9]|[1-9][0-9]){4}$'
 regex_cccd = '[0-9]{12}'
 regex_edu_level = '^([0-9]|([1][012]))[/]([9]|([1][2]))$'
+regex_area_id = '^[0-9]*$'
 
 
 # so sánh chuỗi với chuỗi regex
@@ -61,6 +58,8 @@ def check_dob(dob):
     elif nam == today.year and thang == today.month and ngay > today.day:
         return False
     return True
+
+
 
 
 class CitizenServices:
@@ -127,16 +126,10 @@ class CitizenServices:
         id_city = id_acc[0:2]
         id_district = id_acc[0:4]
         id_ward = id_acc[0:6]
-        city_name = CityDb.find_by_id(id_city).cityProvinceName
-        dist_name = DistrictDb.find_by_id(id_district).districtName
-        ward_name = WardDb.find_by_id(id_ward).wardName
-        group_name = GroupDb.find_by_id(group_id).groupName
-
-        permanent_residence = group_name + ',' + ward_name + ',' + dist_name + ',' + city_name
 
         citizen = CitizenDb(CCCD=data["CCCD"], name=data["name"], DOB=data["DOB"], sex=data["sex"],
                             maritalStatus=data["maritalStatus"], nation=data["nation"], religion=data["religion"],
-                            permanentResidence=permanent_residence, temporaryResidence=data["temporaryResidence"],
+                            permanentResidence=data["permanentResidence"], temporaryResidence=data["temporaryResidence"],
                             educationalLevel=data["educationalLevel"], job=data["job"], cityProvinceId=id_city,
                             districtId=id_district, wardId=id_ward, groupId=group_id)
         try:
@@ -178,9 +171,9 @@ class CitizenServices:
 
     # Tra cứu tất cả người dân theo id_acc
     @staticmethod
-    def all_citizen_by_acc(id_acc: str):
-        # A1
+    def all_citizen(id_acc: str):
         role = get_jwt()['role']
+        # A1
         if role == 1:
             citizens = CitizenDb.find_all_citizen()
             return citizens
@@ -196,3 +189,22 @@ class CitizenServices:
         elif role == 5:  # B2
             citizens = CitizenDb.find_all_citizen_in_group(id_acc)
             return citizens
+
+    # Tra cứu theo nóm
+    @staticmethod
+    def all_citizen_by_list_areas(role: int, areas):
+        len_areaId = len(areas[0])
+        # Validate : tất cả các id đều là số , chia  hết cho 2 , độ dài tất cả các id đầu vào bằng nhau
+        for area in areas:
+            if (not validate_regex(area, regex_area_id)) or len(area) % 2 != 0 or len(area) != len_areaId:
+                return 1
+        # A1 chỉ cho
+        if (role == 1 and len_areaId in [2, 4, 6, 8]) \
+                or (role == 2 and len_areaId in [4, 6, 8])\
+                or (role == 3 and len_areaId in [6, 8])\
+                or (role == 4 and len_areaId == 8):
+            return CitizenDb.find_all_citizen_by_list_area(areas, len_areaId)
+        return []
+
+
+

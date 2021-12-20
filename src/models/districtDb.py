@@ -1,4 +1,5 @@
 from src.database import db
+from src.models.accountDb import AccountDb
 
 
 class DistrictDb(db.Model):
@@ -39,8 +40,8 @@ class DistrictDb(db.Model):
         return cls.query.filter_by(cityProvinceId=Id).all()
 
     @classmethod
-    def find_by_id_like(cls, id):
-        search = "{}%".format(id)
+    def find_by_id_like(cls, Id):
+        search = "{}%".format(Id)
         return cls.query.filter(cls.districtId.like(search)).all()
 
     @staticmethod
@@ -63,6 +64,12 @@ class DistrictDb(db.Model):
     @classmethod
     def count_total(cls, id_province):
         return cls.query.filter_by(cityProvinceId=id_province).count()
+
+    @classmethod
+    def join_areaId(cls):
+        query = db.session.query(DistrictDb, AccountDb). \
+            outerjoin(AccountDb, AccountDb.accountId == DistrictDb.districtId).all()
+        return query
 
     def save_to_db(self):
         db.session.add(self)

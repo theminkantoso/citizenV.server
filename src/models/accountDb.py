@@ -1,8 +1,4 @@
 from datetime import date
-from src.models.cityProvinceDb import CityDb
-from src.models.districtDb import DistrictDb
-from src.models.wardDb import WardDb
-from src.models.residentialGroupDb import GroupDb
 from src.database import db
 
 
@@ -93,8 +89,8 @@ class AccountDb(db.Model):
     @classmethod
     def lock_managed_account_hierachy(cls, accId):
         search = "{}%".format(accId)
-        cls.query.filter(cls.managerAccount.like(search)).\
-            update({"isLocked": 1, "startDate": None, "endDate": None}, synchronize_session='fetch')
+        cls.query.filter(cls.managerAccount.like(search)). \
+            update({"isLocked": 1, "startTime": None, "endTime": None}, synchronize_session='fetch')
         db.session.commit()
 
     @classmethod
@@ -103,33 +99,21 @@ class AccountDb(db.Model):
         cls.query.filter(cls.managerAccount.like(search)).delete(synchronize_session='fetch')
         db.session.commit()
 
+    @staticmethod
+    def get_email_user_manager(id_manager, id_in):
+        return db.session.query(AccountDb.email).filter(AccountDb.managerAccount == id_manager). \
+            filter(AccountDb.accountId == id_in).first()
+
     # @classmethod
     # def delete_managed_account_hierachy_2(cls, accId):
     #     search = "{}%".format(accId)
-    #     print(cls.query.filter(cls.managerAccount.like(search)).count())
+    #     print(cls.query.filter(cls.managerAccount.like(search)).count().group_by(accId))
 
     @classmethod
     def delete_account_by_delete_area(cls, areaId):
         search = "{}%".format(areaId)
         cls.query.filter(cls.accountId.like(search)).delete(synchronize_session='fetch')
         db.session.commit()
-
-    @classmethod
-    def join_areaId(cls, roleId):
-        query = None
-        if roleId == 1:
-            query = db.session.query(CityDb, AccountDb). \
-                outerjoin(AccountDb, AccountDb.accountId == CityDb.cityProvinceId).all()
-        elif roleId == 2:
-            query = db.session.query(DistrictDb, AccountDb) \
-                .outerjoin(AccountDb, AccountDb.accountId == DistrictDb.districtId).all()
-        elif roleId == 3:
-            query = db.session.query(WardDb, AccountDb) \
-                .outerjoin(AccountDb, AccountDb.accountId == WardDb.wardId).all()
-        elif roleId == 4:
-            query = db.session.query(GroupDb, AccountDb) \
-                .outerjoin(AccountDb, AccountDb.accountId == GroupDb.groupId).all()
-        return query
 
     def save_to_db(self):
         db.session.add(self)

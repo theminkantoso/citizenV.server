@@ -6,42 +6,7 @@ from src.services import my_mail
 from flask import jsonify
 from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity, get_jwt
 from flask_mail import Message
-from src.models.cityProvinceDb import CityDb
-from src.models.districtDb import DistrictDb
-from src.models.wardDb import WardDb
-from src.models.residentialGroupDb import GroupDb
-
-import re
-import random
-import string
-
-
-def random_string():
-    """
-    Generate a random password
-    :return: a random string with 6 letters and 6 numbers
-    """
-    str1 = ''.join((random.choice(string.ascii_letters) for x in range(6)))
-    str1 += ''.join((random.choice(string.digits) for x in range(6)))
-
-    sam_list = list(str1)
-    random.shuffle(sam_list)
-    final_string = ''.join(sam_list)
-    return final_string
-
-
-def validate_regex(input_string, regex):
-    """
-    Validate input string based on a given regex
-    :param input_string: string needs to check
-    :param regex: regex pattern
-    :return: True if satisfied
-    """
-    pattern = re.compile(regex)
-    if pattern.fullmatch(input_string):
-        return True
-    return False
-
+from src.services.accountService import AccountService
 
 class Account(Resource):
     parser = reqparse.RequestParser()
@@ -52,15 +17,26 @@ class Account(Resource):
         pass
         # args = request.args
         # print(args['a'])  # For debugging
+        # a = CityDb.find_join_account()
+        # k = []
+        # for i in range(len(a)):
+        #     print(type(CityDb.json2(a[i])))
+        #     k.append(CityDb.json2(a[i]))
+        # print(k)
+        # return {"a": k}, 200
+        # print(CityDb.count_total(), CityDb.count_completed())
+        # print(WardDb.count_completed('2901'), WardDb.count_total('2901'))
+        # print(DistrictDb.count_completed('29'), DistrictDb.count_total('29'))
+        # ak = AccountDb.get_email_user_manager('00','0003')
+        # print(ak[0])
 
     def post(self):
         data = Account.parser.parse_args()
         id = data['id']
         password = data['password']
 
-        # validate
-        regex_id = '^[0-9]*$'
-        if not validate_regex(id, regex_id) or not password.isalnum():
+        # validate input
+        if not AccountService.validate_input_id_pass(id, password):
             return {'message': "Invalid id or password"}, 400
 
         user = AccountDb.find_by_id(id)
@@ -68,29 +44,8 @@ class Account(Resource):
         if user is None:
             return {'message': "Incorrect id or password"}, 401
 
-        name = ""
-        if user.roleId == 0:
-            name = "Admin"
-        elif user.roleId == 1:
-            name = "A1"
-        elif user.roleId == 2:
-            name = CityDb.find_by_id(user.accountId).cityProvinceName
-        elif user.roleId == 3:
-            dist = DistrictDb.find_by_id(user.accountId).districtName
-            city = CityDb.find_by_id(user.accountId[0:2]).cityProvinceName
-            name = dist + ',' + city
-        elif user.roleId == 4:
-            ward = WardDb.find_by_id(user.accountId).wardName
-            dist = DistrictDb.find_by_id(user.accountId[0:4]).districtName
-            city = CityDb.find_by_id(user.accountId[0:2]).cityProvinceName
-            name = ward + ',' + dist + ',' + city
+        name = AccountService.area_name_of_acc(user)
 
-        elif user.roleId == 5:
-            group = GroupDb.find_by_id(user.accountId).groupName
-            ward = WardDb.find_by_id(user.accountId[0:6]).wardName
-            dist = DistrictDb.find_by_id(user.accountId[0:4]).districtName
-            city = CityDb.find_by_id(user.accountId[0:2]).cityProvinceName
-            name = group + ',' + ward + ',' + dist + ',' + city
         if check_password_hash(user.password, password):
             # additional_claim = {"role": user.roleId, "isLocked": user.isLocked}
             additional_claim = {"role": user.roleId, "isLocked": user.isLocked, "name": name}
@@ -99,6 +54,11 @@ class Account(Resource):
             # update khóa tài khoản
             # do server không phải chạy 24/24 nên khi đăng nhập server sẽ kiểm tra có khóa tài khoản không
             # kiểm tra thời gian hiện tại với thời gian tài khoản được thêm sửa xóa
+            # Update lock CRUD permission
+            # Since server cannot run continuously, we use alternative solution via check the period of the
+            # logged in account when logging in.
+            # This means the system does not lock CRUD permission automatically, but check when logging in and lock
+            # if necessary.
             today = date.today()
             if user.startDate is not None and user.endDate is not None:
                 if user.startDate <= today <= user.endDate:
@@ -106,7 +66,7 @@ class Account(Resource):
                     user.commit_to_db()
                 else:
                     user.isLocked = True
-                    # khóa tài khoản con
+                    # lock children accounts
                     try:
                         AccountDb.lock_managed_account_hierachy(id)
                     except Exception as e:
@@ -162,25 +122,23 @@ class Repass(Resource):
         id = data['id']
         email = data['email']
 
-        # validate
-        regex_id = '^[0-9]*$'
-        regex_mail = r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b'
-        if not validate_regex(input_string=email.lower(), regex=regex_mail) \
-                or not validate_regex(input_string=id, regex=regex_id):
+        # validate input
+        if not AccountService.validate_input_id_email(id, email):
             return {'message': "Check your id or email"}, 400
 
         get_user = AccountDb.find_by_email(email, id)
         if get_user is None:
             return {'message': "No account with this email and id"}, 400
         try:
-            new_password = random_string()
-            # gửi mail mật khẩu mới cho người dùng
+            new_password = AccountService.random_string()
+            # send new password to user
             get_user.password = generate_password_hash(new_password, method='sha256')
             msg = Message('New Password Recovery', sender='phucpb.hrt@gmail.com', recipients=[email.lower()])
             msg.body = 'Your new password is {}'.format(new_password)
             my_mail.send(msg)
             get_user.commit_to_db()
-        except:
+        except Exception as e:
+            print(e)
             return {'message': "Unable to send confirmation mail"}, 400
         return {'message': "New password sent to your mailbox!"}, 200
 
@@ -196,8 +154,8 @@ class ChangePass(Resource):
         password = data['password']
         new_password = data['newpassword']
 
-        # validate
-        if not password.isalnum() or not new_password.isalnum() or len(new_password) == 0:
+        # validate input
+        if not AccountService.validate_input_pass_newpass(password, new_password):
             return {'message': "Wrong input format"}, 400
 
         id = get_jwt_identity()

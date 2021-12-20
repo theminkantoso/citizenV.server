@@ -1,4 +1,4 @@
-from flask_jwt_extended import jwt_required, get_jwt_identity
+from flask_jwt_extended import jwt_required, get_jwt_identity, get_jwt
 from src.core.auth import crud_permission_required, authorized_required
 from flask_restful import Resource, reqparse
 from src.services.citizen import CitizenServices
@@ -13,6 +13,7 @@ class Citizen(Resource):
     parser.add_argument("maritalStatus", type=str)
     parser.add_argument("nation", type=str)
     parser.add_argument("religion", type=str)
+    parser.add_argument("permanentResidence", type=str)
     parser.add_argument("temporaryResidence", type=str)
     parser.add_argument("educationalLevel", type=str)
     parser.add_argument("job", type=str)
@@ -96,15 +97,16 @@ class add_Citizen(Resource):
     parser = reqparse.RequestParser()
     parser.add_argument("CCCD", type=str)  # CCCD = citizenId
     parser.add_argument("name", type=str)
-    parser.add_argument("CCCD", type=str)
     parser.add_argument("DOB", type=str)
     parser.add_argument("sex", type=str)
     parser.add_argument("maritalStatus", type=str)
     parser.add_argument("nation", type=str)
     parser.add_argument("religion", type=str)
+    parser.add_argument("permanentResidence", type=str)
     parser.add_argument("temporaryResidence", type=str)
     parser.add_argument("educationalLevel", type=str)
     parser.add_argument("job", type=str)
+    parser.add_argument('CCCD', type=str)
 
     # Nhập liệu 1 citizen
     @jwt_required()
@@ -155,5 +157,22 @@ class all_Citizen(Resource):
     @authorized_required(roles=[1, 2, 3, 4, 5])
     def get(self):
         id_acc = get_jwt_identity()
-        citizens = CitizenServices.all_citizen_by_acc(id_acc)
+        citizens = CitizenServices.all_citizen(id_acc)
         return {'Citizens': list(map(lambda x: x.json(), citizens))}
+
+    @jwt_required()
+    @authorized_required(roles=[1, 2, 3, 4])
+    def post(self):
+        parser = reqparse.RequestParser()
+        parser.add_argument("areas", action='append')
+        acc = get_jwt()
+        role = acc['role']
+        data = parser.parse_args()
+        citizens = CitizenServices.all_citizen_by_list_areas(role, data["areas"])
+        if citizens == 1:
+            return {'message': "Invalid id in list"}, 400
+        return {'Citizens': list(map(lambda x: x.json(), citizens))}
+
+
+
+

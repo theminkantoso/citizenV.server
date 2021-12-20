@@ -1,9 +1,5 @@
 from flask_restful import Resource, reqparse
 from src.models.accountDb import AccountDb
-# from src.models.cityProvinceDb import CityDb
-# from src.models.districtDb import DistrictDb
-# from src.models.wardDb import WardDb
-# from src.models.residentialGroupDb import GroupDb
 from src.services.accountService import AccountService
 from src.core.auth import crud_permission_required, authorized_required
 from werkzeug.security import generate_password_hash
@@ -52,54 +48,12 @@ class AccountManagement(Resource):
     @jwt_required()
     @authorized_required(roles=[0, 1, 2, 3, 4])
     def get(self):
-        # id_acc = get_jwt_identity()
-        # acc = AccountDb.find_by_id(id_acc)
-        # managed_accounts = AccountDb.find_managed_account_by_id(id_acc)  # Tất cả người dùng dưới quyền quản lý
-        # if managed_accounts:
-        #     k = []
-        #     if acc.roleId == 0:  # Tất cả người dùng A1
-        #         return {'Accounts': list(map(lambda x: x.json(), managed_accounts))}, 200
-        #     # Cho A1, A2, A3, B1
-        #     acc_join = AccountDb.join_areaId(acc.roleId)   # join để lấy id của các vùng
-        #     for i in range(len(acc_join)):
-        #         areaId = ""
-        #         if acc.roleId == 1:
-        #             areaId = acc_join[i][0].cityProvinceId  # Id của các thành phố
-        #         elif acc.roleId == 2:
-        #             areaId = acc_join[i][0].districtId  # Id của các quận/huyện
-        #         elif acc.roleId == 3:
-        #             areaId = acc_join[i][0].wardId  # Id của các xã/phường
-        #         elif acc.roleId == 4:
-        #             areaId = acc_join[i][0].groupId  # Id của các thôn/bản/tdp
-        #         k.append(AccountDb.json1(acc_join[i][1], areaId))
-        #     return {"areas": k}, 200
-        # return {}, 200
         id_acc = get_jwt_identity()
         acc = get_jwt()
         managed_accounts = AccountDb.find_managed_account_by_id(id_acc)  # Tất cả người dùng dưới quyền quản lý
         if managed_accounts:
-            k = []
-            if acc["role"] == 0:  # Tất cả người dùng A1
-                return {'Accounts': list(map(lambda x: x.json(), managed_accounts))}, 200
-            # Cho A1, A2, A3, B1
-            acc_join = AccountDb.join_areaId(acc["role"])   # join để lấy id của các vùng
-            for i in range(len(acc_join)):
-                areaId = ""
-                if acc["role"] == 1:
-                    areaId = acc_join[i][0].cityProvinceId  # Id của các thành phố
-                elif acc["role"] == 2:
-                    areaId = acc_join[i][0].districtId  # Id của các quận/huyện
-                elif acc["role"] == 3:
-                    areaId = acc_join[i][0].wardId  # Id của các xã/phường
-                elif acc["role"] == 4:
-                    areaId = acc_join[i][0].groupId  # Id của các thôn/bản/tdp
-                len_areaId = len(areaId)
-                if areaId[0:len_areaId-2] == id_acc:
-                    k.append(AccountDb.json1(acc_join[i][1], areaId))
-            return {"areas": k}, 200
-        managed_accounts = AccountDb.find_managed_account_by_id(id_acc)
-        if managed_accounts:
-            return {'Accounts': list(map(lambda x: x.json(), managed_accounts))}, 200
+            accounts = AccountService.join_area_account(acc, managed_accounts, id_acc)
+            return {"Accounts": accounts}, 200
         return {}, 200
 
     @jwt_required()
@@ -112,13 +66,11 @@ class AccountManagement(Resource):
         id_create = data['id']
         email_create = data['email']
 
-        # validate
-        regex_id = '^[0-9]*$'
-        regex_mail = r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b'
-        if not validate_regex(id_create, regex_id) or not validate_regex(email_create, regex_mail):
+        # validate input
+        if not AccountService.validate_input_id_email_create(id_create, email_create):
             return {'message': "Invalid input format"}, 400
 
-        # check chống tạo tk rác, tài khoản không tương ứng với một mã tỉnh thành quận huyện nào đó
+        # prevent creating a trash account where id does not match any location
         id_create_len = len(id_create)
         # NEED TO REMOVE THESE COMMENT LATER
         # if id_create_len == 2:
@@ -134,16 +86,17 @@ class AccountManagement(Resource):
         #     return {'message': "This is a trash account"}, 400
 
         # check tk phải có id đúng format <tkcha> + <2 ký tự>
-        if id_acc != id_create[0:id_create_len - 2]:
+        if not AccountService.check_format_id_plus_2(id_acc, id_create, id_create_len):
             return {'message': "Wrong format <id> plus two digit"}, 400
 
-        # chống tạo tài khoản trùng
-        exist_check = AccountDb.find_by_id(accId=id_create)
-        if exist_check:
+        # prevent duplicate account
+        if not AccountService.find_duplicate(id_create):
             return {'message': "Account already existed"}, 400
 
         try:
-            password = random_string()
+            password = AccountService.random_string()
+
+            # send email to user, including id and default password
             msg = Message('Your account information', sender='phucpb.hrt@gmail.com', recipients=[email_create.lower()])
             msg.body = 'Your id is {f_id} and your password is {f_pass}'.format(f_id=id_create, f_pass=password)
             my_mail.send(msg)
@@ -196,23 +149,27 @@ class AccountManagementChange(Resource):
         except:
             return {'message': "invalid input"}, 400
 
-        # validate
+        # validate input
         data_ok = True
-        if password_modify is not None:
-            data_ok = AccountService.check_password(password_modify)
+        data_ok = AccountService.check_password(password_modify)
 
-        if email_modify is not None:
+        # ensure (!startDate AND !endDate) OR (startDate AND endDate)
+        if ((start_date_modify is not None and end_date_modify is None) or
+                (start_date_modify is None and end_date_modify is not None)):
             data_ok = AccountService.validate_email(email_modify)
 
         # ensure (!startDate AND !endDate) OR (startDate AND endDate)
         if ((start_date_modify is not None and end_date_modify is None) or
                 (start_date_modify is None and end_date_modify is not None)):
             data_ok = False
-        elif start_date_modify is not None and end_date_modify is not None:
-            if start_date_modify > end_date_modify:
-                data_ok = False
 
-        # hợp lệ thời gian khai báo với tài khoản cha
+        if not data_ok:
+            return {'message': "invalid input"}, 400
+
+        if start_date_modify is not None and end_date_modify is not None:
+            data_ok = AccountService.validate_period(start_date_modify, end_date_modify)
+
+        # ensure CRUD period satisfy with parent's account CRUD period
         parent_user = AccountDb.find_by_id(id_acc)
         if parent_user is None:
             return {'message': "something went wrong"}, 500
@@ -224,8 +181,9 @@ class AccountManagementChange(Resource):
                 data_ok = False
 
         if not data_ok:
-            return {'message': "invalid input"}, 400
+            return {'message': "Check your CRUD period again"}, 400
 
+        # prevent one user access other resources
         current_user = AccountDb.find_by_id(id_modify)
         if current_user is None:
             return {'message': "invalid input"}, 400
