@@ -46,3 +46,27 @@ class StatisticsService():
             return CitizenServices.get_marital_status_district(id)
         elif role == 4:
             return CitizenServices.get_marital_status_ward(id)
+
+    @staticmethod
+    def convert_to_dict_sex(arr):
+        dict_out = {"Nam": 0, "Nu": 0}
+        print(arr[0][0], arr[0][1])
+        for i in range(len(arr)):
+            dict_out.update({arr[int(i)][0]: arr[int(i)][1]})
+        return dict_out
+
+    @staticmethod
+    def convert_to_dict_edu(arr):
+        dict_out = {"0/10": 0, "1/10": 0, "2/10": 0, "3/10": 0, "4/10": 0, "5/10": 0, "6/10": 0, "7/10": 0, "8/10": 0,
+                    "9/10": 0, "10/10": 0, "0/12": 0, "1/12": 0, "2/12": 0, "3/12": 0, "4/12": 0, "5/12": 0, "6/12": 0,
+                    "7/12": 0, "8/12": 0, "9/12": 0, "10/12": 0, "11/12": 0, "12/12": 0}
+        for i in range(len(arr)):
+            dict_out.update({arr[int(i)][0]: arr[int(i)][1]})
+        return dict_out
+
+    @staticmethod
+    def convert_to_dict_marital(arr):
+        dict_out = {"Chua ket hon": 0, "Da ket hon": 0, "Ly hon": 0}
+        for i in range(len(arr)):
+            dict_out.update({arr[int(i)][0]: arr[int(i)][1]})
+        return dict_out

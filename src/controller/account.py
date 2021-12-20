@@ -31,7 +31,10 @@ class Account(Resource):
         #     k.append(CityDb.json2(a[i]))
         # print(k)
         # return {"a": k}, 200
-        # print(CitizenDb.get_stats_sex_entire())
+        ar = CitizenDb.get_stats_sex_entire()
+        a = {}
+        a.update({ar[0][0]: ar[0][1]})
+        print(a)
         # print(WardDb.count_completed('2901'), WardDb.count_total('2901'))
         # print(DistrictDb.count_completed('29'), DistrictDb.count_total('29'))
         # ak = AccountDb.get_email_user_manager('00','0003')

@@ -113,7 +113,6 @@ class CitizenDb(db.Model):
 
     @staticmethod
     def get_stats_sex_entire():
-        # return db.session.query(CitizenDb.sex, db.func.count()).group_by(CitizenDb.sex).filter_by(nation='Kinh').all()
         return db.session.query(CitizenDb.sex, db.func.count()).group_by(CitizenDb.sex).all()
 
     @staticmethod
