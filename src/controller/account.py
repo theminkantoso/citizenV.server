@@ -12,6 +12,8 @@ from src.models.districtDb import DistrictDb
 from src.models.wardDb import WardDb
 from src.models.residentialGroupDb import GroupDb
 
+from src.models.citizenDb import CitizenDb
+
 
 class Account(Resource):
     parser = reqparse.RequestParser()
@@ -29,7 +31,7 @@ class Account(Resource):
         #     k.append(CityDb.json2(a[i]))
         # print(k)
         # return {"a": k}, 200
-        # print(CityDb.count_total(), CityDb.count_completed())
+        # print(CitizenDb.get_stats_sex_entire())
         # print(WardDb.count_completed('2901'), WardDb.count_total('2901'))
         # print(DistrictDb.count_completed('29'), DistrictDb.count_total('29'))
         # ak = AccountDb.get_email_user_manager('00','0003')

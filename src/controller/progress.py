@@ -18,11 +18,11 @@ class Progress(Resource):
             location = ProgressServices.list_city_progress()
             count_complete = ProgressServices.count_completed_cities()
             count_total = ProgressServices.count_total_cities()
-        elif id_acc_len == 2:
+        elif id_acc_len == 2 or role == 2:
             location = ProgressServices.list_district_progress(id_acc)
             count_complete = ProgressServices.count_completed_districts(id_acc)
             count_total = ProgressServices.count_total_districts(id_acc)
-        elif id_acc_len == 4:
+        elif id_acc_len == 4 or role == 3:
             location = ProgressServices.list_ward_progress(id_acc)
             count_complete = ProgressServices.count_completed_wards(id_acc)
             count_total = ProgressServices.count_total_wards(id_acc)
@@ -55,7 +55,7 @@ class ProgressSpecific(Resource):
                 return ProgressServices.convert_to_json_progress_specific(location, count_complete, count_total), 200
             else:
                 return {"message": "No location like that or invalid input"}, 404
-        elif id_acc_len == 2:
+        elif id_acc_len == 2 or role == 2:
             location = ProgressServices.list_district_progress_specific(id_acc, id_request)
             count_complete = ProgressServices.count_completed_wards(id_request)
             count_total = ProgressServices.count_total_wards(id_request)
@@ -63,7 +63,7 @@ class ProgressSpecific(Resource):
                 return ProgressServices.convert_to_json_progress_specific(location, count_complete, count_total), 200
             else:
                 return {"message": "No location like that or invalid input"}, 404
-        elif id_acc_len == 4:
+        elif id_acc_len == 4 or role == 3:
             location = ProgressServices.list_ward_progress_specific(id_acc, id_request)
             return ProgressServices.convert_to_json_dict_progress(location)
         else:
