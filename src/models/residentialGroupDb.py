@@ -1,3 +1,5 @@
+from datetime import date
+
 from src.database import db
 from src.models.accountDb import AccountDb
 
@@ -20,11 +22,15 @@ class GroupDb(db.Model):
             "wardId": self.wardId
         }
 
-    def json1(self, sum_citizen):
+    def json1(self, sum_citizen, endTime):
+        if endTime is None:
+            endTime = ""
+        elif isinstance(endTime, date):
+            endTime = endTime.isoformat()
         return {
-            "groupId": self.groupId,
-            "groupName": self.groupName,
-            "wardId": self.wardId,
+            "id": self.groupId,
+            "name": self.groupName,
+            "endTime": endTime,
             "sumCitizen": sum_citizen
         }
 
@@ -49,6 +55,19 @@ class GroupDb(db.Model):
         query = db.session.query(GroupDb, AccountDb) \
             .outerjoin(AccountDb, AccountDb.accountId == GroupDb.groupId).all()
         return query
+
+    @classmethod
+    def find_join_account_specific(cls, id_acc, id_group):
+        return db.session.query(GroupDb.groupId, GroupDb.groupName,\
+                                AccountDb.endDate).select_from(GroupDb). \
+            join(AccountDb, GroupDb.groupId == AccountDb.accountId).filter(GroupDb.wardId == id_acc). \
+            filter(GroupDb.groupId == id_group).first()
+
+    @staticmethod
+    def find_join_account(id):
+        return db.session.query(GroupDb.groupId, GroupDb.groupName,
+                                AccountDb.endDate).select_from(GroupDb). \
+            join(AccountDb, GroupDb.groupId == AccountDb.accountId).filter(GroupDb.wardId == id).all()
 
     def save_to_db(self):
         db.session.add(self)

@@ -8,7 +8,7 @@ from src.services.accountService import AccountService
 class Progress(Resource):
 
     @jwt_required()
-    @authorized_required([1, 2, 3])
+    @authorized_required([1, 2, 3, 4])
     def get(self):
         id_acc = get_jwt_identity()
         claims = get_jwt()
@@ -26,6 +26,9 @@ class Progress(Resource):
             location = ProgressServices.list_ward_progress(id_acc)
             count_complete = ProgressServices.count_completed_wards(id_acc)
             count_total = ProgressServices.count_total_wards(id_acc)
+        elif id_acc_len == 6:
+            location = ProgressServices.list_group_progress(id_acc)
+            return {"progress": ProgressServices.convert_to_list_group(location)}, 200
         else:
             return {"message": "Something went wrong"}, 404
         if location:
@@ -38,10 +41,11 @@ class Progress(Resource):
     # def get(self):
     #
 
+
 class ProgressSpecific(Resource):
 
     @jwt_required()
-    @authorized_required([1, 2, 3])
+    @authorized_required([1, 2, 3, 4])
     def get(self, id):
         id_acc = get_jwt_identity()
         claims = get_jwt()
@@ -69,12 +73,21 @@ class ProgressSpecific(Resource):
                 return {"message": "No location like that or invalid input"}, 404
         elif id_acc_len == 4:
             location = ProgressServices.list_ward_progress_specific(id_acc, id_request)
-            return ProgressServices.convert_to_json_dict_progress(location)
+            if location:
+                return ProgressServices.convert_to_json_dict_progress(location)
+            else:
+                return {"message": "No location like that or invalid input"}, 404
+        elif id_acc_len == 6:
+            location = ProgressServices.list_group_progress_specific(id_acc, id_request)
+            if location:
+                return ProgressServices.convert_to_json_group(location)
+            else:
+                return {"message": "No location like that or invalid input"}, 404
         else:
             return {"message": "Something went wrong"}, 404
 
     @jwt_required()
-    @authorized_required([1, 2, 3])
+    @authorized_required([1, 2, 3, 4])
     def post(self, id):
         id_acc = get_jwt_identity()
         claims = get_jwt()
@@ -84,6 +97,7 @@ class ProgressSpecific(Resource):
 
         email = ProgressServices.get_email_managed(id_acc, id_request)
         if email:
+            print(email)
             status = ProgressServices.send_mail(email, id_acc)
             if status == 1:
                 return {"message": "email sent"}, 200

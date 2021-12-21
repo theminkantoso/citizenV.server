@@ -20,8 +20,7 @@ class Group(Resource):
         elif group is None:
             return {'message': 'group not found.'}, 404
         else:
-            sum_citizen = GroupServices.sum_citizen_in_group(group_id)
-            return group.json1(sum_citizen), 200
+            return group.json(), 200
 
     # Thêm mã cho 1 thôn/bản/tdp
     @jwt_required()
@@ -108,8 +107,4 @@ class Groups(Resource):
     def get(self):
         id_acc = get_jwt_identity()
         groups = GroupServices.list_group_in_ward(id_acc)
-        k = []
-        for group in groups:
-            sum_citizen = GroupServices.sum_citizen_in_group(group.groupId)
-            k.append(group.json1(sum_citizen))
-        return {"Areas": k}, 200
+        return {"Areas": list(map(lambda x: x.json(), groups))}, 200

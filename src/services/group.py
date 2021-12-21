@@ -51,7 +51,7 @@ class GroupServices:
             return 1  # Tên thôn/bản/tdp đã có trong xã/phường
         if GroupDb.find_by_id(data["groupId"]):
             return 2  # Id đã được cấp cho thôn/bản/tdp khác
-        g = GroupDb(groupId=data["groupId"], groupName=group_name, wardId=id_acc, completed=None)
+        g = GroupDb(groupId=data["groupId"], groupName=group_name, wardId=id_acc)
         try:
             g.save_to_db()
         except:
@@ -89,3 +89,12 @@ class GroupServices:
     def list_group_in_ward(ward_id):
         groups = GroupDb.find_by_ward_id(ward_id)
         return groups
+
+    @staticmethod
+    def list_group_progress(id: str):
+        return GroupDb.find_join_account(id)
+
+    @staticmethod
+    def list_group_progress_specific(id_account, id_group):
+        return GroupDb.find_join_account_specific(id_account, id_group)
+

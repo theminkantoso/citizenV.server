@@ -1,6 +1,8 @@
+from src.models.residentialGroupDb import GroupDb
 from src.services.city import CityServices
 from src.services.district import DistrictServices
 from src.services.ward import WardServices
+from src.services.group import GroupServices
 from src.services.accountService import AccountService
 from flask_mail import Message
 from src.services import my_mail
@@ -69,6 +71,21 @@ class ProgressServices():
         return list_out
 
     @staticmethod
+    def convert_to_list_group(arr):
+        list_out = []
+        for group in arr:
+            endTime = group.endDate
+            sum_citizen = GroupServices.sum_citizen_in_group(group.groupId)
+            list_out.append(GroupDb.json1(group, sum_citizen, endTime))
+        return list_out
+
+    @staticmethod
+    def convert_to_json_group(group):
+        sum_citizen = GroupServices.sum_citizen_in_group(group.groupId)
+        endTime = group.endDate
+        return GroupDb.json1(group, sum_citizen, endTime)
+
+    @staticmethod
     def count_completed_cities():
         return int(CityServices.count_completed_cities())
 
@@ -115,6 +132,14 @@ class ProgressServices():
     @staticmethod
     def list_ward_progress_specific(id_acc, id_request):
         return WardServices.list_ward_progress_specific(id_acc, id_request)
+
+    @staticmethod
+    def list_group_progress(id_acc):
+        return GroupServices.list_group_progress(id_acc)
+
+    @staticmethod
+    def list_group_progress_specific(id_acc, id_request):
+        return GroupServices.list_group_progress_specific(id_acc, id_request)
 
     @staticmethod
     def get_email_managed(id_acc, id_request):
