@@ -137,14 +137,14 @@ class AccountManagementChange(Resource):
         is_locked_modify = data['isLocked']
         start_date_modify = data['StartDate']
         end_date_modify = data['EndDate']
-        if data['StartDate'] and data['EndDate']:
-            try:
-                start_date_modify = datetime.strptime(data['StartDate'], '%Y-%m-%d').date()
-                # start_date_modify = data['StartDate']
-                end_date_modify = datetime.strptime(data['EndDate'], '%Y-%m-%d').date()
-                # end_date_modify = data['EndDate']
-            except:
-                return {'message': "invalid input"}, 400
+        # if data['StartDate'] and data['EndDate']:
+        #     try:
+        #         start_date_modify = datetime.strptime(data['StartDate'], '%Y-%m-%d').date()
+        #         # start_date_modify = data['StartDate']
+        #         end_date_modify = datetime.strptime(data['EndDate'], '%Y-%m-%d').date()
+        #         # end_date_modify = data['EndDate']
+        #     except:
+        #         return {'message': "invalid input"}, 400
 
         # validate input
         data_ok = True
@@ -173,6 +173,13 @@ class AccountManagementChange(Resource):
         # ensure CRUD period of child account is valid with this account (parent account)
         # child.startDate > parent.startDate AND child.endDate < parent.endDate
         if parent_user.startDate is not None and parent_user.endDate is not None:
+            try:
+                start_date_modify = datetime.strptime(data['StartDate'], '%Y-%m-%d').date()
+                # start_date_modify = data['StartDate']
+                end_date_modify = datetime.strptime(data['EndDate'], '%Y-%m-%d').date()
+                # end_date_modify = data['EndDate']
+            except:
+                return {'message': "invalid input"}, 400
             if parent_user.startDate > start_date_modify or parent_user.endDate < end_date_modify:
                 data_ok = False
 
