@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Dec 20, 2021 at 10:24 AM
+-- Generation Time: Dec 21, 2021 at 04:55 PM
 -- Server version: 10.4.22-MariaDB
 -- PHP Version: 8.1.0
 
@@ -30,7 +30,7 @@ USE `citizenv`;
 --
 
 DROP TABLE IF EXISTS `account`;
-CREATE TABLE `account` (
+CREATE TABLE IF NOT EXISTS `account` (
   `accountId` varchar(100) NOT NULL,
   `password` varchar(10000) NOT NULL,
   `email` varchar(1000) DEFAULT NULL,
@@ -38,7 +38,9 @@ CREATE TABLE `account` (
   `managerAccount` varchar(100) DEFAULT NULL,
   `startDate` date DEFAULT NULL,
   `endDate` date DEFAULT NULL,
-  `isLocked` tinyint(1) DEFAULT NULL
+  `isLocked` tinyint(1) DEFAULT NULL,
+  PRIMARY KEY (`accountId`),
+  KEY `fk_account_account` (`managerAccount`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------
@@ -48,7 +50,7 @@ CREATE TABLE `account` (
 --
 
 DROP TABLE IF EXISTS `citizen`;
-CREATE TABLE `citizen` (
+CREATE TABLE IF NOT EXISTS `citizen` (
   `CCCD` varchar(12) NOT NULL,
   `name` varchar(50) DEFAULT NULL,
   `DOB` date NOT NULL,
@@ -63,7 +65,12 @@ CREATE TABLE `citizen` (
   `cityProvinceId` varchar(2) NOT NULL,
   `districtId` varchar(4) NOT NULL,
   `wardId` varchar(6) NOT NULL,
-  `groupId` varchar(8) NOT NULL
+  `groupId` varchar(8) NOT NULL,
+  PRIMARY KEY (`CCCD`),
+  KEY `fk_citizen_cityprovince` (`cityProvinceId`),
+  KEY `fk_citizen_district` (`districtId`),
+  KEY `fk_citizen_ward` (`wardId`),
+  KEY `fk_citizen_residentialgroup` (`groupId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------
@@ -73,10 +80,11 @@ CREATE TABLE `citizen` (
 --
 
 DROP TABLE IF EXISTS `cityprovince`;
-CREATE TABLE `cityprovince` (
+CREATE TABLE IF NOT EXISTS `cityprovince` (
   `cityProvinceId` varchar(2) NOT NULL,
   `cityProvinceName` varchar(30) NOT NULL,
-  `completed` tinyint(1) DEFAULT NULL
+  `completed` tinyint(1) DEFAULT NULL,
+  PRIMARY KEY (`cityProvinceId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------
@@ -86,11 +94,13 @@ CREATE TABLE `cityprovince` (
 --
 
 DROP TABLE IF EXISTS `district`;
-CREATE TABLE `district` (
+CREATE TABLE IF NOT EXISTS `district` (
   `districtId` varchar(4) NOT NULL,
   `districtName` varchar(30) NOT NULL,
   `cityProvinceId` varchar(2) NOT NULL,
-  `completed` tinyint(1) DEFAULT NULL
+  `completed` tinyint(1) DEFAULT NULL,
+  PRIMARY KEY (`districtId`),
+  KEY `fk_district_cityprovince` (`cityProvinceId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
@@ -115,14 +125,30 @@ DELIMITER ;
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `file`
+--
+
+DROP TABLE IF EXISTS `file`;
+CREATE TABLE IF NOT EXISTS `file` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(100) NOT NULL,
+  `data` mediumblob NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `residentialgroup`
 --
 
 DROP TABLE IF EXISTS `residentialgroup`;
-CREATE TABLE `residentialgroup` (
+CREATE TABLE IF NOT EXISTS `residentialgroup` (
   `groupId` varchar(8) NOT NULL,
   `groupName` varchar(30) NOT NULL,
-  `wardId` varchar(6) NOT NULL
+  `wardId` varchar(6) NOT NULL,
+  PRIMARY KEY (`groupId`),
+  KEY `fk_residentialgroup_ward` (`wardId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------
@@ -132,9 +158,10 @@ CREATE TABLE `residentialgroup` (
 --
 
 DROP TABLE IF EXISTS `revoked_tokens`;
-CREATE TABLE `revoked_tokens` (
-  `id` int(11) NOT NULL,
-  `jti` varchar(120) NOT NULL
+CREATE TABLE IF NOT EXISTS `revoked_tokens` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `jti` varchar(120) NOT NULL,
+  PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------
@@ -144,11 +171,13 @@ CREATE TABLE `revoked_tokens` (
 --
 
 DROP TABLE IF EXISTS `ward`;
-CREATE TABLE `ward` (
+CREATE TABLE IF NOT EXISTS `ward` (
   `wardId` varchar(6) NOT NULL,
   `wardName` varchar(30) NOT NULL,
   `districtId` varchar(4) NOT NULL,
-  `completed` tinyint(1) DEFAULT NULL
+  `completed` tinyint(1) DEFAULT NULL,
+  PRIMARY KEY (`wardId`),
+  KEY `fk_ward_district` (`districtId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
@@ -169,70 +198,6 @@ CREATE TRIGGER `updateCompletedWard` AFTER UPDATE ON `ward` FOR EACH ROW BEGIN
 END
 $$
 DELIMITER ;
-
---
--- Indexes for dumped tables
---
-
---
--- Indexes for table `account`
---
-ALTER TABLE `account`
-  ADD PRIMARY KEY (`accountId`),
-  ADD KEY `fk_account_account` (`managerAccount`);
-
---
--- Indexes for table `citizen`
---
-ALTER TABLE `citizen`
-  ADD PRIMARY KEY (`CCCD`),
-  ADD KEY `fk_citizen_cityprovince` (`cityProvinceId`),
-  ADD KEY `fk_citizen_district` (`districtId`),
-  ADD KEY `fk_citizen_ward` (`wardId`),
-  ADD KEY `fk_citizen_residentialgroup` (`groupId`);
-
---
--- Indexes for table `cityprovince`
---
-ALTER TABLE `cityprovince`
-  ADD PRIMARY KEY (`cityProvinceId`);
-
---
--- Indexes for table `district`
---
-ALTER TABLE `district`
-  ADD PRIMARY KEY (`districtId`),
-  ADD KEY `fk_district_cityprovince` (`cityProvinceId`);
-
---
--- Indexes for table `residentialgroup`
---
-ALTER TABLE `residentialgroup`
-  ADD PRIMARY KEY (`groupId`),
-  ADD KEY `fk_residentialgroup_ward` (`wardId`);
-
---
--- Indexes for table `revoked_tokens`
---
-ALTER TABLE `revoked_tokens`
-  ADD PRIMARY KEY (`id`);
-
---
--- Indexes for table `ward`
---
-ALTER TABLE `ward`
-  ADD PRIMARY KEY (`wardId`),
-  ADD KEY `fk_ward_district` (`districtId`);
-
---
--- AUTO_INCREMENT for dumped tables
---
-
---
--- AUTO_INCREMENT for table `revoked_tokens`
---
-ALTER TABLE `revoked_tokens`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- Constraints for dumped tables
