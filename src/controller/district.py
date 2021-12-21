@@ -43,7 +43,7 @@ class District(Resource):
         elif d == 3:
             return {"message": "An error occurred inserting the district."}, 500
         elif d == 4:
-            return {"Message": "district added. "}, 200
+            return {"message": "district added. "}, 200
 
     # Xoá 1 quận/huyện trong 1 tỉnh/thành phố khỏi danh sách
     @jwt_required()

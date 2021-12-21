@@ -43,7 +43,7 @@ class Ward(Resource):
         elif w == 3:
             return {"message": "An error occurred inserting the ward."}, 500
         elif w == 4:
-            return {"Message": "ward added. "}, 200
+            return {"message": "ward added. "}, 200
 
     # Xoá 1 xã/phường  khỏi danh sách
     @jwt_required()

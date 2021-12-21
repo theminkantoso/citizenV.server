@@ -44,7 +44,7 @@ class Group(Resource):
         elif g == 3:
             return {"message": "An error occurred inserting the group."}, 500
         elif g == 4:
-            return {"Message": "group added. "}, 200
+            return {"message": "group added. "}, 200
 
     # Xoá 1 thôn/bản/tdp trong 1 xã/phường khỏi danh sách
     @jwt_required()
