@@ -25,6 +25,9 @@ Create a ```citizenv``` database in your MySQL server, then import schema file `
 
 You can see accounts id (which is also the username) in the database, all have ```123456``` as the default pass
 
+## Run
+``` python citizenv.py```
+
 ## Project structure
 ```
 src---
