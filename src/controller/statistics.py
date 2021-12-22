@@ -12,27 +12,11 @@ class Statistics(Resource):
         id_acc = get_jwt_identity()
         claims = get_jwt()
         role = claims["role"]
-        # id_acc_len = len(id_acc)
         if role == 1:
             population = StatisticsService.population('A1', 1)
             stat_sex = StatisticsService.stat_sex('A1', 1)
             marital = StatisticsService.stat_marital('A1', 1)
             edu = StatisticsService.stat_edu('A1', 1)
-        # elif id_acc_len == 2:
-        #     population = StatisticsService.population(id_acc, 2)
-        #     stat_sex = StatisticsService.stat_sex(id_acc, 2)
-        #     marital = StatisticsService.stat_marital(id_acc, 2)
-        #     edu = StatisticsService.stat_edu(id_acc, 2)
-        # elif id_acc_len == 4:
-        #     population = StatisticsService.population(id_acc, 3)
-        #     stat_sex = StatisticsService.stat_sex(id_acc, 3)
-        #     marital = StatisticsService.stat_marital(id_acc, 3)
-        #     edu = StatisticsService.stat_edu(id_acc, 3)
-        # elif id_acc_len == 6:
-        #     population = StatisticsService.population(id_acc, 4)
-        #     stat_sex = StatisticsService.stat_sex(id_acc, 4)
-        #     marital = StatisticsService.stat_marital(id_acc, 4)
-        #     edu = StatisticsService.stat_edu(id_acc, 4)
         elif role == 2 or role == 3 or role == 4:
             population = StatisticsService.population(id_acc, role)
             stat_sex = StatisticsService.stat_sex(id_acc, role)
@@ -70,21 +54,12 @@ class StatisticsSpecific(Resource):
         if 2 <= role <= 4:
             if not StatisticsService.check_valid_request(id_acc, id_request):
                 return {"message": "not authorized"}, 403
-        if role == 1:
+        if 1 <= role <= 4:
             population = StatisticsService.population(id_request, StatisticsService.gen_index_request(id_request))
             stat_sex = StatisticsService.stat_sex(id_request, StatisticsService.gen_index_request(id_request))
             marital = StatisticsService.stat_marital(id_request, StatisticsService.gen_index_request(id_request))
             edu = StatisticsService.stat_edu(id_request, StatisticsService.gen_index_request(id_request))
             name = StatisticsService.get_name(id_request, StatisticsService.gen_index_request(id_request))
-        elif 2 <= role <= 4:
-            if not StatisticsService.check_valid_request(id_acc, id_request):
-                return {"message": "not authorized"}, 403
-            else:
-                population = StatisticsService.population(id_request, StatisticsService.gen_index_request(id_request))
-                stat_sex = StatisticsService.stat_sex(id_request, StatisticsService.gen_index_request(id_request))
-                marital = StatisticsService.stat_marital(id_request, StatisticsService.gen_index_request(id_request))
-                edu = StatisticsService.stat_edu(id_request, StatisticsService.gen_index_request(id_request))
-                name = StatisticsService.get_name(id_request, StatisticsService.gen_index_request(id_request))
         else:
             return {"message": "Something went wrong"}, 404
 

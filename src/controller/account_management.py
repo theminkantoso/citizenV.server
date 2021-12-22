@@ -128,7 +128,6 @@ class AccountManagementChange(Resource):
         data = AccountManagementChange.parser.parse_args()
         id_acc = get_jwt_identity()
         id_modify = id
-        password_modify = data['password']
         email_modify = data['email']
         is_locked_modify = data['isLocked']
         start_date_modify = data['StartDate']
@@ -144,7 +143,6 @@ class AccountManagementChange(Resource):
 
         # validate input
         data_ok = True
-        data_ok = AccountService.check_password(password_modify)
 
         # ensure (!startDate AND !endDate) OR (startDate AND endDate)
         if ((start_date_modify is not None and end_date_modify is None) or
@@ -190,8 +188,6 @@ class AccountManagementChange(Resource):
         elif current_user.managerAccount != id_acc:
             return {"message": "not authorized"}, 403
 
-        if password_modify is not None:
-            current_user.password = generate_password_hash(password_modify, method='sha256')
         if email_modify is not None:
             current_user.email = email_modify
         if start_date_modify is not None:

@@ -36,11 +36,6 @@ class Progress(Resource):
                     "total": count_total}, 200
         return {}, 200
 
-    # @jwt_required()
-    # @authorized_required([4])
-    # def get(self):
-    #
-
 
 class ProgressSpecific(Resource):
 

@@ -79,11 +79,6 @@ class AccountService:
             return False
         return True
 
-    @staticmethod
-    def check_password(password):
-        if not password.isalnum():
-            return False
-        return True
 
     @staticmethod
     def validate_email(email):
