@@ -56,6 +56,10 @@ class CityDb(db.Model):
     def find_city_name(id):
         return db.session.query(CityDb.cityProvinceName).filter_by(cityProvinceId=id).first()
 
+    @classmethod
+    def check_exist(cls, id):
+        return cls.query.filter_by(cityProvinceId=id).count()
+
     def save_to_db(self):
         db.session.add(self)
         db.session.commit()

@@ -47,6 +47,10 @@ class GroupDb(db.Model):
     def find_group_name(id):
         return db.session.query(GroupDb.groupName).filter_by(groupId=id).first()
 
+    @classmethod
+    def check_exist(cls, id):
+        return cls.query.filter_by(groupId=id).count()
+
     def save_to_db(self):
         db.session.add(self)
         db.session.commit()

@@ -125,3 +125,7 @@ class CityServices:
     @staticmethod
     def get_city_name(id):
         return str(CityDb.find_city_name(id)[0])
+
+    @staticmethod
+    def check_exist(id):
+        return int(CityDb.check_exist(id)) > 0

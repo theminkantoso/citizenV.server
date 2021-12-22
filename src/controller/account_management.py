@@ -65,21 +65,11 @@ class AccountManagement(Resource):
             return {'message': "Invalid input format"}, 400
 
         # prevent creating a trash account where id does not match any location
-        id_create_len = len(id_create)
-        # NEED TO REMOVE THESE COMMENT LATER
-        # if id_create_len == 2:
-        #     duplicate_check = CityDb.find_by_id(id=id_create)
-        # elif id_create_len == 4:
-        #     duplicate_check = DistrictDb.find_by_id(id=id_create)
-        # elif id_create_len == 6:
-        #     duplicate_check = WardDb.find_by_id(id=id_create)
-        # elif id_create_len == 8:
-        #     duplicate_check = GroupDb.find_by_id(id=id_create)
-        #
-        # if duplicate_check is None:
-        #     return {'message': "This is a trash account"}, 400
+        if not AccountService.prevent_trash_account(id):
+            return {'message': "This is a trash account"}, 400
 
         # check tk phải có id đúng format <tkcha> + <2 ký tự>
+        id_create_len = len(id_create)
         if not AccountService.check_format_id_plus_2(id_acc, id_create, id_create_len):
             return {'message': "Wrong format <id> plus two digit"}, 400
 

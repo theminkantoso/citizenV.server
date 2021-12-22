@@ -137,3 +137,7 @@ class DistrictServices:
     def get_district_name(id):
         return str(DistrictDb.find_district_name(id)[0])
 
+    @staticmethod
+    def check_exist(id):
+        return int(DistrictDb.check_exist(id)) > 0
+

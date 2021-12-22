@@ -154,3 +154,7 @@ class WardServices:
     @staticmethod
     def get_ward_name(id):
         return str(WardDb.find_ward_name(id)[0])
+
+    @staticmethod
+    def check_exist(id):
+        return int(WardDb.check_exist(id)) > 0

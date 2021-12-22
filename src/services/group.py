@@ -93,3 +93,7 @@ class GroupServices:
     @staticmethod
     def get_group_name(id):
         return str(GroupDb.find_group_name(id)[0])
+
+    @staticmethod
+    def check_exist(id):
+        return int(GroupDb.check_exist(id)) > 0

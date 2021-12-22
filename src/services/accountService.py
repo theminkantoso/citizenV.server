@@ -1,4 +1,8 @@
 from src.models.accountDb import AccountDb
+from src.services.city import CityServices
+from src.services.district import DistrictServices
+from src.services.ward import WardServices
+from src.services.group import GroupServices
 import re
 import random
 import string
@@ -115,6 +119,11 @@ class AccountService:
     @staticmethod
     def get_email_from_manager(id_manager, id_in):
         return AccountDb.get_email_user_manager(id_manager, id_in)
+
+    @staticmethod
+    def prevent_trash_account(id):
+        return (CityServices.check_exist(id) or DistrictServices.check_exist(id) or WardServices.check_exist(id)
+                   or GroupServices.check_exist(id))
 
 
 

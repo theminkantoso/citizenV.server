@@ -64,6 +64,10 @@ class WardDb(db.Model):
     def find_ward_name(id):
         return db.session.query(WardDb.wardName).filter_by(wardId=id).first()
 
+    @classmethod
+    def check_exist(cls, id):
+        return cls.query.filter_by(wardId=id).count()
+
     def save_to_db(self):
         db.session.add(self)
         db.session.commit()
