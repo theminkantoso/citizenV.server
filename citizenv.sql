@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Dec 21, 2021 at 04:55 PM
+-- Generation Time: Dec 22, 2021 at 05:37 PM
 -- Server version: 10.4.22-MariaDB
 -- PHP Version: 8.1.0
 
@@ -20,8 +20,6 @@ SET time_zone = "+00:00";
 --
 -- Database: `citizenv`
 --
-CREATE DATABASE IF NOT EXISTS `citizenv` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
-USE `citizenv`;
 
 -- --------------------------------------------------------
 
@@ -29,8 +27,7 @@ USE `citizenv`;
 -- Table structure for table `account`
 --
 
-DROP TABLE IF EXISTS `account`;
-CREATE TABLE IF NOT EXISTS `account` (
+CREATE TABLE `account` (
   `accountId` varchar(100) NOT NULL,
   `password` varchar(10000) NOT NULL,
   `email` varchar(1000) DEFAULT NULL,
@@ -38,9 +35,7 @@ CREATE TABLE IF NOT EXISTS `account` (
   `managerAccount` varchar(100) DEFAULT NULL,
   `startDate` date DEFAULT NULL,
   `endDate` date DEFAULT NULL,
-  `isLocked` tinyint(1) DEFAULT NULL,
-  PRIMARY KEY (`accountId`),
-  KEY `fk_account_account` (`managerAccount`)
+  `isLocked` tinyint(1) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------
@@ -49,8 +44,7 @@ CREATE TABLE IF NOT EXISTS `account` (
 -- Table structure for table `citizen`
 --
 
-DROP TABLE IF EXISTS `citizen`;
-CREATE TABLE IF NOT EXISTS `citizen` (
+CREATE TABLE `citizen` (
   `CCCD` varchar(12) NOT NULL,
   `name` varchar(50) DEFAULT NULL,
   `DOB` date NOT NULL,
@@ -65,12 +59,7 @@ CREATE TABLE IF NOT EXISTS `citizen` (
   `cityProvinceId` varchar(2) NOT NULL,
   `districtId` varchar(4) NOT NULL,
   `wardId` varchar(6) NOT NULL,
-  `groupId` varchar(8) NOT NULL,
-  PRIMARY KEY (`CCCD`),
-  KEY `fk_citizen_cityprovince` (`cityProvinceId`),
-  KEY `fk_citizen_district` (`districtId`),
-  KEY `fk_citizen_ward` (`wardId`),
-  KEY `fk_citizen_residentialgroup` (`groupId`)
+  `groupId` varchar(8) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------
@@ -79,13 +68,21 @@ CREATE TABLE IF NOT EXISTS `citizen` (
 -- Table structure for table `cityprovince`
 --
 
-DROP TABLE IF EXISTS `cityprovince`;
-CREATE TABLE IF NOT EXISTS `cityprovince` (
+CREATE TABLE `cityprovince` (
   `cityProvinceId` varchar(2) NOT NULL,
   `cityProvinceName` varchar(30) NOT NULL,
-  `completed` tinyint(1) DEFAULT NULL,
-  PRIMARY KEY (`cityProvinceId`)
+  `completed` tinyint(1) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Triggers `cityprovince`
+--
+DELIMITER $$
+CREATE TRIGGER `delete_account_city` AFTER DELETE ON `cityprovince` FOR EACH ROW BEGIN 
+	DELETE FROM account WHERE accountId LIKE CONCAT(old.cityProvinceId, '%');
+    END
+$$
+DELIMITER ;
 
 -- --------------------------------------------------------
 
@@ -93,20 +90,22 @@ CREATE TABLE IF NOT EXISTS `cityprovince` (
 -- Table structure for table `district`
 --
 
-DROP TABLE IF EXISTS `district`;
-CREATE TABLE IF NOT EXISTS `district` (
+CREATE TABLE `district` (
   `districtId` varchar(4) NOT NULL,
   `districtName` varchar(30) NOT NULL,
   `cityProvinceId` varchar(2) NOT NULL,
-  `completed` tinyint(1) DEFAULT NULL,
-  PRIMARY KEY (`districtId`),
-  KEY `fk_district_cityprovince` (`cityProvinceId`)
+  `completed` tinyint(1) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Triggers `district`
 --
-DROP TRIGGER IF EXISTS `updateCompletedDistrict`;
+DELIMITER $$
+CREATE TRIGGER `delete_account_district` AFTER DELETE ON `district` FOR EACH ROW BEGIN 
+	DELETE FROM account WHERE accountId LIKE CONCAT(old.districtId, '%');
+    END
+$$
+DELIMITER ;
 DELIMITER $$
 CREATE TRIGGER `updateCompletedDistrict` AFTER UPDATE ON `district` FOR EACH ROW BEGIN 
 	DECLARE countCompleted INT DEFAULT 0;
@@ -128,12 +127,10 @@ DELIMITER ;
 -- Table structure for table `file`
 --
 
-DROP TABLE IF EXISTS `file`;
-CREATE TABLE IF NOT EXISTS `file` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
+CREATE TABLE `file` (
+  `id` int(11) NOT NULL,
   `name` varchar(100) NOT NULL,
-  `data` mediumblob NOT NULL,
-  PRIMARY KEY (`id`)
+  `data` mediumblob NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------
@@ -142,14 +139,21 @@ CREATE TABLE IF NOT EXISTS `file` (
 -- Table structure for table `residentialgroup`
 --
 
-DROP TABLE IF EXISTS `residentialgroup`;
-CREATE TABLE IF NOT EXISTS `residentialgroup` (
+CREATE TABLE `residentialgroup` (
   `groupId` varchar(8) NOT NULL,
   `groupName` varchar(30) NOT NULL,
-  `wardId` varchar(6) NOT NULL,
-  PRIMARY KEY (`groupId`),
-  KEY `fk_residentialgroup_ward` (`wardId`)
+  `wardId` varchar(6) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Triggers `residentialgroup`
+--
+DELIMITER $$
+CREATE TRIGGER `delete_account_group` AFTER DELETE ON `residentialgroup` FOR EACH ROW BEGIN 
+	DELETE FROM account WHERE accountId LIKE CONCAT(old.groupId, '%');
+    END
+$$
+DELIMITER ;
 
 -- --------------------------------------------------------
 
@@ -157,11 +161,9 @@ CREATE TABLE IF NOT EXISTS `residentialgroup` (
 -- Table structure for table `revoked_tokens`
 --
 
-DROP TABLE IF EXISTS `revoked_tokens`;
-CREATE TABLE IF NOT EXISTS `revoked_tokens` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `jti` varchar(120) NOT NULL,
-  PRIMARY KEY (`id`)
+CREATE TABLE `revoked_tokens` (
+  `id` int(11) NOT NULL,
+  `jti` varchar(120) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------
@@ -170,20 +172,22 @@ CREATE TABLE IF NOT EXISTS `revoked_tokens` (
 -- Table structure for table `ward`
 --
 
-DROP TABLE IF EXISTS `ward`;
-CREATE TABLE IF NOT EXISTS `ward` (
+CREATE TABLE `ward` (
   `wardId` varchar(6) NOT NULL,
   `wardName` varchar(30) NOT NULL,
   `districtId` varchar(4) NOT NULL,
-  `completed` tinyint(1) DEFAULT NULL,
-  PRIMARY KEY (`wardId`),
-  KEY `fk_ward_district` (`districtId`)
+  `completed` tinyint(1) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Triggers `ward`
 --
-DROP TRIGGER IF EXISTS `updateCompletedWard`;
+DELIMITER $$
+CREATE TRIGGER `delete_account_ward` AFTER DELETE ON `ward` FOR EACH ROW BEGIN 
+	DELETE FROM account WHERE accountId LIKE CONCAT(old.wardId, '%');
+    END
+$$
+DELIMITER ;
 DELIMITER $$
 CREATE TRIGGER `updateCompletedWard` AFTER UPDATE ON `ward` FOR EACH ROW BEGIN 
 	DECLARE countCompleted INT DEFAULT 0;
@@ -200,6 +204,82 @@ $$
 DELIMITER ;
 
 --
+-- Indexes for dumped tables
+--
+
+--
+-- Indexes for table `account`
+--
+ALTER TABLE `account`
+  ADD PRIMARY KEY (`accountId`),
+  ADD KEY `fk_account_account` (`managerAccount`);
+
+--
+-- Indexes for table `citizen`
+--
+ALTER TABLE `citizen`
+  ADD PRIMARY KEY (`CCCD`),
+  ADD KEY `fk_citizen_cityprovince` (`cityProvinceId`),
+  ADD KEY `fk_citizen_district` (`districtId`),
+  ADD KEY `fk_citizen_ward` (`wardId`),
+  ADD KEY `fk_citizen_residentialgroup` (`groupId`);
+
+--
+-- Indexes for table `cityprovince`
+--
+ALTER TABLE `cityprovince`
+  ADD PRIMARY KEY (`cityProvinceId`);
+
+--
+-- Indexes for table `district`
+--
+ALTER TABLE `district`
+  ADD PRIMARY KEY (`districtId`),
+  ADD KEY `fk_district_cityprovince` (`cityProvinceId`);
+
+--
+-- Indexes for table `file`
+--
+ALTER TABLE `file`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `residentialgroup`
+--
+ALTER TABLE `residentialgroup`
+  ADD PRIMARY KEY (`groupId`),
+  ADD KEY `fk_residentialgroup_ward` (`wardId`);
+
+--
+-- Indexes for table `revoked_tokens`
+--
+ALTER TABLE `revoked_tokens`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `ward`
+--
+ALTER TABLE `ward`
+  ADD PRIMARY KEY (`wardId`),
+  ADD KEY `fk_ward_district` (`districtId`);
+
+--
+-- AUTO_INCREMENT for dumped tables
+--
+
+--
+-- AUTO_INCREMENT for table `file`
+--
+ALTER TABLE `file`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `revoked_tokens`
+--
+ALTER TABLE `revoked_tokens`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
 -- Constraints for dumped tables
 --
 
@@ -207,28 +287,28 @@ DELIMITER ;
 -- Constraints for table `citizen`
 --
 ALTER TABLE `citizen`
-  ADD CONSTRAINT `fk_citizen_cityprovince` FOREIGN KEY (`cityProvinceId`) REFERENCES `cityprovince` (`cityProvinceId`) ON UPDATE CASCADE,
-  ADD CONSTRAINT `fk_citizen_district` FOREIGN KEY (`districtId`) REFERENCES `district` (`districtId`) ON UPDATE CASCADE,
-  ADD CONSTRAINT `fk_citizen_residentialgroup` FOREIGN KEY (`groupId`) REFERENCES `residentialgroup` (`groupId`) ON UPDATE CASCADE,
-  ADD CONSTRAINT `fk_citizen_ward` FOREIGN KEY (`wardId`) REFERENCES `ward` (`wardId`) ON UPDATE CASCADE;
+  ADD CONSTRAINT `fk_citizen_cityprovince` FOREIGN KEY (`cityProvinceId`) REFERENCES `cityprovince` (`cityProvinceId`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `fk_citizen_district` FOREIGN KEY (`districtId`) REFERENCES `district` (`districtId`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `fk_citizen_residentialgroup` FOREIGN KEY (`groupId`) REFERENCES `residentialgroup` (`groupId`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `fk_citizen_ward` FOREIGN KEY (`wardId`) REFERENCES `ward` (`wardId`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Constraints for table `district`
 --
 ALTER TABLE `district`
-  ADD CONSTRAINT `fk_district_cityprovince` FOREIGN KEY (`cityProvinceId`) REFERENCES `cityprovince` (`cityProvinceId`) ON UPDATE CASCADE;
+  ADD CONSTRAINT `fk_district_cityprovince` FOREIGN KEY (`cityProvinceId`) REFERENCES `cityprovince` (`cityProvinceId`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Constraints for table `residentialgroup`
 --
 ALTER TABLE `residentialgroup`
-  ADD CONSTRAINT `fk_residentialgroup_ward` FOREIGN KEY (`wardId`) REFERENCES `ward` (`wardId`) ON UPDATE CASCADE;
+  ADD CONSTRAINT `fk_residentialgroup_ward` FOREIGN KEY (`wardId`) REFERENCES `ward` (`wardId`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Constraints for table `ward`
 --
 ALTER TABLE `ward`
-  ADD CONSTRAINT `fk_ward_district` FOREIGN KEY (`districtId`) REFERENCES `district` (`districtId`) ON UPDATE CASCADE;
+  ADD CONSTRAINT `fk_ward_district` FOREIGN KEY (`districtId`) REFERENCES `district` (`districtId`) ON DELETE CASCADE ON UPDATE CASCADE;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
