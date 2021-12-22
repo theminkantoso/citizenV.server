@@ -66,6 +66,13 @@ class AccountService:
 
     @staticmethod
     def check_format_id_plus_2(id_acc, id_create, id_create_length):
+        """
+        Ensure input is in format id_create = id_account + <2 digits>
+        :param id_acc: current user id
+        :param id_create: id of account to be created
+        :param id_create_length: length of id_create
+        :return: True if satisfy id_create = id_account + <2 digits>
+        """
         if len(id_create) <= len(id_acc):
             return False
         if id_acc != id_create[0:id_create_length - 2]:
@@ -180,8 +187,14 @@ class AccountService:
 
     @staticmethod
     def prevent_trash_account(id):
+        """
+        Ensure an account created correspond to a location in the system, no trash account
+        :param id: input id account to be create
+        :return: True if any location match this input id
+        """
         return (CityServices.check_exist(id) or DistrictServices.check_exist(id) or WardServices.check_exist(id)
                 or GroupServices.check_exist(id))
+
 
 
 
