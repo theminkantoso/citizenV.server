@@ -65,7 +65,7 @@ class AccountManagement(Resource):
             return {'message': "Invalid input format"}, 400
 
         # prevent creating a trash account where id does not match any location
-        if not AccountService.prevent_trash_account(id):
+        if not AccountService.prevent_trash_account(id_create):
             return {'message': "This is a trash account"}, 400
 
         # check tk phải có id đúng format <tkcha> + <2 ký tự>
@@ -153,6 +153,13 @@ class AccountManagementChange(Resource):
             return {'message': "invalid input"}, 400
 
         if start_date_modify is not None and end_date_modify is not None:
+            try:
+                start_date_modify = datetime.strptime(data['StartDate'], '%Y-%m-%d').date()
+                # start_date_modify = data['StartDate']
+                end_date_modify = datetime.strptime(data['EndDate'], '%Y-%m-%d').date()
+                # end_date_modify = data['EndDate']
+            except:
+                return {'message': "invalid input"}, 400
             data_ok = AccountService.validate_period(start_date_modify, end_date_modify)
 
         # ensure CRUD period satisfy with parent's account CRUD period
@@ -163,13 +170,6 @@ class AccountManagementChange(Resource):
         # ensure CRUD period of child account is valid with this account (parent account)
         # child.startDate > parent.startDate AND child.endDate < parent.endDate
         if parent_user.startDate is not None and parent_user.endDate is not None:
-            try:
-                start_date_modify = datetime.strptime(data['StartDate'], '%Y-%m-%d').date()
-                # start_date_modify = data['StartDate']
-                end_date_modify = datetime.strptime(data['EndDate'], '%Y-%m-%d').date()
-                # end_date_modify = data['EndDate']
-            except:
-                return {'message': "invalid input"}, 400
             if parent_user.startDate > start_date_modify or parent_user.endDate < end_date_modify:
                 data_ok = False
 

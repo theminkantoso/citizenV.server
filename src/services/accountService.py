@@ -123,7 +123,7 @@ class AccountService:
     @staticmethod
     def prevent_trash_account(id):
         return (CityServices.check_exist(id) or DistrictServices.check_exist(id) or WardServices.check_exist(id)
-                   or GroupServices.check_exist(id))
+                or GroupServices.check_exist(id))
 
 
 
