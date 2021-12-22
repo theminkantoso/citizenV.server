@@ -103,6 +103,12 @@ class StatisticsService():
         return True
 
     @staticmethod
+    def check_valid_request_role(id_req, role):
+        if len(id_req) == 8 and role != 4:
+            return False
+        return True
+
+    @staticmethod
     def check_request_two_digit(id_req):
         return len(id_req) % 2 == 0 and 8 >= len(id_req) >= 2
 

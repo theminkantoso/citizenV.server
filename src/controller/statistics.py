@@ -51,6 +51,8 @@ class StatisticsSpecific(Resource):
         id_request = id
         if not StatisticsService.check_request_two_digit(id_request):
             return {"message": "invalid input"}, 400
+        if StatisticsService.check_valid_request_role(id_request, role):
+            return {"message": "not authorized"}, 403
         if 2 <= role <= 4:
             if not StatisticsService.check_valid_request(id_acc, id_request):
                 return {"message": "not authorized"}, 403

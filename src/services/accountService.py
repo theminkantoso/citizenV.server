@@ -79,7 +79,6 @@ class AccountService:
             return False
         return True
 
-
     @staticmethod
     def validate_email(email):
         regex_mail = r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b'
@@ -178,6 +177,8 @@ class AccountService:
             city = CityDb.find_by_id(user.accountId[0:2]).cityProvinceName
             name = group + ',' + ward + ',' + dist + ',' + city
         return name
+
+    @staticmethod
     def prevent_trash_account(id):
         return (CityServices.check_exist(id) or DistrictServices.check_exist(id) or WardServices.check_exist(id)
                 or GroupServices.check_exist(id))

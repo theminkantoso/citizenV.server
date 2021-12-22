@@ -132,14 +132,6 @@ class AccountManagementChange(Resource):
         is_locked_modify = data['isLocked']
         start_date_modify = data['StartDate']
         end_date_modify = data['EndDate']
-        # if data['StartDate'] and data['EndDate']:
-        #     try:
-        #         start_date_modify = datetime.strptime(data['StartDate'], '%Y-%m-%d').date()
-        #         # start_date_modify = data['StartDate']
-        #         end_date_modify = datetime.strptime(data['EndDate'], '%Y-%m-%d').date()
-        #         # end_date_modify = data['EndDate']
-        #     except:
-        #         return {'message': "invalid input"}, 400
 
         # validate input
         data_ok = True
@@ -160,9 +152,7 @@ class AccountManagementChange(Resource):
         if start_date_modify is not None and end_date_modify is not None:
             try:
                 start_date_modify = datetime.strptime(data['StartDate'], '%Y-%m-%d').date()
-                # start_date_modify = data['StartDate']
                 end_date_modify = datetime.strptime(data['EndDate'], '%Y-%m-%d').date()
-                # end_date_modify = data['EndDate']
             except:
                 return {'message': "invalid input"}, 400
             data_ok = AccountService.validate_period(start_date_modify, end_date_modify)

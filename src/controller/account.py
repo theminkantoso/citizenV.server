@@ -22,23 +22,6 @@ class Account(Resource):
 
     def get(self):
         pass
-        # args = request.args
-        # print(args['a'])  # For debugging
-        # a = CityDb.find_join_account()
-        # k = []
-        # for i in range(len(a)):
-        #     print(type(CityDb.json2(a[i])))
-        #     k.append(CityDb.json2(a[i]))
-        # print(k)
-        # return {"a": k}, 200
-        # ar = CitizenDb.get_stats_sex_entire()
-        # a = {}
-        # a.update({ar[0][0]: ar[0][1]})
-        # print(a)
-        # print(WardDb.count_completed('2901'), WardDb.count_total('2901'))
-        # print(DistrictDb.count_completed('29'), DistrictDb.count_total('29'))
-        # ak = AccountDb.get_email_user_manager('00','0003')
-        # print(ak[0])
 
     def post(self):
         data = Account.parser.parse_args()
@@ -57,13 +40,9 @@ class Account(Resource):
         name = AccountService.area_name_of_acc(user)
 
         if check_password_hash(user.password, password):
-            # additional_claim = {"role": user.roleId, "isLocked": user.isLocked}
             additional_claim = {"role": user.roleId, "isLocked": user.isLocked, "name": name}
             access_token = create_access_token(identity=id, additional_claims=additional_claim)
 
-            # update khóa tài khoản
-            # do server không phải chạy 24/24 nên khi đăng nhập server sẽ kiểm tra có khóa tài khoản không
-            # kiểm tra thời gian hiện tại với thời gian tài khoản được thêm sửa xóa
             # Update lock CRUD permission
             # Since server cannot run continuously, we use alternative solution via check the period of the
             # logged in account when logging in.
