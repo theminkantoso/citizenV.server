@@ -31,10 +31,8 @@ class CityDb(db.Model):
 
     @staticmethod
     def find_join_account():
-        return db.session.query(CityDb.cityProvinceId, CityDb.cityProvinceName, CityDb.completed, AccountDb.endDate). \
-            join(AccountDb, CityDb.cityProvinceId == AccountDb.accountId).all()
-        # return db.session.query(CityDb.cityProvinceName, CitizenDb.name).join(CitizenDb).\
-        #     filter(CityDb.cityProvinceId == CitizenDb.cityProvinceId).filter(CityDb.cityProvinceId == 29).all()
+        return db.session.query(CityDb.cityProvinceId, CityDb.cityProvinceName, CityDb.completed, AccountDb.endTime).\
+            join(AccountDb).filter(CityDb.cityProvinceId == AccountDb.accountId).all()
 
     @staticmethod
     def find_join_account_specific(id):
@@ -59,6 +57,13 @@ class CityDb(db.Model):
         query = db.session.query(CityDb, AccountDb). \
             outerjoin(AccountDb, AccountDb.accountId == CityDb.cityProvinceId).all()
         return query
+    @staticmethod
+    def find_city_name(id):
+        return db.session.query(CityDb.cityProvinceName).filter_by(cityProvinceId=id).first()
+
+    @classmethod
+    def check_exist(cls, id):
+        return cls.query.filter_by(cityProvinceId=id).count()
 
     def save_to_db(self):
         db.session.add(self)

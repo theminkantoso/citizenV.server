@@ -101,6 +101,96 @@ class CitizenDb(db.Model):
             return cls.query.filter(CitizenDb.wardId.in_(areas)).all()
         elif len_areaId == 8:
             return cls.query.filter(CitizenDb.groupId.in_(areas)).all()
+    def get_population_entire(cls):
+        return cls.query.count()
+
+    @classmethod
+    def get_population_city(cls, id):
+        return cls.query.filter_by(cityProvinceId=id).count()
+
+    @classmethod
+    def get_population_district(cls, id):
+        return cls.query.filter_by(districtId=id).count()
+
+    @classmethod
+    def get_population_ward(cls, id):
+        return cls.query.filter_by(wardId=id).count()
+
+    @classmethod
+    def get_population_group(cls, id):
+        return cls.query.filter_by(groupId=id).count()
+
+    @staticmethod
+    def get_stats_sex_entire():
+        return db.session.query(CitizenDb.sex, db.func.count()).group_by(CitizenDb.sex).all()
+
+    @staticmethod
+    def get_stats_sex_city(id):
+        return db.session.query(CitizenDb.sex, db.func.count()).group_by(CitizenDb.sex).\
+            filter_by(cityProvinceId=id).all()
+
+    @staticmethod
+    def get_stats_sex_district(id):
+        return db.session.query(CitizenDb.sex, db.func.count()).group_by(CitizenDb.sex). \
+            filter_by(districtId=id).all()
+
+    @staticmethod
+    def get_stats_sex_ward(id):
+        return db.session.query(CitizenDb.sex, db.func.count()).group_by(CitizenDb.sex). \
+            filter_by(wardId=id).all()
+
+    @staticmethod
+    def get_stats_sex_group(id):
+        return db.session.query(CitizenDb.sex, db.func.count()).group_by(CitizenDb.sex). \
+            filter_by(groupId=id).all()
+
+    @staticmethod
+    def get_stats_edu_entire():
+        return db.session.query(CitizenDb.educationalLevel, db.func.count()).group_by(CitizenDb.educationalLevel).all()
+
+    @staticmethod
+    def get_stats_edu_city(id):
+        return db.session.query(CitizenDb.educationalLevel, db.func.count()).group_by(CitizenDb.educationalLevel).\
+            filter_by(cityProvinceId=id).all()
+
+    @staticmethod
+    def get_stats_edu_district(id):
+        return db.session.query(CitizenDb.educationalLevel, db.func.count()).group_by(CitizenDb.educationalLevel). \
+            filter_by(districtId=id).all()
+
+    @staticmethod
+    def get_stats_edu_ward(id):
+        return db.session.query(CitizenDb.educationalLevel, db.func.count()).group_by(CitizenDb.educationalLevel). \
+            filter_by(wardId=id).all()
+
+    @staticmethod
+    def get_stats_edu_group(id):
+        return db.session.query(CitizenDb.educationalLevel, db.func.count()).group_by(CitizenDb.educationalLevel). \
+            filter_by(groupId=id).all()
+
+    @staticmethod
+    def get_marital_status_entire():
+        return db.session.query(CitizenDb.maritalStatus, db.func.count()).group_by(CitizenDb.maritalStatus).all()
+
+    @staticmethod
+    def get_marital_status_city(id):
+        return db.session.query(CitizenDb.maritalStatus, db.func.count()).group_by(CitizenDb.maritalStatus). \
+            filter_by(cityProvinceId=id).all()
+
+    @staticmethod
+    def get_marital_status_district(id):
+        return db.session.query(CitizenDb.maritalStatus, db.func.count()).group_by(CitizenDb.maritalStatus). \
+            filter_by(districtId=id).all()
+
+    @staticmethod
+    def get_marital_status_ward(id):
+        return db.session.query(CitizenDb.maritalStatus, db.func.count()).group_by(CitizenDb.maritalStatus). \
+            filter_by(wardId=id).all()
+
+    @staticmethod
+    def get_marital_status_group(id):
+        return db.session.query(CitizenDb.maritalStatus, db.func.count()).group_by(CitizenDb.maritalStatus). \
+            filter_by(groupId=id).all()
 
     def save_to_db(self):
         db.session.add(self)

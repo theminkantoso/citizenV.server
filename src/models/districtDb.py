@@ -70,6 +70,13 @@ class DistrictDb(db.Model):
         query = db.session.query(DistrictDb, AccountDb). \
             outerjoin(AccountDb, AccountDb.accountId == DistrictDb.districtId).all()
         return query
+    @staticmethod
+    def find_district_name(id):
+        return db.session.query(DistrictDb.districtName).filter_by(districtId=id).first()
+
+    @classmethod
+    def check_exist(cls, id):
+        return cls.query.filter_by(districtId=id).count()
 
     def save_to_db(self):
         db.session.add(self)

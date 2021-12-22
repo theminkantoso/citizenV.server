@@ -65,6 +65,13 @@ class WardDb(db.Model):
         query = db.session.query(WardDb, AccountDb) \
             .outerjoin(AccountDb, AccountDb.accountId == WardDb.wardId).all()
         return query
+    @staticmethod
+    def find_ward_name(id):
+        return db.session.query(WardDb.wardName).filter_by(wardId=id).first()
+
+    @classmethod
+    def check_exist(cls, id):
+        return cls.query.filter_by(wardId=id).count()
 
     def save_to_db(self):
         db.session.add(self)

@@ -1,4 +1,8 @@
 from src.models.accountDb import AccountDb
+from src.services.city import CityServices
+from src.services.district import DistrictServices
+from src.services.ward import WardServices
+from src.services.group import GroupServices
 import re
 import random
 import string
@@ -26,7 +30,7 @@ class AccountService:
     @staticmethod
     def validate_input_id_pass(id, password):
         regex_id = '^[0-9]*$'
-        if not validate_regex(id, regex_id) or not password.isalnum():
+        if not validate_regex(id, regex_id) or not password.isalnum() or len(id) == 0:
             return False
         return True
 
@@ -62,6 +66,8 @@ class AccountService:
 
     @staticmethod
     def check_format_id_plus_2(id_acc, id_create, id_create_length):
+        if len(id_create) <= len(id_acc):
+            return False
         if id_acc != id_create[0:id_create_length - 2]:
             return False
         return True
@@ -177,4 +183,10 @@ class AccountService:
             city = CityDb.find_by_id(user.accountId[0:2]).cityProvinceName
             name = group + ',' + ward + ',' + dist + ',' + city
         return name
+    def prevent_trash_account(id):
+        return (CityServices.check_exist(id) or DistrictServices.check_exist(id) or WardServices.check_exist(id)
+                or GroupServices.check_exist(id))
+
+
+
 

@@ -71,21 +71,11 @@ class AccountManagement(Resource):
             return {'message': "Invalid input format"}, 400
 
         # prevent creating a trash account where id does not match any location
-        id_create_len = len(id_create)
-        # NEED TO REMOVE THESE COMMENT LATER
-        # if id_create_len == 2:
-        #     duplicate_check = CityDb.find_by_id(id=id_create)
-        # elif id_create_len == 4:
-        #     duplicate_check = DistrictDb.find_by_id(id=id_create)
-        # elif id_create_len == 6:
-        #     duplicate_check = WardDb.find_by_id(id=id_create)
-        # elif id_create_len == 8:
-        #     duplicate_check = GroupDb.find_by_id(id=id_create)
-        #
-        # if duplicate_check is None:
-        #     return {'message': "This is a trash account"}, 400
+        if not AccountService.prevent_trash_account(id_create):
+            return {'message': "This is a trash account"}, 400
 
         # check tk phải có id đúng format <tkcha> + <2 ký tự>
+        id_create_len = len(id_create)
         if not AccountService.check_format_id_plus_2(id_acc, id_create, id_create_len):
             return {'message': "Wrong format <id> plus two digit"}, 400
 
@@ -141,13 +131,16 @@ class AccountManagementChange(Resource):
         password_modify = data['password']
         email_modify = data['email']
         is_locked_modify = data['isLocked']
-        try:
-            start_date_modify = datetime.strptime(data['StartDate'], '%Y-%m-%d').date()
-            # start_date_modify = data['StartDate']
-            end_date_modify = datetime.strptime(data['EndDate'], '%Y-%m-%d').date()
-            # end_date_modify = data['EndDate']
-        except:
-            return {'message': "invalid input"}, 400
+        start_date_modify = data['StartDate']
+        end_date_modify = data['EndDate']
+        # if data['StartDate'] and data['EndDate']:
+        #     try:
+        #         start_date_modify = datetime.strptime(data['StartDate'], '%Y-%m-%d').date()
+        #         # start_date_modify = data['StartDate']
+        #         end_date_modify = datetime.strptime(data['EndDate'], '%Y-%m-%d').date()
+        #         # end_date_modify = data['EndDate']
+        #     except:
+        #         return {'message': "invalid input"}, 400
 
         # validate input
         data_ok = True
@@ -167,6 +160,13 @@ class AccountManagementChange(Resource):
             return {'message': "invalid input"}, 400
 
         if start_date_modify is not None and end_date_modify is not None:
+            try:
+                start_date_modify = datetime.strptime(data['StartDate'], '%Y-%m-%d').date()
+                # start_date_modify = data['StartDate']
+                end_date_modify = datetime.strptime(data['EndDate'], '%Y-%m-%d').date()
+                # end_date_modify = data['EndDate']
+            except:
+                return {'message': "invalid input"}, 400
             data_ok = AccountService.validate_period(start_date_modify, end_date_modify)
 
         # ensure CRUD period satisfy with parent's account CRUD period

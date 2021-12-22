@@ -68,6 +68,13 @@ class GroupDb(db.Model):
         return db.session.query(GroupDb.groupId, GroupDb.groupName,
                                 AccountDb.endDate).select_from(GroupDb). \
             join(AccountDb, GroupDb.groupId == AccountDb.accountId).filter(GroupDb.wardId == id).all()
+    @staticmethod
+    def find_group_name(id):
+        return db.session.query(GroupDb.groupName).filter_by(groupId=id).first()
+
+    @classmethod
+    def check_exist(cls, id):
+        return cls.query.filter_by(groupId=id).count()
 
     def save_to_db(self):
         db.session.add(self)
