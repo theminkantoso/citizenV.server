@@ -54,10 +54,9 @@ class CityServices:
 
     # xoá tỉnh/thành phố
     @staticmethod
-    def delete_city(c: CityDb, city_id: str):
+    def delete_city(c: CityDb):
         try:
             c.delete_from_db()
-            AccountDb.delete_account_by_delete_area(city_id)
         except:
             return 1  # error
         return 2  # deleted

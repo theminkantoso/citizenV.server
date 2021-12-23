@@ -55,7 +55,7 @@ class AccountDb(db.Model):
                 "managerAccount": "",
                 "startDate": "",
                 "endDate": "",
-                "isLocked": ""
+                "isLocked": None
             }
         else:
             if isinstance(acc.startDate, date):
@@ -108,12 +108,6 @@ class AccountDb(db.Model):
     # def delete_managed_account_hierachy_2(cls, accId):
     #     search = "{}%".format(accId)
     #     print(cls.query.filter(cls.managerAccount.like(search)).count().group_by(accId))
-
-    @classmethod
-    def delete_account_by_delete_area(cls, areaId):
-        search = "{}%".format(areaId)
-        cls.query.filter(cls.accountId.like(search)).delete(synchronize_session='fetch')
-        db.session.commit()
 
     def save_to_db(self):
         db.session.add(self)

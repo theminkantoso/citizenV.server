@@ -49,7 +49,7 @@ class City(Resource):
         if c == 0:
             return {'message': "Invalid id"}, 400
         if c:  # city_id tồn tại
-            city = CityServices.delete_city(c, city_id)
+            city = CityServices.delete_city(c)
             if city == 1:
                 return {"message": "An error occurred deleting the cityProvince."}, 500
             if city == 2:

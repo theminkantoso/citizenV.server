@@ -55,10 +55,9 @@ class DistrictServices:
 
     # Xoá 1 quận/huyện trong 1 tỉnh/thành phố khỏi danh sách
     @staticmethod
-    def delete_district(dist: DistrictDb, dist_id: str):
+    def delete_district(dist: DistrictDb):
         try:
             dist.delete_from_db()
-            AccountDb.delete_account_by_delete_area(dist_id)
         except:
             return 0  # err
         return 1  # deleted

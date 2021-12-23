@@ -62,7 +62,7 @@ class Group(Resource):
             return {'message': 'group not found.'}, 404
         else:
             # Kiểm tra group_id có tồn tại và người dùng có quyền không
-            group = GroupServices.delete_group(g, group_id)
+            group = GroupServices.delete_group(g)
             if group == 1:
                 return {'message': 'Group deleted.'}, 200
             else:

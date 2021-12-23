@@ -53,10 +53,9 @@ class WardServices:
 
     # Xoá 1 xã/phường khỏi danh sách
     @staticmethod
-    def delete_ward(ward: WardDb, ward_id: str):
+    def delete_ward(ward: WardDb):
         try:
             ward.delete_from_db()
-            AccountDb.delete_account_by_delete_area(ward_id)
         except:
             return 1  # err
         return 0  # deleted

@@ -60,10 +60,9 @@ class GroupServices:
 
     # Xoá 1 thôn/bản/tdp khỏi danh sách
     @staticmethod
-    def delete_group(group: GroupDb, group_id: str):
+    def delete_group(group: GroupDb):
         try:
             group.delete_from_db()
-            AccountDb.delete_account_by_delete_area(group_id)
         except Exception as e:
             print(e)
             return 0  # err

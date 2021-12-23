@@ -60,7 +60,7 @@ class Ward(Resource):
         elif w is None:
             return {'message': 'ward not found.'}, 404
         else:  # ward_id tồn tại và người dùng có quyền
-            ward = WardServices.delete_ward(w, ward_id)
+            ward = WardServices.delete_ward(w)
             if ward == 1:
                 return {'message': 'An error occurred delete the ward.'}, 500
             else:
