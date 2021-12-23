@@ -110,7 +110,7 @@ class Districts(Resource):
     @authorized_required(roles=[1, 2])  # A1, A2
     def get(self, city_id):
         id_acc = get_jwt_identity()
-        if len(id_acc) == 1:
+        if len(id_acc) == 1 or len(id_acc) == 2:
             dists = DistrictServices.list_district_in_city(city_id)
             if dists == 0:
                 return {'message': "Invalid city_id"}, 400

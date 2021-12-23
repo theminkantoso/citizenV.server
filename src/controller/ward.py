@@ -134,7 +134,7 @@ class Wards(Resource):
     @authorized_required(roles=[1, 2, 3])  # A1, A2, A3
     def get(self, dist_id):
         id_acc = get_jwt_identity()
-        if len(id_acc) == 1 or (len(id_acc) == 2 and id_acc == dist_id[0:2]):
+        if len(id_acc) == 1 or len(id_acc) == 2 or len(id_acc) == 4:
             wards = WardServices.list_ward_in_district(dist_id)
             if wards == 0:
                 return {'message': "Invalid dist_id"}, 400
