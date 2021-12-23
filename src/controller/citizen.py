@@ -160,7 +160,7 @@ class all_Citizen(Resource):
         citizens = CitizenServices.all_citizen(id_acc)
         areas = CitizenServices.all_area_name(id_acc)
         return {'Citizens': list(map(lambda x: x.json(), citizens)),
-                'areas': areas}
+                'Areas': areas}
 
     # Tất cả citizen theo từng nhóm
     @jwt_required()
