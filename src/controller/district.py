@@ -107,7 +107,7 @@ class Districts(Resource):
 
     # Tất cả quận/huyện trong 1 tỉnh/thành phố
     @jwt_required()
-    @authorized_required(roles=[1])  # A1
+    @authorized_required(roles=[1, 2])  # A1, A2
     def get(self, city_id):
         id_acc = get_jwt_identity()
         if len(id_acc) == 1:

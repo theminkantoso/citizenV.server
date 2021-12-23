@@ -110,7 +110,7 @@ class add_Citizen(Resource):
 
     # Nhập liệu 1 citizen
     @jwt_required()
-    @authorized_required(roles=[4, 5])  # Nhập bởi B1, B2
+    @authorized_required(roles=[4, 5])  # Nhập liệu bởi B1, B2
     @crud_permission_required
     def post(self, group_id):
         id_acc = get_jwt_identity()
@@ -158,9 +158,7 @@ class all_Citizen(Resource):
     def get(self):
         id_acc = get_jwt_identity()
         citizens = CitizenServices.all_citizen(id_acc)
-        areas = CitizenServices.all_area_name(id_acc)
-        return {'Citizens': list(map(lambda x: x.json(), citizens)),
-                'Areas': areas}
+        return {'Citizens': list(map(lambda x: x.json(), citizens))}
 
     # Tất cả citizen theo từng nhóm
     @jwt_required()

@@ -111,7 +111,7 @@ class Groups(Resource):
 
     # Tất cả thôn/bản/tdp trong 1 xã/phường
     @jwt_required()
-    @authorized_required(roles=[1, 2, 3])  # A1, A2, A3
+    @authorized_required(roles=[1, 2, 3, 4])  # A1, A2, A3, A4
     def get(self, ward_id):
         id_acc = get_jwt_identity()
         if len(id_acc) == 1:

@@ -131,7 +131,7 @@ class Wards(Resource):
 
     # Tất cả xã/phường trong 1 quận/huyện
     @jwt_required()
-    @authorized_required(roles=[1])  # A1, A2
+    @authorized_required(roles=[1, 2, 3])  # A1, A2, A3
     def get(self, dist_id):
         id_acc = get_jwt_identity()
         if len(id_acc) == 1 or (len(id_acc) == 2 and id_acc == dist_id[0:2]):

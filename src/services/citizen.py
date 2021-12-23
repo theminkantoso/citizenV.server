@@ -4,10 +4,6 @@ from flask_jwt_extended import get_jwt
 
 from src.models.citizenDb import CitizenDb
 from src.models.accountDb import AccountDb
-from src.services.city import CityServices
-from src.services.district import DistrictServices
-from src.services.ward import WardServices
-from src.services.group import GroupServices
 import re
 
 # regex_validate
@@ -62,13 +58,6 @@ def check_dob(dob):
     elif nam == today.year and thang == today.month and ngay > today.day:
         return False
     return True
-
-
-def json_area(name, id):
-    return {
-        "Name": name,
-        "Id": id
-    }
 
 
 class CitizenServices:
@@ -199,30 +188,6 @@ class CitizenServices:
         elif role == 5:  # B2
             citizens = CitizenDb.find_all_citizen_in_group(id_acc)
             return citizens
-
-    # Tra cứu tất cả area theo id_acc
-    @staticmethod
-    def all_area_name(id_acc: str):
-        role = get_jwt()['role']
-        k = []
-        # A1
-        if role == 1:  # A1
-            areas = CityServices.list_city_db()
-            for area in areas:
-                k.append(json_area(area.cityProvinceName, area.cityProvinceId))
-        elif role == 2:  # A2
-            areas = DistrictServices.list_district_in_city(id_acc)
-            for area in areas:
-                k.append(json_area(area.districtName, area.districtId))
-        elif role == 3:  # A3
-            areas = WardServices.list_ward_in_district(id_acc)
-            for area in areas:
-                k.append(json_area(area.wardName, area.wardId))
-        elif role == 4:  # B1
-            areas = GroupServices.list_group_in_ward(id_acc)
-            for area in areas:
-                k.append(json_area(area.groupName, area.groupId))
-        return k
 
     # Tra cứu theo nóm
     @staticmethod

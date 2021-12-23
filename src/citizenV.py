@@ -33,7 +33,7 @@ api.add_resource(UserLogoutAccess, '/logout')
 
 # Tỉnh/thành phố
 api.add_resource(City, '/city', '/city/<string:city_id>')
-api.add_resource(Cities, '/cities')
+api.add_resource(Cities, '/cities', '/cities/<string:acc_id>')
 
 # Quận/huyện
 api.add_resource(District, '/district', '/district/<string:dist_id>')

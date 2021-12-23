@@ -1,6 +1,6 @@
 from flask_restful import Resource, reqparse
 from src.services.city import CityServices
-from flask_jwt_extended import jwt_required
+from flask_jwt_extended import jwt_required, get_jwt_identity
 from src.core.auth import crud_permission_required, authorized_required
 
 
@@ -89,3 +89,13 @@ class Cities(Resource):
     def get(self):
         cities = CityServices.list_city_db()
         return {'Areas': list(map(lambda x: x.json(), cities))}, 200
+
+    # Tất cả tỉnh/thành phố chỉ tên và id
+    @jwt_required()
+    @authorized_required(roles=[1])  # A1
+    def get(self, acc_id):
+        id_acc = get_jwt_identity()
+        if id_acc == acc_id:
+            cities = CityServices.list_city_db()
+            return {"Areas": list(map(lambda x: x.json1(), cities))}, 200
+        return {"message": "not authorized"}, 403
