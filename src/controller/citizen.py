@@ -35,7 +35,7 @@ class Citizen(Resource):
 
     # Xoá 1 citizen  khỏi danh sách
     @jwt_required()
-    @authorized_required(roles=[4])  # B1 và B2
+    @authorized_required(roles=[4])  # B1
     @crud_permission_required
     def delete(self, citizen_id):
         id_acc = get_jwt_identity()
@@ -57,7 +57,7 @@ class Citizen(Resource):
     # Chỉnh sửa thông tin 1 citizen
     # Nhập liệu 1 citizen
     @jwt_required()
-    @authorized_required(roles=[4])  # Nhập bởi B1, B2
+    @authorized_required(roles=[4])  # Sửa bởi B1
     @crud_permission_required
     def put(self, citizen_id):
         id_acc = get_jwt_identity()
