@@ -92,7 +92,7 @@ class AccountManagement(Resource):
             my_mail.send(msg)
             new_account = AccountDb(AccountId=id_create, Password=generate_password_hash(password, method='sha256'),
                                     email=email_create, RoleId=int(role_acc['role']) + 1, manager_account=id_acc,
-                                    isLocked=0)
+                                    isLocked=1)
             new_account.save_to_db()
             return {'message': "New account sent to user's mailbox!"}, 200
         except Exception as e:
