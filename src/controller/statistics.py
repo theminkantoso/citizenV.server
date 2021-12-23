@@ -17,11 +17,13 @@ class Statistics(Resource):
             stat_sex = StatisticsService.stat_sex('A1', 1)
             marital = StatisticsService.stat_marital('A1', 1)
             edu = StatisticsService.stat_edu('A1', 1)
+            group_age = StatisticsService.stat_group_age('A1', 1)
         elif role == 2 or role == 3 or role == 4:
             population = StatisticsService.population(id_acc, role)
             stat_sex = StatisticsService.stat_sex(id_acc, role)
             marital = StatisticsService.stat_marital(id_acc, role)
             edu = StatisticsService.stat_edu(id_acc, role)
+            group_age = StatisticsService.stat_group_age(id_acc, role)
         else:
             return {"message": "Something went wrong"}, 404
 
@@ -31,9 +33,11 @@ class Statistics(Resource):
             marital_json = StatisticsService.convert_to_dict_marital(marital)
         if edu:
             edu_json = StatisticsService.convert_to_dict_edu(edu)
+        if group_age:
+            group_age_json = StatisticsService.convert_to_dict_group_age(group_age)
         ret_dict = {}
         if stat_sex_json and marital_json and edu_json:
-            ret_dict = {**stat_sex_json, **marital_json, **edu_json}
+            ret_dict = {**stat_sex_json, **marital_json, **edu_json, **group_age_json}
         ret_dict["population"] = population
         if ret_dict:
             return ret_dict, 200
@@ -61,6 +65,7 @@ class StatisticsSpecific(Resource):
             stat_sex = StatisticsService.stat_sex(id_request, StatisticsService.gen_index_request(id_request))
             marital = StatisticsService.stat_marital(id_request, StatisticsService.gen_index_request(id_request))
             edu = StatisticsService.stat_edu(id_request, StatisticsService.gen_index_request(id_request))
+            group_age = StatisticsService.stat_group_age(id_request, StatisticsService.gen_index_request(id_request))
             name = StatisticsService.get_name(id_request, StatisticsService.gen_index_request(id_request))
         else:
             return {"message": "Something went wrong"}, 404
@@ -71,9 +76,11 @@ class StatisticsSpecific(Resource):
             marital_json = StatisticsService.convert_to_dict_marital(marital)
         if edu:
             edu_json = StatisticsService.convert_to_dict_edu(edu)
+        if group_age:
+            group_age_json = StatisticsService.convert_to_dict_group_age(group_age)
         ret_dict = {}
         if stat_sex_json and marital_json and edu_json:
-            ret_dict = {**stat_sex_json, **marital_json, **edu_json}
+            ret_dict = {**stat_sex_json, **marital_json, **edu_json, **group_age_json}
         ret_dict["population"] = population
         ret_dict["name"] = name
         if ret_dict:

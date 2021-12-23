@@ -1,3 +1,6 @@
+import sqlalchemy
+from sqlalchemy import func
+
 from src.database import db
 from datetime import date
 
@@ -101,6 +104,8 @@ class CitizenDb(db.Model):
             return cls.query.filter(CitizenDb.wardId.in_(areas)).all()
         elif len_areaId == 8:
             return cls.query.filter(CitizenDb.groupId.in_(areas)).all()
+
+    @classmethod
     def get_population_entire(cls):
         return cls.query.count()
 
@@ -190,6 +195,71 @@ class CitizenDb(db.Model):
     @staticmethod
     def get_marital_status_group(id):
         return db.session.query(CitizenDb.maritalStatus, db.func.count()).group_by(CitizenDb.maritalStatus). \
+            filter_by(groupId=id).all()
+
+    @staticmethod
+    def get_group_age_entire():
+        return db.session.query(
+            func.sum(func.IF(func.TIMESTAMPDIFF(sqlalchemy.text('YEAR'), CitizenDb.DOB, '2021-12-23') < 19, 1, 0)),
+            func.sum(func.IF(func.TIMESTAMPDIFF(sqlalchemy.text('YEAR'), CitizenDb.DOB, '2021-12-23').
+                             between(19, 45), 1, 0)),
+            func.sum(func.IF(func.TIMESTAMPDIFF(sqlalchemy.text('YEAR'), CitizenDb.DOB, '2021-12-23').
+                             between(46, 65), 1, 0)),
+            func.sum(func.IF(func.TIMESTAMPDIFF(sqlalchemy.text('YEAR'), CitizenDb.DOB, '2021-12-23').
+                             between(66, 80), 1, 0)),
+            func.sum(func.IF(func.TIMESTAMPDIFF(sqlalchemy.text('YEAR'), CitizenDb.DOB, '2021-12-23') > 80, 1, 0))).\
+            all()
+
+    @staticmethod
+    def get_group_age_city(id):
+        return db.session.query(
+            func.sum(func.IF(func.TIMESTAMPDIFF(sqlalchemy.text('YEAR'), CitizenDb.DOB, '2021-12-23') < 19, 1, 0)),
+            func.sum(func.IF(func.TIMESTAMPDIFF(sqlalchemy.text('YEAR'), CitizenDb.DOB, '2021-12-23').
+                             between(19, 45), 1, 0)),
+            func.sum(func.IF(func.TIMESTAMPDIFF(sqlalchemy.text('YEAR'), CitizenDb.DOB, '2021-12-23').
+                             between(46, 65), 1, 0)),
+            func.sum(func.IF(func.TIMESTAMPDIFF(sqlalchemy.text('YEAR'), CitizenDb.DOB, '2021-12-23').
+                             between(66, 80), 1, 0)),
+            func.sum(func.IF(func.TIMESTAMPDIFF(sqlalchemy.text('YEAR'), CitizenDb.DOB, '2021-12-23') > 80, 1, 0))).\
+            filter_by(cityProvinceId=id).all()
+
+    @staticmethod
+    def get_group_age_district(id):
+        return db.session.query(
+            func.sum(func.IF(func.TIMESTAMPDIFF(sqlalchemy.text('YEAR'), CitizenDb.DOB, '2021-12-23') < 19, 1, 0)),
+            func.sum(func.IF(func.TIMESTAMPDIFF(sqlalchemy.text('YEAR'), CitizenDb.DOB, '2021-12-23').
+                             between(19, 45), 1, 0)),
+            func.sum(func.IF(func.TIMESTAMPDIFF(sqlalchemy.text('YEAR'), CitizenDb.DOB, '2021-12-23').
+                             between(46, 65), 1, 0)),
+            func.sum(func.IF(func.TIMESTAMPDIFF(sqlalchemy.text('YEAR'), CitizenDb.DOB, '2021-12-23').
+                             between(66, 80), 1, 0)),
+            func.sum(func.IF(func.TIMESTAMPDIFF(sqlalchemy.text('YEAR'), CitizenDb.DOB, '2021-12-23') > 80, 1, 0))). \
+            filter_by(districtId=id).all()
+
+    @staticmethod
+    def get_group_age_ward(id):
+        return db.session.query(
+            func.sum(func.IF(func.TIMESTAMPDIFF(sqlalchemy.text('YEAR'), CitizenDb.DOB, '2021-12-23') < 19, 1, 0)),
+            func.sum(func.IF(func.TIMESTAMPDIFF(sqlalchemy.text('YEAR'), CitizenDb.DOB, '2021-12-23').
+                             between(19, 45), 1, 0)),
+            func.sum(func.IF(func.TIMESTAMPDIFF(sqlalchemy.text('YEAR'), CitizenDb.DOB, '2021-12-23').
+                             between(46, 65), 1, 0)),
+            func.sum(func.IF(func.TIMESTAMPDIFF(sqlalchemy.text('YEAR'), CitizenDb.DOB, '2021-12-23').
+                             between(66, 80), 1, 0)),
+            func.sum(func.IF(func.TIMESTAMPDIFF(sqlalchemy.text('YEAR'), CitizenDb.DOB, '2021-12-23') > 80, 1, 0))). \
+            filter_by(wardId=id).all()
+
+    @staticmethod
+    def get_group_age_group(id):
+        return db.session.query(
+            func.sum(func.IF(func.TIMESTAMPDIFF(sqlalchemy.text('YEAR'), CitizenDb.DOB, '2021-12-23') < 19, 1, 0)),
+            func.sum(func.IF(func.TIMESTAMPDIFF(sqlalchemy.text('YEAR'), CitizenDb.DOB, '2021-12-23').
+                             between(19, 45), 1, 0)),
+            func.sum(func.IF(func.TIMESTAMPDIFF(sqlalchemy.text('YEAR'), CitizenDb.DOB, '2021-12-23').
+                             between(46, 65), 1, 0)),
+            func.sum(func.IF(func.TIMESTAMPDIFF(sqlalchemy.text('YEAR'), CitizenDb.DOB, '2021-12-23').
+                             between(66, 80), 1, 0)),
+            func.sum(func.IF(func.TIMESTAMPDIFF(sqlalchemy.text('YEAR'), CitizenDb.DOB, '2021-12-23') > 80, 1, 0))). \
             filter_by(groupId=id).all()
 
     def save_to_db(self):

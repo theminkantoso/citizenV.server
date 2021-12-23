@@ -287,3 +287,23 @@ class CitizenServices:
     @staticmethod
     def get_marital_status_group(id):
         return CitizenDb.get_marital_status_group(id)
+
+    @staticmethod
+    def get_group_age_entire():
+        return CitizenDb.get_group_age_entire()
+
+    @staticmethod
+    def get_group_age_city(id):
+        return CitizenDb.get_group_age_city(id)
+
+    @staticmethod
+    def get_group_age_district(id):
+        return CitizenDb.get_group_age_district(id)
+
+    @staticmethod
+    def get_group_age_ward(id):
+        return CitizenDb.get_group_age_ward(id)
+
+    @staticmethod
+    def get_group_age_group(id):
+        return CitizenDb.get_group_age_group(id)

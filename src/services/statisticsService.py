@@ -60,6 +60,19 @@ class StatisticsService():
             return CitizenServices.get_marital_status_group(id)
 
     @staticmethod
+    def stat_group_age(id, role):
+        if id == 'A1' and role == 1:
+            return CitizenServices.get_group_age_entire()
+        elif role == 2:
+            return CitizenServices.get_group_age_city(id)
+        elif role == 3:
+            return CitizenServices.get_group_age_district(id)
+        elif role == 4:
+            return CitizenServices.get_group_age_ward(id)
+        elif role == 5:
+            return CitizenServices.get_group_age_group(id)
+
+    @staticmethod
     def get_name(id, role):
         if role == 2:
             return CityServices.get_city_name(id)
@@ -72,6 +85,11 @@ class StatisticsService():
 
     @staticmethod
     def convert_to_dict_sex(arr):
+        """
+        Convert query result to dictionary
+        :param arr: input result
+        :return: dictionary form, later convert to JSON
+        """
         dict_out = {"Nam": 0, "Nu": 0}
         for i in range(len(arr)):
             dict_out.update({arr[int(i)][0]: arr[int(i)][1]})
@@ -79,6 +97,11 @@ class StatisticsService():
 
     @staticmethod
     def convert_to_dict_edu(arr):
+        """
+        Convert query result to dictionary
+        :param arr: input result
+        :return: dictionary form, later convert to JSON
+        """
         dict_out = {"0/10": 0, "1/10": 0, "2/10": 0, "3/10": 0, "4/10": 0, "5/10": 0, "6/10": 0, "7/10": 0, "8/10": 0,
                     "9/10": 0, "10/10": 0, "0/12": 0, "1/12": 0, "2/12": 0, "3/12": 0, "4/12": 0, "5/12": 0, "6/12": 0,
                     "7/12": 0, "8/12": 0, "9/12": 0, "10/12": 0, "11/12": 0, "12/12": 0}
@@ -88,9 +111,25 @@ class StatisticsService():
 
     @staticmethod
     def convert_to_dict_marital(arr):
+        """
+        Convert query result to dictionary
+        :param arr: input result
+        :return: dictionary form, later convert to JSON
+        """
         dict_out = {"Chua ket hon": 0, "Da ket hon": 0, "Ly hon": 0}
         for i in range(len(arr)):
             dict_out.update({arr[int(i)][0]: arr[int(i)][1]})
+        return dict_out
+
+    @staticmethod
+    def convert_to_dict_group_age(arr):
+        """
+        Convert query result to dictionary
+        :param arr: input result
+        :return: dictionary form, later convert to JSON
+        """
+        dict_out = {"under 18": int(arr[0][0]), "19-45": int(arr[0][1]), "46-65": int(arr[0][2]),
+                    "66-80": int(arr[0][3]), "above 80": int(arr[0][4])}
         return dict_out
 
     @staticmethod
@@ -104,12 +143,23 @@ class StatisticsService():
 
     @staticmethod
     def check_valid_request_role(id_req, role):
+        """
+        Ensure A1, A2, A3 can access down to ward level, only B1 can access residentialGroup
+        :param id_req: input request
+        :param role: role of account
+        :return: True if request is at residentialGroup level and role is B1
+        """
         if len(id_req) == 8 and role != 4:
             return False
         return True
 
     @staticmethod
     def check_request_two_digit(id_req):
+        """
+        Ensure request is 2,4,6 or 8 digits
+        :param id_req: input request
+        :return: True if statisfy condition above
+        """
         return len(id_req) % 2 == 0 and 8 >= len(id_req) >= 2
 
     @staticmethod

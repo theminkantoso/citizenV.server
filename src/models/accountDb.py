@@ -104,11 +104,6 @@ class AccountDb(db.Model):
         return db.session.query(AccountDb.email).filter(AccountDb.managerAccount == id_manager). \
             filter(AccountDb.accountId == id_in).first()
 
-    # @classmethod
-    # def delete_managed_account_hierachy_2(cls, accId):
-    #     search = "{}%".format(accId)
-    #     print(cls.query.filter(cls.managerAccount.like(search)).count().group_by(accId))
-
     def save_to_db(self):
         db.session.add(self)
         db.session.commit()
