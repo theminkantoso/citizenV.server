@@ -4,6 +4,10 @@ from flask_jwt_extended import get_jwt
 
 from src.models.citizenDb import CitizenDb
 from src.models.accountDb import AccountDb
+from src.services.city import CityServices
+from src.services.district import DistrictServices
+from src.services.ward import WardServices
+from src.services.group import GroupServices
 import re
 
 # regex_validate
@@ -26,7 +30,7 @@ def check_dob(dob):
     s = dob.split('-')
     if len(s) != 3:  # 3 phần ngày, tháng, năm
         return False
-    regex = '^[0-9]*$' # đầu vào là các chữ số
+    regex = '^[0-9]*$'  # đầu vào là các chữ số
     if (not validate_regex(s[0], regex)) or (not validate_regex(s[1], regex)) or (not validate_regex(s[2], regex)):
         return False
     # chuyển str về int
@@ -60,6 +64,11 @@ def check_dob(dob):
     return True
 
 
+def json_area(name, id):
+    return {
+        "Name": name,
+        "Id": id
+    }
 
 
 class CitizenServices:
@@ -129,7 +138,8 @@ class CitizenServices:
 
         citizen = CitizenDb(CCCD=data["CCCD"], name=data["name"], DOB=data["DOB"], sex=data["sex"],
                             maritalStatus=data["maritalStatus"], nation=data["nation"], religion=data["religion"],
-                            permanentResidence=data["permanentResidence"], temporaryResidence=data["temporaryResidence"],
+                            permanentResidence=data["permanentResidence"],
+                            temporaryResidence=data["temporaryResidence"],
                             educationalLevel=data["educationalLevel"], job=data["job"], cityProvinceId=id_city,
                             districtId=id_district, wardId=id_ward, groupId=group_id)
         try:
@@ -190,6 +200,30 @@ class CitizenServices:
             citizens = CitizenDb.find_all_citizen_in_group(id_acc)
             return citizens
 
+    # Tra cứu tất cả area theo id_acc
+    @staticmethod
+    def all_area_name(id_acc: str):
+        role = get_jwt()['role']
+        k = []
+        # A1
+        if role == 1:  # A1
+            areas = CityServices.list_city_db()
+            for area in areas:
+                k.append(json_area(area.cityProvinceName, area.cityProvinceId))
+        elif role == 2:  # A2
+            areas = DistrictServices.list_district_in_city(id_acc)
+            for area in areas:
+                k.append(json_area(area.districtName, area.districtId))
+        elif role == 3:  # A3
+            areas = WardServices.list_ward_in_district(id_acc)
+            for area in areas:
+                k.append(json_area(area.wardName, area.wardId))
+        elif role == 4:  # B1
+            areas = GroupServices.list_group_in_ward(id_acc)
+            for area in areas:
+                k.append(json_area(area.groupName, area.groupId))
+        return k
+
     # Tra cứu theo nóm
     @staticmethod
     def all_citizen_by_list_areas(role: int, areas):
@@ -200,13 +234,11 @@ class CitizenServices:
                 return 1
         # A1 chỉ cho
         if (role == 1 and len_areaId in [2, 4, 6, 8]) \
-                or (role == 2 and len_areaId in [4, 6, 8])\
-                or (role == 3 and len_areaId in [6, 8])\
+                or (role == 2 and len_areaId in [4, 6, 8]) \
+                or (role == 3 and len_areaId in [6, 8]) \
                 or (role == 4 and len_areaId == 8):
             return CitizenDb.find_all_citizen_by_list_area(areas, len_areaId)
         return []
-
-
 
     @staticmethod
     def get_population_entire():

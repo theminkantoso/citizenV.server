@@ -152,14 +152,17 @@ class add_Citizen(Resource):
 
 
 class all_Citizen(Resource):
-
+    # Tất cả citizen
     @jwt_required()
     @authorized_required(roles=[1, 2, 3, 4])
     def get(self):
         id_acc = get_jwt_identity()
         citizens = CitizenServices.all_citizen(id_acc)
-        return {'Citizens': list(map(lambda x: x.json(), citizens))}
+        areas = CitizenServices.all_area_name(id_acc)
+        return {'Citizens': list(map(lambda x: x.json(), citizens)),
+                'areas': areas}
 
+    # Tất cả citizen theo từng nhóm
     @jwt_required()
     @authorized_required(roles=[1, 2, 3, 4])
     def post(self):
