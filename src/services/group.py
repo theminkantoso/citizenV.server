@@ -86,8 +86,14 @@ class GroupServices:
     # List thôn/bản/tdp
     @staticmethod
     def list_group_in_ward(ward_id):
+        # validate
+        regex_id = '^(0[1-9]|[1-9][0-9]){3}$'
+        if not validate_regex(ward_id, regex_id):
+            return 0  # Invalid ward_id
         groups = GroupDb.find_by_ward_id(ward_id)
-        return groups
+        if groups:
+            return groups
+        return None
 
     @staticmethod
     def list_group_progress(id: str):

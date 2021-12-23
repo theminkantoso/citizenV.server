@@ -23,6 +23,12 @@ class DistrictDb(db.Model):
             "completed": self.completed
         }
 
+    def json1(self):
+        return {
+            "Name": self.districtName,
+            "Id": self.districtId
+        }
+
     @classmethod
     def find_by_name(cls, name):
         return cls.query.filter_by(districtName=name).first()

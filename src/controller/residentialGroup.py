@@ -108,3 +108,16 @@ class Groups(Resource):
         id_acc = get_jwt_identity()
         groups = GroupServices.list_group_in_ward(id_acc)
         return {"Areas": list(map(lambda x: x.json(), groups))}, 200
+
+    # Tất cả thôn/bản/tdp trong 1 xã/phường
+    @jwt_required()
+    @authorized_required(roles=[1, 2, 3])  # A1, A2, A3
+    def get(self, ward_id):
+        id_acc = get_jwt_identity()
+        if len(id_acc) == 1:
+            groups = GroupServices.list_group_in_ward(ward_id)
+            if groups == 0:
+                return {'message': "Invalid ward_id"}, 400
+            elif groups is None:
+                return {'message': 'ward not found.'}, 404
+            return {"Areas": list(map(lambda x: x.json2(), groups))}, 200

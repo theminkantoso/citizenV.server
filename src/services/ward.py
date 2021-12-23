@@ -94,8 +94,14 @@ class WardServices:
     # List xã/phường
     @staticmethod
     def list_ward_in_district(dist_id: str):
+        # validate
+        regex_id = '^(0[1-9]|[1-9][0-9]){2}$'
+        if not validate_regex(dist_id, regex_id):
+            return 0  # Invalid dist_id
         wards = WardDb.find_by_district_id(dist_id)
-        return wards
+        if wards:
+            return wards
+        return None
 
     @staticmethod
     def list_ward_progress(id: str):

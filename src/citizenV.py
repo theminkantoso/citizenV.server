@@ -37,16 +37,16 @@ api.add_resource(Cities, '/cities')
 
 # Quận/huyện
 api.add_resource(District, '/district', '/district/<string:dist_id>')
-api.add_resource(Districts, '/districts')
+api.add_resource(Districts, '/districts', '/districts/<string:city_id>')
 
 # Xã/phường
 api.add_resource(Ward, '/ward', '/ward/<string:ward_id>')
-api.add_resource(Wards, '/wards')
+api.add_resource(Wards, '/wards', '/wards/<string:dist_id>')
 api.add_resource(WardCompleted, '/wardCompleted')
 
 # Thôn/bản/tdp
 api.add_resource(Group, '/group', '/group/<string:group_id>')
-api.add_resource(Groups, '/groups')
+api.add_resource(Groups, '/groups', '/groups/<string:ward_id>')
 
 # Màn hình quản lý tài khoản
 api.add_resource(AccountManagement, '/accounts')

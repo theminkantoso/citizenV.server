@@ -102,5 +102,19 @@ class Districts(Resource):
     @authorized_required(roles=[2])  # A2
     def get(self):
         id_acc = get_jwt_identity()
-        dist = DistrictServices.list_district_in_city(id_acc)
-        return {"Areas": list(map(lambda x: x.json(), dist))}, 200
+        dists = DistrictServices.list_district_in_city(id_acc)
+        return {"Areas": list(map(lambda x: x.json(), dists))}, 200
+
+    # Tất cả quận/huyện trong 1 tỉnh/thành phố
+    @jwt_required()
+    @authorized_required(roles=[1])  # A1
+    def get(self, city_id):
+        id_acc = get_jwt_identity()
+        if len(id_acc) == 1:
+            dists = DistrictServices.list_district_in_city(city_id)
+            if dists == 0:
+                return {'message': "Invalid city_id"}, 400
+            elif dists is None:
+                return {'message': 'city not found.'}, 404
+            return {"Areas": list(map(lambda x: x.json1(), dists))}, 200
+

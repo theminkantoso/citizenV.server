@@ -34,6 +34,12 @@ class GroupDb(db.Model):
             "sumCitizen": sum_citizen
         }
 
+    def json2(self):
+        return {
+            "Name": self.groupName,
+            "Id": self.groupId
+        }
+
     @classmethod
     def find_by_name(cls, name):
         return cls.query.filter_by(groupName=name).first()

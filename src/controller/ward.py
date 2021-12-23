@@ -126,5 +126,18 @@ class Wards(Resource):
     @authorized_required(roles=[3])  # A3
     def get(self):
         id_acc = get_jwt_identity()
-        ward = WardServices.list_ward_in_district(id_acc)
-        return {"Areas": list(map(lambda x: x.json(), ward))}, 200
+        wards = WardServices.list_ward_in_district(id_acc)
+        return {"Areas": list(map(lambda x: x.json(), wards))}, 200
+
+    # Tất cả xã/phường trong 1 quận/huyện
+    @jwt_required()
+    @authorized_required(roles=[1])  # A1, A2
+    def get(self, dist_id):
+        id_acc = get_jwt_identity()
+        if len(id_acc) == 1 or (len(id_acc) == 2 and id_acc == dist_id[0:2]):
+            wards = WardServices.list_ward_in_district(dist_id)
+            if wards == 0:
+                return {'message': "Invalid dist_id"}, 400
+            elif wards is None:
+                return {'message': 'dist not found.'}, 404
+            return {"Areas": list(map(lambda x: x.json1(), wards))}, 200
