@@ -20,7 +20,7 @@ class Citizen(Resource):
 
     # Tìm kiếm 1 citizen
     @jwt_required()
-    @authorized_required(roles=[1, 2, 3, 4, 5])
+    @authorized_required(roles=[1, 2, 3, 4])
     def get(self, citizen_id):
         id_acc = get_jwt_identity()
         # Kiểm tra citizen_id tồn tại hay không
@@ -35,7 +35,7 @@ class Citizen(Resource):
 
     # Xoá 1 citizen  khỏi danh sách
     @jwt_required()
-    @authorized_required(roles=[4, 5])  # B1 và B2
+    @authorized_required(roles=[4])  # B1 và B2
     @crud_permission_required
     def delete(self, citizen_id):
         id_acc = get_jwt_identity()
@@ -57,7 +57,7 @@ class Citizen(Resource):
     # Chỉnh sửa thông tin 1 citizen
     # Nhập liệu 1 citizen
     @jwt_required()
-    @authorized_required(roles=[4, 5])  # Nhập bởi B1, B2
+    @authorized_required(roles=[4])  # Nhập bởi B1, B2
     @crud_permission_required
     def put(self, citizen_id):
         id_acc = get_jwt_identity()
@@ -154,7 +154,7 @@ class add_Citizen(Resource):
 class all_Citizen(Resource):
 
     @jwt_required()
-    @authorized_required(roles=[1, 2, 3, 4, 5])
+    @authorized_required(roles=[1, 2, 3, 4])
     def get(self):
         id_acc = get_jwt_identity()
         citizens = CitizenServices.all_citizen(id_acc)
