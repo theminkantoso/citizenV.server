@@ -189,6 +189,36 @@ class CitizenServices:
             citizens = CitizenDb.find_all_citizen_in_group(id_acc)
             return citizens
 
+    # Tra cứu tất cả người dân theo area_id
+    @staticmethod
+    def all_citizen_area(id_acc: str, area_id: str):
+        # validate
+        regex_id = '^(0[1-9]|[1-9][0-9])*$'
+        if not validate_regex(area_id, regex_id) or (2 > len(area_id) or len(area_id) > 8):
+            return 0  # Invalid area_id
+        role = get_jwt()['role']
+        # A1
+        if len(id_acc) >= len(area_id):
+            return 1
+        elif role == 2 and id_acc != area_id[0:2]:
+            return 1
+        elif role == 3 and id_acc != area_id[0:4]:
+            return 1
+        elif role == 4 and id_acc != area_id[0:6]:
+            return 1
+        if len(area_id) == 2:
+            citizens = CitizenDb.find_all_citizen_in_city(area_id)
+            return citizens
+        elif len(area_id) == 4:
+            citizens = CitizenDb.find_all_citizen_in_dist(area_id)
+            return citizens
+        elif len(area_id) == 6:
+            citizens = CitizenDb.find_all_citizen_in_ward(area_id)
+            return citizens
+        elif len(area_id) == 8:
+            citizens = CitizenDb.find_all_citizen_in_group(area_id)
+            return citizens
+
     # Tra cứu theo nóm
     @staticmethod
     def all_citizen_by_list_areas(role: int, areas):

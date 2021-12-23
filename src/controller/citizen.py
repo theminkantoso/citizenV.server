@@ -120,7 +120,7 @@ class add_Citizen(Resource):
         if g == 0:
             return {'message': "Invalid group_id"}, 400
         elif g == 1 or (id_acc != group_id and len(id_acc) == 8):
-            return {'message': "not authorized"}
+            return {'message': "not authorized"}, 403
         elif g is None:
             return {'message': 'groupId not found.'}, 404
         else:
@@ -159,6 +159,18 @@ class all_Citizen(Resource):
         id_acc = get_jwt_identity()
         citizens = CitizenServices.all_citizen(id_acc)
         return {'Citizens': list(map(lambda x: x.json(), citizens))}
+
+    # Tất cả citizen có đầu vào
+    @jwt_required()
+    @authorized_required(roles=[1, 2, 3, 4])
+    def get(self, area_id):
+        id_acc = get_jwt_identity()
+        citizens = CitizenServices.all_citizen_area(id_acc, area_id)
+        if citizens == 0:
+            return {'message': "Invalid area_id"}, 400
+        elif citizens == 1:
+            return {"message": "not authorized"}, 403
+        return {'Citizens': list(map(lambda x: x.json(), citizens))}, 200
 
     # Tất cả citizen theo từng nhóm
     @jwt_required()

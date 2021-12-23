@@ -55,7 +55,7 @@ api.add_resource(AccountManagementChange, '/accounts/<string:id>')
 # Người dân
 api.add_resource(Citizen, '/citizen', '/citizen/<string:citizen_id>')
 api.add_resource(add_Citizen, '/citizen/<string:group_id>')
-api.add_resource(all_Citizen, '/citizens')
+api.add_resource(all_Citizen, '/citizens', '/citizens/<string:area_id>')
 
 # Progress
 api.add_resource(Progress, '/progress')
