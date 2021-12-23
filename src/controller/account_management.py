@@ -184,10 +184,10 @@ class AccountManagementChange(Resource):
             current_user.startDate = start_date_modify
             current_user.endDate = end_date_modify
         if is_locked_modify is not None:
-            current_user.isLocked = is_locked_modify
-            current_user.startDate = None
-            current_user.endDate = None
             if is_locked_modify:
+                current_user.isLocked = is_locked_modify
+                current_user.startDate = None
+                current_user.endDate = None
                 try:
                     AccountDb.lock_managed_account_hierachy(id_modify)
                 except Exception as e:

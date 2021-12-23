@@ -90,7 +90,7 @@ class AccountDb(db.Model):
     def lock_managed_account_hierachy(cls, accId):
         search = "{}%".format(accId)
         cls.query.filter(cls.managerAccount.like(search)). \
-            update({"isLocked": 1, "startTime": None, "endTime": None}, synchronize_session='fetch')
+            update({"isLocked": 1, "startDate": None, "endDate": None}, synchronize_session='fetch')
         db.session.commit()
 
     @classmethod
@@ -103,11 +103,6 @@ class AccountDb(db.Model):
     def get_email_user_manager(id_manager, id_in):
         return db.session.query(AccountDb.email).filter(AccountDb.managerAccount == id_manager). \
             filter(AccountDb.accountId == id_in).first()
-
-    # @classmethod
-    # def delete_managed_account_hierachy_2(cls, accId):
-    #     search = "{}%".format(accId)
-    #     print(cls.query.filter(cls.managerAccount.like(search)).count().group_by(accId))
 
     def save_to_db(self):
         db.session.add(self)
