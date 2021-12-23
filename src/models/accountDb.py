@@ -90,7 +90,7 @@ class AccountDb(db.Model):
     def lock_managed_account_hierachy(cls, accId):
         search = "{}%".format(accId)
         cls.query.filter(cls.managerAccount.like(search)). \
-            update({"isLocked": 1, "startTime": None, "endTime": None}, synchronize_session='fetch')
+            update({"isLocked": 1, "startDate": None, "endDate": None}, synchronize_session='fetch')
         db.session.commit()
 
     @classmethod

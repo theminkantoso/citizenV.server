@@ -27,8 +27,10 @@ class Progress(Resource):
             count_complete = ProgressServices.count_completed_wards(id_acc)
             count_total = ProgressServices.count_total_wards(id_acc)
         elif id_acc_len == 6:
+            ward_completed = ProgressServices.ward_completed(id_acc)
             location = ProgressServices.list_group_progress(id_acc)
-            return {"progress": ProgressServices.convert_to_list_group(location)}, 200
+            return {"progress": ProgressServices.convert_to_list_group(location),
+                    "completed": ward_completed}, 200
         else:
             return {"message": "Something went wrong"}, 404
         if location:

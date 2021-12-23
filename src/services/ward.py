@@ -78,17 +78,11 @@ class WardServices:
 
     # cập nhật tiến độ
     @staticmethod
-    def completed(id_acc: str, ward_id: str, data: dict):
-        # Validate group_id (đầu vào là 6 số)
-        regex_id = '^(0[1-9]|[1-9][0-9]){3}$'
-        if not validate_regex(ward_id, regex_id):
-            return 0  # Invalid group_id
-        ward = WardDb.find_by_id(ward_id)
+    def completed(id_acc: str, data: dict):
+        ward = WardDb.find_by_id(id_acc)
         completed = data["completed"]
         if ward:
-            if id_acc != ward_id:
-                return 1  # not authorized
-            elif completed == ward.completed:
+            if completed == ward.completed:
                 return 2  # not change
             try:
                 ward.completed = completed
@@ -96,7 +90,6 @@ class WardServices:
             except:
                 return 3  # error
             return None  # updated
-        return 4  # wardId not found
 
     # List xã/phường
     @staticmethod
@@ -146,6 +139,10 @@ class WardServices:
     @staticmethod
     def get_ward_name(id):
         return str(WardDb.find_ward_name(id)[0])
+
+    @staticmethod
+    def get_ward_completed(id):
+        return WardDb.find_by_id(id).completed
 
     @staticmethod
     def check_exist(id):

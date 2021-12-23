@@ -5,7 +5,6 @@ from flask_cors import CORS
 from src.controller.account import Account, Repass, ChangePass, UserLogoutAccess
 from src.controller.cityProvince import City, Cities
 from src.controller.district import District, Districts
-from src.controller.progress import Progress, ProgressSpecific
 from src.controller.ward import Ward, Wards, WardCompleted
 from src.controller.residentialGroup import Group, Groups
 from src.controller.account_management import AccountManagement, AccountManagementChange
@@ -43,7 +42,7 @@ api.add_resource(Districts, '/districts')
 # Xã/phường
 api.add_resource(Ward, '/ward', '/ward/<string:ward_id>')
 api.add_resource(Wards, '/wards')
-api.add_resource(WardCompleted, '/wardCompleted/<string:ward_id>')
+api.add_resource(WardCompleted, '/wardCompleted')
 
 # Thôn/bản/tdp
 api.add_resource(Group, '/group', '/group/<string:group_id>')
