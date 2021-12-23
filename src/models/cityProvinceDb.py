@@ -31,13 +31,13 @@ class CityDb(db.Model):
 
     @staticmethod
     def find_join_account():
-        return db.session.query(CityDb.cityProvinceId, CityDb.cityProvinceName, CityDb.completed, AccountDb.endTime).\
-            join(AccountDb).filter(CityDb.cityProvinceId == AccountDb.accountId).all()
+        return db.session.query(CityDb.cityProvinceId, CityDb.cityProvinceName, CityDb.completed, AccountDb.endDate).\
+            select_from(CityDb).join(AccountDb, CityDb.cityProvinceId == AccountDb.accountId).all()
 
     @staticmethod
     def find_join_account_specific(id):
         return db.session.query(CityDb.cityProvinceId, CityDb.cityProvinceName, CityDb.completed, AccountDb.endDate). \
-            join(AccountDb, CityDb.cityProvinceId == AccountDb.accountId). \
+            select_from(CityDb).join(AccountDb, CityDb.cityProvinceId == AccountDb.accountId). \
             filter(CityDb.cityProvinceId == id).first()
 
     @classmethod
