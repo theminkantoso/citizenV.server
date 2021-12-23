@@ -21,6 +21,7 @@ class Account(Resource):
     parser.add_argument('password', type=str)
 
     def get(self):
+        # print(CitizenDb.get_group_age_entire()[0][1])
         pass
 
     def post(self):

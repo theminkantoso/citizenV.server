@@ -60,6 +60,19 @@ class StatisticsService():
             return CitizenServices.get_marital_status_group(id)
 
     @staticmethod
+    def stat_group_age(id, role):
+        if id == 'A1' and role == 1:
+            return CitizenServices.get_group_age_entire()
+        elif role == 2:
+            return CitizenServices.get_group_age_city(id)
+        elif role == 3:
+            return CitizenServices.get_group_age_district(id)
+        elif role == 4:
+            return CitizenServices.get_group_age_ward(id)
+        elif role == 5:
+            return CitizenServices.get_group_age_group(id)
+
+    @staticmethod
     def get_name(id, role):
         if role == 2:
             return CityServices.get_city_name(id)
@@ -106,6 +119,17 @@ class StatisticsService():
         dict_out = {"Chua ket hon": 0, "Da ket hon": 0, "Ly hon": 0}
         for i in range(len(arr)):
             dict_out.update({arr[int(i)][0]: arr[int(i)][1]})
+        return dict_out
+
+    @staticmethod
+    def convert_to_dict_group_age(arr):
+        """
+        Convert query result to dictionary
+        :param arr: input result
+        :return: dictionary form, later convert to JSON
+        """
+        dict_out = {"under 18": int(arr[0][0]), "19-45": int(arr[0][1]), "46-65": int(arr[0][2]),
+                    "66-80": int(arr[0][3]), "above 80": int(arr[0][4])}
         return dict_out
 
     @staticmethod
