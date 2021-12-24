@@ -7,6 +7,11 @@ from src.models.accountDb import AccountDb
 import re
 
 # regex_validate
+from src.models.cityProvinceDb import CityDb
+from src.models.districtDb import DistrictDb
+from src.models.residentialGroupDb import GroupDb
+from src.models.wardDb import WardDb
+
 regex_group_id = '^(0[1-9]|[1-9][0-9]){4}$'
 regex_cccd = '[0-9]{12}'
 regex_edu_level = '^([0-9]|([1][012]))[/]([9]|([1][2]))$'
@@ -124,10 +129,19 @@ class CitizenServices:
         id_city = id_acc[0:2]
         id_district = id_acc[0:4]
         id_ward = id_acc[0:6]
+        if data["permanentResidence"] is None:
+            data["permanentResidence"] = ''
+        if data["temporaryResidence"] is None:
+            data["temporaryResidence"] = ''
+        city_name = CityDb.find_by_id(id_city).cityProvinceName
+        dist_name = DistrictDb.find_by_id(id_district).districtName
+        ward_name = WardDb.find_by_id(id_ward).wardName
+        group_name = GroupDb.find_by_id(group_id).groupName
+        permanent_residence = data["permanentResidence"] + ',' + group_name + ',' + ward_name + ',' + dist_name + ',' + city_name
 
         citizen = CitizenDb(CCCD=data["CCCD"], name=data["name"], DOB=data["DOB"], sex=data["sex"],
                             maritalStatus=data["maritalStatus"], nation=data["nation"], religion=data["religion"],
-                            permanentResidence=data["permanentResidence"],
+                            permanentResidence=permanent_residence,
                             temporaryResidence=data["temporaryResidence"],
                             educationalLevel=data["educationalLevel"], job=data["job"], cityProvinceId=id_city,
                             districtId=id_district, wardId=id_ward, groupId=group_id)
