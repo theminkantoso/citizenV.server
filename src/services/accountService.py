@@ -128,7 +128,9 @@ class AccountService:
     def join_area_account(acc, managed_accounts, id_acc):
         accounts = []
         if acc["role"] == 0:  # Tất cả người dùng A1
-            return {'Accounts': list(map(lambda x: x.json(), managed_accounts))}, 200
+            Ad = AccountDb.find_managed_account_by_id(id_acc)
+            for i in range(len(id_acc)):
+                accounts.append(AccountDb.jsonAdmin(id_acc, Ad[i]))
         # Cho A1, A2, A3, B1
         elif acc["role"] == 1:
             acc_join = CityDb.join_areaId()  # join để lấy id của các vùng

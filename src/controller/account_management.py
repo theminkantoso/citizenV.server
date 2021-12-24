@@ -195,7 +195,7 @@ class AccountManagementChange(Resource):
                     return {"message": "something wrong"}, 500
 
         try:
-            current_user.commit_to_db() # need to recheck
+            current_user.commit_to_db()  # need to recheck
             return {"message": "done"}, 200
         except:
             return {"message": "something wrong"}, 500

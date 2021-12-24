@@ -70,6 +70,19 @@ class AccountDb(db.Model):
                     "managerAccount": acc.managerAccount, "startDate": startDate_json,
                     "endDate": endDate_json, "isLocked": acc.isLocked}
 
+    def jsonAdmin(accId, acc):
+        if isinstance(acc.startDate, date):
+            startDate_json = acc.startDate.isoformat()
+        else:
+            startDate_json = ''
+        if isinstance(acc.endDate, date):
+            endDate_json = acc.endDate.isoformat()
+        else:
+            endDate_json = ''
+        return {"areaId": accId, "accountId": accId, "email": acc.email, "roleId": acc.roleId,
+                "managerAccount": acc.managerAccount, "startDate": startDate_json,
+                "endDate": endDate_json, "isLocked": acc.isLocked}
+
     @classmethod
     def find_account(cls, accId, passWord):
         return cls.query.filter_by(accountId=accId, password=passWord).first()
