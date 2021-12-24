@@ -134,10 +134,12 @@ class Wards(Resource):
     @authorized_required(roles=[1, 2, 3])  # A1, A2, A3
     def get(self, dist_id):
         id_acc = get_jwt_identity()
-        if len(id_acc) == 1 or len(id_acc) == 2 or len(id_acc) == 4:
+        if len(id_acc) == 1 or (len(id_acc) == 2 and id_acc == dist_id[0:2])\
+                or (len(id_acc) == 4 and id_acc == dist_id):
             wards = WardServices.list_ward_in_district(dist_id)
             if wards == 0:
                 return {'message': "Invalid dist_id"}, 400
             elif wards is None:
                 return {'message': 'dist not found.'}, 404
             return {"Areas": list(map(lambda x: x.json1(), wards))}, 200
+        return {"message": "not authorized"}, 403

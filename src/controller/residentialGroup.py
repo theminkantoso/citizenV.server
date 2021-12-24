@@ -114,10 +114,12 @@ class Groups(Resource):
     @authorized_required(roles=[1, 2, 3, 4])  # A1, A2, A3, A4
     def get(self, ward_id):
         id_acc = get_jwt_identity()
-        if len(id_acc) == 1 or len(id_acc) == 2 or len(id_acc) == 4 or len(id_acc) == 6:
+        if len(id_acc) == 1 or (len(id_acc) == 2 and id_acc == ward_id[0:2])\
+                or (len(id_acc) == 4 and id_acc == ward_id[0:2]) or (len(id_acc) == 6 and id_acc == ward_id):
             groups = GroupServices.list_group_in_ward(ward_id)
             if groups == 0:
                 return {'message': "Invalid ward_id"}, 400
             elif groups is None:
                 return {'message': 'ward not found.'}, 404
             return {"Areas": list(map(lambda x: x.json2(), groups))}, 200
+        return {"message": "not authorized"}, 403
