@@ -129,6 +129,9 @@ class Wards(Resource):
         wards = WardServices.list_ward_in_district(id_acc)
         return {"Areas": list(map(lambda x: x.json(), wards))}, 200
 
+
+# Thống kê các xã/phường trong 1 quan/huyen
+class all_Wards_in_area(Resource):
     # Tất cả xã/phường trong 1 quận/huyện
     @jwt_required()
     @authorized_required(roles=[1, 2, 3])  # A1, A2, A3

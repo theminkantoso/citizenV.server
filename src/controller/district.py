@@ -105,6 +105,9 @@ class Districts(Resource):
         dists = DistrictServices.list_district_in_city(id_acc)
         return {"Areas": list(map(lambda x: x.json(), dists))}, 200
 
+
+class all_Districts_in_area(Resource):
+
     # Tất cả quận/huyện trong 1 tỉnh/thành phố
     @jwt_required()
     @authorized_required(roles=[1, 2])  # A1, A2
