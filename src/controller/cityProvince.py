@@ -90,6 +90,10 @@ class Cities(Resource):
         cities = CityServices.list_city_db()
         return {'Areas': list(map(lambda x: x.json(), cities))}, 200
 
+
+# Danh sách các tỉnh/thành phố
+class all_Cities(Resource):
+
     # Tất cả tỉnh/thành phố chỉ tên và id
     @jwt_required()
     @authorized_required(roles=[1])  # A1

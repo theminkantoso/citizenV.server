@@ -3,10 +3,10 @@ from flask import Flask
 from flask_cors import CORS
 
 from src.controller.account import Account, Repass, ChangePass, UserLogoutAccess
-from src.controller.cityProvince import City, Cities
-from src.controller.district import District, Districts
-from src.controller.ward import Ward, Wards, WardCompleted
-from src.controller.residentialGroup import Group, Groups
+from src.controller.cityProvince import City, Cities, all_Cities
+from src.controller.district import District, Districts, all_Districts_in_area
+from src.controller.ward import Ward, Wards, WardCompleted, all_Wards_in_area
+from src.controller.residentialGroup import Group, Groups, all_groups_in_area
 from src.controller.account_management import AccountManagement, AccountManagementChange
 from src.controller.citizen import Citizen, add_Citizen, all_Citizen, all_Citizen_Area
 from src.controller.progress import Progress, ProgressSpecific
@@ -33,20 +33,25 @@ api.add_resource(UserLogoutAccess, '/logout')
 
 # Tỉnh/thành phố
 api.add_resource(City, '/city', '/city/<string:city_id>')
-api.add_resource(Cities, '/cities', '/cities/<string:acc_id>')
+api.add_resource(Cities, '/cities')
+api.add_resource(all_Cities, '/cities/<string:acc_id>')
 
 # Quận/huyện
 api.add_resource(District, '/district', '/district/<string:dist_id>')
-api.add_resource(Districts, '/districts', '/districts/<string:city_id>')
+api.add_resource(Districts, '/districts')
+api.add_resource(all_Districts_in_area, '/districts/<string:city_id>')
 
 # Xã/phường
 api.add_resource(Ward, '/ward', '/ward/<string:ward_id>')
-api.add_resource(Wards, '/wards', '/wards/<string:dist_id>')
+api.add_resource(Wards, '/wards')
+api.add_resource(all_Wards_in_area, '/wards/<string:dist_id>')
 api.add_resource(WardCompleted, '/wardCompleted')
+
 
 # Thôn/bản/tdp
 api.add_resource(Group, '/group', '/group/<string:group_id>')
-api.add_resource(Groups, '/groups', '/groups/<string:ward_id>')
+api.add_resource(Groups, '/groups')
+api.add_resource(all_groups_in_area,  '/groups/<string:ward_id>')
 
 # Màn hình quản lý tài khoản
 api.add_resource(AccountManagement, '/accounts')
