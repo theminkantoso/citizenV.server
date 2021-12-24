@@ -106,7 +106,6 @@ class add_Citizen(Resource):
     parser.add_argument("temporaryResidence", type=str)
     parser.add_argument("educationalLevel", type=str)
     parser.add_argument("job", type=str)
-    parser.add_argument('CCCD', type=str)
 
     # Nhập liệu 1 citizen
     @jwt_required()
