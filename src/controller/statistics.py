@@ -1,4 +1,4 @@
-from flask_restful import Resource
+from flask_restful import Resource, reqparse
 from flask_jwt_extended import jwt_required, get_jwt_identity, get_jwt
 from src.core.auth import authorized_required
 from src.services.statisticsService import StatisticsService
@@ -43,6 +43,13 @@ class Statistics(Resource):
             return ret_dict, 200
         return {}, 200
 
+    # Phân tích citizen theo từng nhóm vùng
+    @jwt_required()
+    @authorized_required(roles=[1, 2, 3, 4])
+    def post(self):
+        parser = reqparse.RequestParser()
+        parser.add_argument("areas", action='append')
+
 
 class StatisticsSpecific(Resource):
 
@@ -55,7 +62,7 @@ class StatisticsSpecific(Resource):
         id_request = id
         if not StatisticsService.check_request_two_digit(id_request):
             return {"message": "invalid input"}, 400
-        if StatisticsService.check_valid_request_role(id_request, role):
+        if not StatisticsService.check_valid_request_role(id_request, role):
             return {"message": "not authorized"}, 403
         if 2 <= role <= 4:
             if not StatisticsService.check_valid_request(id_acc, id_request):
@@ -69,7 +76,7 @@ class StatisticsSpecific(Resource):
             name = StatisticsService.get_name(id_request, StatisticsService.gen_index_request(id_request))
         else:
             return {"message": "Something went wrong"}, 404
-
+        edu_json = ''
         if stat_sex:
             stat_sex_json = StatisticsService.convert_to_dict_sex(stat_sex)
         if marital:
@@ -86,6 +93,3 @@ class StatisticsSpecific(Resource):
         if ret_dict:
             return ret_dict, 200
         return {}, 200
-
-
-

@@ -160,18 +160,6 @@ class all_Citizen(Resource):
         citizens = CitizenServices.all_citizen(id_acc)
         return {'Citizens': list(map(lambda x: x.json(), citizens))}
 
-    # Tất cả citizen có đầu vào
-    @jwt_required()
-    @authorized_required(roles=[1, 2, 3, 4])
-    def get(self, area_id):
-        id_acc = get_jwt_identity()
-        citizens = CitizenServices.all_citizen_area(id_acc, area_id)
-        if citizens == 0:
-            return {'message': "Invalid area_id"}, 400
-        elif citizens == 1:
-            return {"message": "not authorized"}, 403
-        return {'Citizens': list(map(lambda x: x.json(), citizens))}, 200
-
     # Tất cả citizen theo từng nhóm
     @jwt_required()
     @authorized_required(roles=[1, 2, 3, 4])
@@ -187,5 +175,17 @@ class all_Citizen(Resource):
         return {'Citizens': list(map(lambda x: x.json(), citizens))}
 
 
+class all_Citizen_Area(Resource):
+    # Tất cả citizen có đầu vào
+    @jwt_required()
+    @authorized_required(roles=[1, 2, 3, 4])
+    def get(self, area_id):
+        id_acc = get_jwt_identity()
+        citizens = CitizenServices.all_citizen_area(id_acc, area_id)
+        if citizens == 0:
+            return {'message': "Invalid area_id"}, 400
+        elif citizens == 1:
+            return {"message": "not authorized"}, 403
+        return {'Citizens': list(map(lambda x: x.json(), citizens))}, 200
 
 

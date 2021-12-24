@@ -8,7 +8,7 @@ from src.controller.district import District, Districts
 from src.controller.ward import Ward, Wards, WardCompleted
 from src.controller.residentialGroup import Group, Groups
 from src.controller.account_management import AccountManagement, AccountManagementChange
-from src.controller.citizen import Citizen, add_Citizen, all_Citizen
+from src.controller.citizen import Citizen, add_Citizen, all_Citizen, all_Citizen_Area
 from src.controller.progress import Progress, ProgressSpecific
 from src.controller.statistics import Statistics, StatisticsSpecific
 from src.controller.file import File
@@ -55,7 +55,8 @@ api.add_resource(AccountManagementChange, '/accounts/<string:id>')
 # Người dân
 api.add_resource(Citizen, '/citizen', '/citizen/<string:citizen_id>')
 api.add_resource(add_Citizen, '/citizen/<string:group_id>')
-api.add_resource(all_Citizen, '/citizens', '/citizens/<string:area_id>')
+api.add_resource(all_Citizen, '/citizens')
+api.add_resource(all_Citizen_Area, '/citizens/<string:area_id>')
 
 # Progress
 api.add_resource(Progress, '/progress')
