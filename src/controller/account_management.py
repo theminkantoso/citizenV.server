@@ -102,7 +102,6 @@ class AccountManagement(Resource):
 
 class AccountManagementChange(Resource):
     parser = reqparse.RequestParser()
-    parser.add_argument('password', type=str)
     parser.add_argument('email', type=str)
     parser.add_argument('StartDate')
     parser.add_argument('EndDate')
