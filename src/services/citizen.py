@@ -293,7 +293,7 @@ class CitizenServices:
 
     @staticmethod
     def get_stats_edu_group(id):
-        return CitizenDb.get_stats_edu_district(id)
+        return CitizenDb.get_stats_edu_group(id)
 
     @staticmethod
     def get_marital_status_entire():
@@ -334,3 +334,85 @@ class CitizenServices:
     @staticmethod
     def get_group_age_group(id):
         return CitizenDb.get_group_age_group(id)
+
+    @staticmethod
+    def get_population_cities(arr):
+        return CitizenDb.get_population_cities(arr)
+
+    @staticmethod
+    def get_population_districts(arr):
+        return CitizenDb.get_population_districts(arr)
+
+    @staticmethod
+    def get_population_wards(arr):
+        return CitizenDb.get_population_wards(arr)
+
+    @staticmethod
+    def get_population_groups(arr):
+        return CitizenDb.get_population_groups(arr)
+
+    @staticmethod
+    def get_stats_sex_cities(arr):
+        return CitizenDb.get_stats_sex_cities(arr)
+
+    @staticmethod
+    def get_stats_sex_districts(arr):
+        return CitizenDb.get_stats_sex_districts(arr)
+
+    @staticmethod
+    def get_stats_sex_wards(arr):
+        return CitizenDb.get_stats_sex_wards(arr)
+
+    @staticmethod
+    def get_stats_sex_groups(arr):
+        return CitizenDb.get_stats_sex_groups(arr)
+
+    @staticmethod
+    def get_stats_edu_cities(arr):
+        return CitizenDb.get_stats_edu_cities(arr)
+
+    @staticmethod
+    def get_stats_edu_districts(arr):
+        return CitizenDb.get_stats_edu_districts(arr)
+
+    @staticmethod
+    def get_stats_edu_wards(arr):
+        return CitizenDb.get_stats_edu_wards(arr)
+
+    @staticmethod
+    def get_stats_edu_groups(arr):
+        return CitizenDb.get_stats_edu_groups(arr)
+
+    @staticmethod
+    def get_marital_status_cities(arr):
+        return CitizenDb.get_marital_status_cities(arr)
+
+    @staticmethod
+    def get_marital_status_districts(arr):
+        return CitizenDb.get_marital_status_districts(arr)
+
+    @staticmethod
+    def get_marital_status_wards(arr):
+        return CitizenDb.get_marital_status_wards(arr)
+
+    @staticmethod
+    def get_marital_status_groups(arr):
+        return CitizenDb.get_marital_status_groups(arr)
+
+    @staticmethod
+    def get_group_age_cities(arr):
+        return CitizenDb.get_group_age_cities(arr)
+
+    @staticmethod
+    def get_group_age_districts(arr):
+        return CitizenDb.get_group_age_districts(arr)
+
+    @staticmethod
+    def get_group_age_wards(arr):
+        return CitizenDb.get_group_age_wards(arr)
+
+    @staticmethod
+    def get_group_age_groups(arr):
+        return CitizenDb.get_group_age_groups(arr)
+
+
