@@ -12,6 +12,7 @@ from src.controller.citizen import Citizen, add_Citizen, all_Citizen, all_Citize
 from src.controller.progress import Progress, ProgressSpecific
 from src.controller.statistics import Statistics, StatisticsSpecific
 from src.controller.file import File
+from src.controller.excel import TestExcel
 
 
 from src import services, controller
@@ -74,6 +75,8 @@ api.add_resource(StatisticsSpecific, '/statistics/<string:id>')
 
 # file
 api.add_resource(File, '/file')
+
+api.add_resource(TestExcel, '/excel')
 
 
 @controller.jwt_manager.token_in_blocklist_loader

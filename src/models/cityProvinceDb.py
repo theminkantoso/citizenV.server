@@ -41,6 +41,11 @@ class CityDb(db.Model):
             select_from(CityDb).join(AccountDb, CityDb.cityProvinceId == AccountDb.accountId).all()
 
     @staticmethod
+    def find_join_account_allocated():
+        return db.session.query(CityDb.cityProvinceId, CityDb.cityProvinceName, CityDb.completed, AccountDb.endDate). \
+            select_from(CityDb).join(AccountDb, CityDb.cityProvinceId == AccountDb.accountId).count()
+
+    @staticmethod
     def find_join_account_specific(id):
         return db.session.query(CityDb.cityProvinceId, CityDb.cityProvinceName, CityDb.completed, AccountDb.endDate). \
             select_from(CityDb).join(AccountDb, CityDb.cityProvinceId == AccountDb.accountId). \
