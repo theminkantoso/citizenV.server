@@ -70,7 +70,8 @@ class AccountDb(db.Model):
                     "managerAccount": acc.managerAccount, "startDate": startDate_json,
                     "endDate": endDate_json, "isLocked": acc.isLocked}
 
-    def jsonAdmin(accId, acc):
+    @classmethod
+    def jsonAdmin(cls, acc):
         if isinstance(acc.startDate, date):
             startDate_json = acc.startDate.isoformat()
         else:
@@ -79,7 +80,7 @@ class AccountDb(db.Model):
             endDate_json = acc.endDate.isoformat()
         else:
             endDate_json = ''
-        return {"areaId": accId, "accountId": accId, "email": acc.email, "roleId": acc.roleId,
+        return {"areaId": acc.accountId, "accountId": acc.accountId, "email": acc.email, "roleId": acc.roleId,
                 "managerAccount": acc.managerAccount, "startDate": startDate_json,
                 "endDate": endDate_json, "isLocked": acc.isLocked}
 

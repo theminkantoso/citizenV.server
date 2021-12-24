@@ -45,6 +45,7 @@ class CitizenDb(db.Model):
     def json(self):
         if isinstance(self.DOB, date):
             dob_json = self.DOB.isoformat()
+            # dob_json = self.DOB.strftime("%d-%m-%Y")
         else:
             dob_json = ''
         return {

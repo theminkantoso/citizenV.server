@@ -148,7 +148,9 @@ class ProgressServices():
     @staticmethod
     def get_email_managed(id_acc, id_request):
         mail = AccountService.get_email_from_manager(id_acc, id_request)
-        return str(mail[0])
+        if mail:
+            return str(mail[0])
+        return None
 
     @staticmethod
     def send_mail(email, id_acc):

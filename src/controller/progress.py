@@ -93,7 +93,6 @@ class ProgressSpecific(Resource):
 
         email = ProgressServices.get_email_managed(id_acc, id_request)
         if email:
-            print(email)
             status = ProgressServices.send_mail(email, id_acc)
             if status == 1:
                 return {"message": "email sent"}, 200
