@@ -134,6 +134,15 @@ class StatisticsService():
 
     @staticmethod
     def check_valid_request(id_acc, id_req):
+        """
+        Ensure an account can only access its sub-location:
+        e.g Hanoi can access Cau Giay District but cannot access Da Nang
+        This function ensure a requested id has a long length (So Cau Giay cannot access Hanoi) and matching pattern
+        string. (141516 and 14 match eachother at the beginning pattern)
+        :param id_acc: id account accessing system
+        :param id_req: requested id
+        :return: True if satisfy above condition
+        """
         if len(id_req) <= len(id_acc):
             return False
         id_req_cut = id_req[0:len(id_acc)]
