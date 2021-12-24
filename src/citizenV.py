@@ -8,7 +8,7 @@ from src.controller.district import District, Districts, all_Districts_in_area
 from src.controller.ward import Ward, Wards, WardCompleted, all_Wards_in_area
 from src.controller.residentialGroup import Group, Groups, all_groups_in_area
 from src.controller.account_management import AccountManagement, AccountManagementChange
-from src.controller.citizen import Citizen, add_Citizen, all_Citizen, all_Citizen_Area
+from src.controller.citizen import Citizen, add_Citizen, all_Citizen, all_Citizen_Area, citizen_by_group_areas
 from src.controller.progress import Progress, ProgressSpecific
 from src.controller.statistics import Statistics, StatisticsSpecific
 from src.controller.file import File
@@ -63,6 +63,7 @@ api.add_resource(AccountManagementChange, '/accounts/<string:id>')
 api.add_resource(Citizen, '/citizen', '/citizen/<string:citizen_id>')
 api.add_resource(add_Citizen, '/citizen/<string:group_id>')
 api.add_resource(all_Citizen, '/citizens')
+api.add_resource(citizen_by_group_areas, '/citizens_areas/<string:spArea_id>')
 api.add_resource(all_Citizen_Area, '/citizens/<string:area_id>')
 
 # Progress

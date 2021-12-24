@@ -208,7 +208,7 @@ class CitizenServices:
     def all_citizen_area(id_acc: str, area_id: str):
         # validate
         regex_id = '^(0[1-9]|[1-9][0-9])*$'
-        if not validate_regex(area_id, regex_id) or (2 > len(area_id) or len(area_id) > 8):
+        if not validate_regex(area_id, regex_id) or (2 > len(area_id) or len(area_id) > 8) or len(area_id) % 2 != 0:
             return 0  # Invalid area_id
         role = get_jwt()['role']
         # A1
@@ -235,19 +235,29 @@ class CitizenServices:
 
     # Tra cứu theo nóm
     @staticmethod
-    def all_citizen_by_list_areas(role: int, areas):
+    def all_citizen_by_list_areas(role: int, id_acc: int, area_id: int, areas):
+        # validate
+        regex_id = '^(0[1-9]|[1-9][0-9])*$'
+        if not validate_regex(area_id, regex_id) or (2 > len(area_id) or len(area_id) > 6) or len(area_id) % 2 != 0:
+            return 0  # Invalid area_id
+        if not ((role == 2 and id_acc == area_id[0:2])
+                or (role == 3 and id_acc == area_id[0:4])
+                or (role == 4 and id_acc == area_id[0:6])):
+            return 0  # Invalid area_id
         len_areaId = len(areas[0])
+        ok = 0
         # Validate : tất cả các id đều là số , chia  hết cho 2 , độ dài tất cả các id đầu vào bằng nhau
         for area in areas:
             if (not validate_regex(area, regex_area_id)) or len(area) % 2 != 0 or len(area) != len_areaId:
                 return 1
-        # A1 chỉ cho
-        if (role == 1 and len_areaId in [2, 4, 6, 8]) \
-                or (role == 2 and len_areaId in [4, 6, 8]) \
-                or (role == 3 and len_areaId in [6, 8]) \
-                or (role == 4 and len_areaId == 8):
+            elif (role == 1 and len_areaId in [2, 4, 6, 8]) \
+                    or (role == 2 and len_areaId in [4, 6, 8] and id_acc == area[0:2]) \
+                    or (role == 3 and len_areaId in [6, 8] and id_acc == area[0:4]) \
+                    or (role == 4 and len_areaId == 8 and id_acc == area[0:6]):
+                ok += 1
+        if ok == len(areas):
             return CitizenDb.find_all_citizen_by_list_area(areas, len_areaId)
-        return []
+        return 2
 
     @staticmethod
     def get_population_entire():

@@ -159,18 +159,25 @@ class all_Citizen(Resource):
         citizens = CitizenServices.all_citizen(id_acc)
         return {'Citizens': list(map(lambda x: x.json(), citizens))}
 
-    # Tất cả citizen theo từng nhóm
+
+class citizen_by_group_areas(Resource):
+    # Tất cả citizen theo nhóm
     @jwt_required()
     @authorized_required(roles=[1, 2, 3, 4])
-    def post(self):
+    def get(self, spArea_id):
         parser = reqparse.RequestParser()
         parser.add_argument("areas", action='append')
         acc = get_jwt()
         role = acc['role']
         data = parser.parse_args()
-        citizens = CitizenServices.all_citizen_by_list_areas(role, data["areas"])
+        id_acc = get_jwt_identity()
+        citizens = CitizenServices.all_citizen_by_list_areas(role, id_acc, spArea_id, data["areas"])
+        if citizens == 0:
+            return {'message': "Invalid spAreaId"}, 400
         if citizens == 1:
             return {'message': "Invalid id in list"}, 400
+        if citizens == 2:
+            return {'message': "Invalid id in list not exist in spArea"}, 400
         return {'Citizens': list(map(lambda x: x.json(), citizens))}
 
 
