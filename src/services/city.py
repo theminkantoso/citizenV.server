@@ -92,6 +92,10 @@ class CityServices:
         return CityDb.find_join_account()
 
     @staticmethod
+    def list_city_allocated():
+        return int(CityDb.find_join_account_allocated())
+
+    @staticmethod
     def list_city_progress_specific(id):
         """
         list a specific city managed by an A1 account

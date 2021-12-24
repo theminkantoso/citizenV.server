@@ -114,6 +114,10 @@ class ProgressServices():
         return CityServices.list_city_progress()
 
     @staticmethod
+    def list_city_allocated():
+        return CityServices.list_city_allocated()
+
+    @staticmethod
     def list_city_progress_specific(id_request):
         return CityServices.list_city_progress_specific(id_request)
 
@@ -122,12 +126,20 @@ class ProgressServices():
         return DistrictServices.list_district_progress(id_acc)
 
     @staticmethod
+    def list_district_allocated(id_acc):
+        return DistrictServices.list_district_allocated(id_acc)
+
+    @staticmethod
     def list_district_progress_specific(id_acc, id_request):
         return DistrictServices.list_district_progress_specific(id_acc, id_request)
 
     @staticmethod
     def list_ward_progress(id_acc):
         return WardServices.list_ward_progress(id_acc)
+
+    @staticmethod
+    def list_ward_allocated(id_acc):
+        return WardServices.list_ward_allocated(id_acc)
 
     @staticmethod
     def list_ward_progress_specific(id_acc, id_request):

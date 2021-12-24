@@ -57,6 +57,13 @@ class DistrictDb(db.Model):
             join(AccountDb, DistrictDb.districtId == AccountDb.accountId).filter(DistrictDb.cityProvinceId == id).all()
 
     @staticmethod
+    def find_join_account_allocated(id):
+        return db.session.query(DistrictDb.districtId, DistrictDb.districtName, DistrictDb.completed,
+                                AccountDb.endDate).select_from(DistrictDb). \
+            join(AccountDb, DistrictDb.districtId == AccountDb.accountId).filter(DistrictDb.cityProvinceId == id).\
+            count()
+
+    @staticmethod
     def find_join_account_specific(id_acc, id_dis):
         return db.session.query(DistrictDb.districtId, DistrictDb.districtName, DistrictDb.completed,
                                 AccountDb.endDate).select_from(DistrictDb).\

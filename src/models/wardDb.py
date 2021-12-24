@@ -52,6 +52,12 @@ class WardDb(db.Model):
             join(AccountDb, WardDb.wardId == AccountDb.accountId).filter(WardDb.districtId == id).all()
 
     @staticmethod
+    def find_join_account_allocated(id):
+        return db.session.query(WardDb.wardId, WardDb.wardName, WardDb.completed,
+                                AccountDb.endDate).select_from(WardDb). \
+            join(AccountDb, WardDb.wardId == AccountDb.accountId).filter(WardDb.districtId == id).count()
+
+    @staticmethod
     def find_join_account_specific(id_acc, id_request):
         return db.session.query(WardDb.wardId, WardDb.wardName, WardDb.completed,
                                 AccountDb.endDate).select_from(WardDb).\
