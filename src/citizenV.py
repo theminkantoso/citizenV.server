@@ -22,7 +22,7 @@ CORS(app)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://root:''@localhost/citizenv'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config.from_pyfile('core/config.py')
-app.config['SQLALCHEMY_POOL_SIZE'] = 100   # Để tạm là 100 -> setTimeOutError sqlachemy
+app.config['SQLALCHEMY_POOL_SIZE'] = 300   # Để tạm là 300 -> setTimeOutError sqlachemy
 
 api = Api(app)
 services.init_app(app)
