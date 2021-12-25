@@ -18,3 +18,13 @@
 vai trò người dùng (A1, A2, v.v) và có quyền khai báo (thêm, sửa, xóa) ở backend
 để các thành viên khác sử dụng
 + Kiểm thử an ninh, gồm các trường hợp đầu vào không hợp lệ
+
+- Lê Minh Tuyến:
++
++
++
+
+- Trần Thị Lan Anh:
++ 
++
++
