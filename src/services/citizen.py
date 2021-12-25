@@ -439,4 +439,16 @@ class CitizenServices:
     def get_group_age_groups(arr):
         return CitizenDb.get_group_age_groups(arr)
 
+    @staticmethod
+    def all_citizen_district(id_acc: str):
+        citizens = CitizenDb.find_all_citizen_in_dist(id_acc)
+        return citizens
+
+    @staticmethod
+    def all_citizen_ward(id_acc: str):
+        citizens = CitizenDb.find_all_citizen_in_ward(id_acc)
+        return citizens
+
+
+
 

@@ -1,3 +1,5 @@
+import os
+
 from flask_restful import Resource, reqparse
 from src.models.accountDb import AccountDb, RevokedTokenModel
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -98,7 +100,7 @@ class Repass(Resource):
             new_password = AccountService.random_string()
             # send new password to user
             get_user.password = generate_password_hash(new_password, method='sha256')
-            msg = Message('New Password Recovery', sender='phucpb.hrt@gmail.com', recipients=[email.lower()])
+            msg = Message('New Password Recovery', sender=os.environ.get('MAIL'), recipients=[email.lower()])
             msg.body = 'Your new password is {}'.format(new_password)
             my_mail.send(msg)
             get_user.commit_to_db()

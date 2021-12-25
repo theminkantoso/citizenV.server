@@ -11,6 +11,7 @@ from flask_mail import Message
 import re
 import random
 import string
+import os
 
 
 def random_string():
@@ -87,7 +88,7 @@ class AccountManagement(Resource):
             password = AccountService.random_string()
 
             # send email to user, including id and default password
-            msg = Message('Your account information', sender='phucpb.hrt@gmail.com', recipients=[email_create.lower()])
+            msg = Message('Your account information', sender=os.environ.get('MAIL'), recipients=[email_create.lower()])
             msg.body = 'Your id is {f_id} and your password is {f_pass}'.format(f_id=id_create, f_pass=password)
             my_mail.send(msg)
             new_account = AccountDb(AccountId=id_create, Password=generate_password_hash(password, method='sha256'),

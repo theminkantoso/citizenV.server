@@ -1,30 +1,31 @@
 import pandas as pd
 import openpyxl
 
+from UliPlot.XLSX import auto_adjust_xlsx_column_width
+
 from flask import send_file
 from flask_restful import Resource
-from src.models.cityProvinceDb import CityDb
-def to_dict(row):
-    if row is None:
-        return None
-
-    rtn_dict = dict()
-    keys = row.__table__.columns.keys()
-    for key in keys:
-        rtn_dict[key] = getattr(row, key)
-    return rtn_dict
+from src.services.excelService import ExcelServices
+from flask_jwt_extended import jwt_required, get_jwt_identity, get_jwt
+from src.core.auth import authorized_required
 
 
 class TestExcel(Resource):
 
+    @jwt_required()
+    @authorized_required(roles=[3, 4])
     def get(self):
-        data = CityDb.find_all()
-        data_list = [to_dict(item) for item in data]
+        id_acc = get_jwt_identity()
+        claims = get_jwt()
+        role = claims["role"]
+        data = ExcelServices.get_citizen(id_acc, role)
+        data_list = [ExcelServices.to_dict(item) for item in data]
         df = pd.DataFrame(data_list)
-        filename = "../open.xlsx"
+        filename = "../danso.xlsx"
 
         writer = pd.ExcelWriter(filename)
-        df.to_excel(writer, sheet_name='Registrados')
+        df.to_excel(writer, sheet_name='DanSo', na_rep='')
+        auto_adjust_xlsx_column_width(df, writer, sheet_name="DanSo", margin=3)
         writer.save()
 
         return send_file(filename)
