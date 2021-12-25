@@ -1,6 +1,7 @@
 from src.services.citizen import CitizenServices
 from datetime import date
 
+
 class ExcelServices():
     @staticmethod
     def to_dict(row):
