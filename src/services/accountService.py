@@ -129,7 +129,7 @@ class AccountService:
         accounts = []
         if acc["role"] == 0:  # Tất cả người dùng A1
             Ad = AccountDb.find_managed_account_by_id('00')
-            for i in range(len(id_acc)):
+            for i in range(len(Ad)):
                 accounts.append(AccountDb.jsonAdmin(Ad[i]))
         # Cho A1, A2, A3, B1
         elif acc["role"] == 1:
