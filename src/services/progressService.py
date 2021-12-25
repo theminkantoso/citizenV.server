@@ -8,6 +8,8 @@ from flask_mail import Message
 from src.services import my_mail
 from datetime import date
 
+import os
+
 
 class ProgressServices():
     @staticmethod
@@ -168,7 +170,7 @@ class ProgressServices():
     def send_mail(email, id_acc):
         status = 1
         try:
-            msg = Message('Đẩy nhanh tiến độ', sender='phucpb.hrt@gmail.com', recipients=[email.lower()])
+            msg = Message('Đẩy nhanh tiến độ', sender=os.environ.get('MAIL'), recipients=[email.lower()])
             msg.body = 'Sắp đến hạn kết thúc khai báo, ' \
                        'cấp trên {} yêu cầu đơn vị nhanh chóng hoàn thành công tác điều tra!'.format(id_acc)
             my_mail.send(msg)
