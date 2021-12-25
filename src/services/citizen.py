@@ -108,7 +108,7 @@ class CitizenServices:
             return 1  # Invalid sex
 
         # validate marital_status
-        list_marital_status = ['Đã kết hôn', 'Chưa kết hôn']
+        list_marital_status = ['Da ket hon', 'Chua ket hon', 'Ly hon']
         if mari_status not in list_marital_status:
             return 2  # Invalid marital status
 
