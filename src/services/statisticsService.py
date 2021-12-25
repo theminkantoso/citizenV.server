@@ -73,6 +73,67 @@ class StatisticsService():
             return CitizenServices.get_group_age_group(id)
 
     @staticmethod
+    def populations(arr):
+        len_arr = len(arr[0])
+        if len_arr == 2:
+            return int(CitizenServices.get_population_cities(arr))
+        elif len_arr == 4:
+            return int(CitizenServices.get_population_districts(arr))
+        elif len_arr == 6:
+            return int(CitizenServices.get_population_wards(arr))
+        elif len_arr == 8:
+            return int(CitizenServices.get_population_groups(arr))
+
+    @staticmethod
+    def stat_sexs(arr):
+        len_arr = len(arr[0])
+        if len_arr == 2:
+            return CitizenServices.get_stats_sex_cities(arr)
+        elif len_arr == 4:
+            return CitizenServices.get_stats_sex_districts(arr)
+        elif len_arr == 6:
+            return CitizenServices.get_stats_sex_wards(arr)
+        elif len_arr == 8:
+            return CitizenServices.get_stats_sex_groups(arr)
+
+    @staticmethod
+    def stat_edus(arr):
+        len_arr = len(arr[0])
+        if len_arr == 2:
+            return CitizenServices.get_stats_edu_cities(arr)
+        elif len_arr == 4:
+            return CitizenServices.get_stats_edu_districts(arr)
+        elif len_arr == 6:
+            return CitizenServices.get_stats_edu_wards(arr)
+        elif len_arr == 8:
+            return CitizenServices.get_stats_edu_groups(arr)
+
+
+    @staticmethod
+    def stat_maritals(arr):
+        len_arr = len(arr[0])
+        if len_arr == 2:
+            return CitizenServices.get_marital_status_cities(arr)
+        elif len_arr == 4:
+            return CitizenServices.get_marital_status_districts(arr)
+        elif len_arr == 6:
+            return CitizenServices.get_marital_status_wards(arr)
+        elif len_arr == 8:
+            return CitizenServices.get_marital_status_groups(arr)
+
+    @staticmethod
+    def stat_group_ages(arr):
+        len_arr = len(arr[0])
+        if len_arr == 2:
+            return CitizenServices.get_group_age_cities(arr)
+        elif len_arr == 4:
+            return CitizenServices.get_group_age_districts(arr)
+        elif len_arr == 6:
+            return CitizenServices.get_group_age_wards(arr)
+        elif len_arr == 8:
+            return CitizenServices.get_group_age_groups(arr)
+
+    @staticmethod
     def get_name(id, role):
         if role == 2:
             return CityServices.get_city_name(id)

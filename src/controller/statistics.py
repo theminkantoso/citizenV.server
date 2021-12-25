@@ -50,6 +50,48 @@ class Statistics(Resource):
         parser = reqparse.RequestParser()
         parser.add_argument("areas", action='append')
 
+        id_acc = get_jwt_identity()
+        claims = get_jwt()
+        role = claims["role"]
+
+        # input id arr, sửa ở đây
+        arr = []
+        len_first = len(arr[0])
+        for i in arr:
+            if not StatisticsService.check_request_two_digit(i) or len(arr[i]) != len_first:
+                return {"message": "invalid input"}, 400
+            if not StatisticsService.check_valid_request_role(i, role):
+                return {"message": "not authorized"}, 403
+        if 2 <= role <= 4:
+            for i in arr:
+                if not StatisticsService.check_valid_request(id_acc, i):
+                    return {"message": "not authorized"}, 403
+        if 1 <= role <= 4:
+            population = StatisticsService.populations(arr)
+            stat_sex = StatisticsService.stat_sexs(arr)
+            marital = StatisticsService.stat_maritals(arr)
+            edu = StatisticsService.stat_edus(arr)
+            group_age = StatisticsService.stat_group_ages(arr)
+        else:
+            return {"message": "Something went wrong"}, 404
+        edu_json = ''
+        if stat_sex:
+            stat_sex_json = StatisticsService.convert_to_dict_sex(stat_sex)
+        if marital:
+            marital_json = StatisticsService.convert_to_dict_marital(marital)
+        if edu:
+            edu_json = StatisticsService.convert_to_dict_edu(edu)
+        if group_age:
+            group_age_json = StatisticsService.convert_to_dict_group_age(group_age)
+        ret_dict = {}
+        if stat_sex_json and marital_json and edu_json:
+            ret_dict = {**stat_sex_json, **marital_json, **edu_json, **group_age_json}
+        ret_dict["population"] = population
+        if ret_dict:
+            return ret_dict, 200
+        return {}, 200
+
+
 
 class StatisticsSpecific(Resource):
 

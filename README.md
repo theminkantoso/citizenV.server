@@ -13,13 +13,7 @@ pip install -r requirements.txt
 
 * Enable IMAP and allow less secure app in your Gmail account 
 
-* Change ```MAIL_USERNAME``` and ```MAIL_PASSWORD``` to your Google account, and ```JWT_SECRET_KEY``` as you like in ```src.core.config.py``` file
-
-* Change ```sender``` part in line ... of file ```src.controller.account.py``` to your mail address
-
-* Change ```sender``` part in line ... of file ```src.controller.account_management.py``` to your mail address
-
-* Change ```sender``` part in ```send_mail``` function of file ```src.services.progressService.py``` to your mail address
+* Setup your OS environment variable, ```MAIL``` is your email and ```PASS``` is your Gmail password
 
 * Create a ```citizenv``` database in your MySQL server, then import schema file ```citizenv.sql``` and data file ```data.sql```
 
