@@ -164,7 +164,7 @@ class citizen_by_group_areas(Resource):
     # Tất cả citizen theo nhóm
     @jwt_required()
     @authorized_required(roles=[1, 2, 3, 4])
-    def get(self, spArea_id):
+    def post(self, spArea_id):
         parser = reqparse.RequestParser()
         parser.add_argument("areas", action='append')
         acc = get_jwt()

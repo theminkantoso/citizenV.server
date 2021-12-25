@@ -137,7 +137,8 @@ class CitizenServices:
         dist_name = DistrictDb.find_by_id(id_district).districtName
         ward_name = WardDb.find_by_id(id_ward).wardName
         group_name = GroupDb.find_by_id(group_id).groupName
-        permanent_residence = data["permanentResidence"] + ',' + group_name + ',' + ward_name + ',' + dist_name + ',' + city_name
+        permanent_residence = data["permanentResidence"] + ',' + group_name + \
+                              ',' + ward_name + ',' + dist_name + ',' + city_name
 
         citizen = CitizenDb(CCCD=data["CCCD"], name=data["name"], DOB=data["DOB"], sex=data["sex"],
                             maritalStatus=data["maritalStatus"], nation=data["nation"], religion=data["religion"],
@@ -166,21 +167,30 @@ class CitizenServices:
         role_acc = AccountDb.find_by_id(id_acc).roleId
         if (role_acc == 5 and id_acc != citizen.groupId) or (role_acc == 4 and id_acc != citizen.wardId):
             return 0  # not authorize
-        try:
-            citizen.name = data["name"]
-            citizen.DOB = data["DOB"]
-            citizen.sex = data["sex"]
-            citizen.maritalStatus = data["maritalStatus"]
-            citizen.nation = data["nation"]
-            citizen.religion = data["religion"]
-            citizen.temporaryResidence = data["temporaryResidence"]
-            citizen.educationalLevel = data["educationalLevel"]
-            citizen.job = data["job"]
-            citizen.save_to_db()
-        except Exception as e:
-            print(e)
-            return 1  # err
-        return 2  # save
+
+        if data["permanentResidence"] != citizen.permanentResidence and data["permanentResidence"]:
+            s = citizen.permanentResidence.split(',')
+            n = len(s)
+            permanent_residence = data["permanentResidence"] + ',' + s[n - 4]\
+                                   + ',' + s[n - 3] + ',' + s[n - 2] + ',' + s[n - 1]
+            print(permanent_residence)
+
+            try:
+                citizen.name = data["name"]
+                citizen.DOB = data["DOB"]
+                citizen.sex = data["sex"]
+                citizen.maritalStatus = data["maritalStatus"]
+                citizen.nation = data["nation"]
+                citizen.religion = data["religion"]
+                citizen.permanentResidence = permanent_residence
+                citizen.temporaryResidence = data["temporaryResidence"]
+                citizen.educationalLevel = data["educationalLevel"]
+                citizen.job = data["job"]
+                citizen.save_to_db()
+            except Exception as e:
+                print(e)
+                return 1  # err
+            return 2  # save
 
     # Tra cứu tất cả người dân theo id_acc
     @staticmethod
@@ -448,7 +458,3 @@ class CitizenServices:
     def all_citizen_ward(id_acc: str):
         citizens = CitizenDb.find_all_citizen_in_ward(id_acc)
         return citizens
-
-
-
-
