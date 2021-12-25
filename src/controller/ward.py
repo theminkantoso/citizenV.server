@@ -143,6 +143,6 @@ class all_Wards_in_area(Resource):
             if wards == 0:
                 return {'message': "Invalid dist_id"}, 400
             elif wards is None:
-                return {'message': 'dist not found.'}, 404
+                return {'message': 'wards not found in dist.'}, 404
             return {"Areas": list(map(lambda x: x.json1(), wards))}, 200
         return {"message": "not authorized"}, 403

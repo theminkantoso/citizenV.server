@@ -55,14 +55,16 @@ class Statistics(Resource):
         role = claims["role"]
 
         # input id arr, sửa ở đây
-        arr = []
+        data = parser.parse_args()
+        arr = data["areas"]
+        print(arr)
         len_first = len(arr[0])
         for i in arr:
-            if not StatisticsService.check_request_two_digit(i) or len(arr[i]) != len_first:
+            if not StatisticsService.check_request_two_digit(i) or len(i) != len_first:
                 return {"message": "invalid input"}, 400
-            if not StatisticsService.check_valid_request_role(i, role):
-                return {"message": "not authorized"}, 403
-        if 2 <= role <= 4:
+            # if not StatisticsService.check_valid_request_role(i, role):
+            #     return {"message": "not authorized"}, 403
+        if 1 <= role <= 4:
             for i in arr:
                 if not StatisticsService.check_valid_request(id_acc, i):
                     return {"message": "not authorized"}, 403
@@ -75,6 +77,9 @@ class Statistics(Resource):
         else:
             return {"message": "Something went wrong"}, 404
         edu_json = ''
+        stat_sex_json = ''
+        marital_json = ''
+        group_age_json = ''
         if stat_sex:
             stat_sex_json = StatisticsService.convert_to_dict_sex(stat_sex)
         if marital:

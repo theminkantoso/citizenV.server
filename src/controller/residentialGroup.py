@@ -123,6 +123,6 @@ class all_groups_in_area(Resource):
             if groups == 0:
                 return {'message': "Invalid ward_id"}, 400
             elif groups is None:
-                return {'message': 'ward not found.'}, 404
+                return {'message': 'groups not found in ward.'}, 404
             return {"Areas": list(map(lambda x: x.json2(), groups))}, 200
         return {"message": "not authorized"}, 403

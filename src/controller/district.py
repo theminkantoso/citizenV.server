@@ -118,6 +118,6 @@ class all_Districts_in_area(Resource):
             if dists == 0:
                 return {'message': "Invalid city_id"}, 400
             elif dists is None:
-                return {'message': 'city not found.'}, 404
+                return {'message': 'dists not found in city.'}, 404
             return {"Areas": list(map(lambda x: x.json1(), dists))}, 200
         return {"message": "not authorized"}, 403

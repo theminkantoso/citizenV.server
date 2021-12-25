@@ -189,8 +189,8 @@ class StatisticsService():
         :param arr: input result
         :return: dictionary form, later convert to JSON
         """
-        dict_out = {"under 18": int(arr[0][0]), "19-45": int(arr[0][1]), "46-65": int(arr[0][2]),
-                    "66-80": int(arr[0][3]), "above 80": int(arr[0][4])}
+        dict_out = {"under 18": str(arr[0][0]), "19-45": str(arr[0][1]), "46-65": str(arr[0][2]),
+                    "66-80": str(arr[0][3]), "above 80": str(arr[0][4])}
         return dict_out
 
     @staticmethod
