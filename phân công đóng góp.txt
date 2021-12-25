@@ -1,0 +1,20 @@
+- Các thành viên BTL cuối kỳ lớp INT3306 1
+
+- Các thành viên trong nhóm: <Họ và tên> - <MSV> - <Mail VNU>
++ Phạm Bảo Phúc (trưởng nhóm) - 19020083 - 19020083@vnu.edu.vn
++ Lê Minh Tuyến - 19020484 - 19020484@vnu.edu.vn
++ Trần Thị Lan Anh - 19020209 - 19020209@vnu.edu.vn 
+
+- Phạm Bảo Phúc (trưởng nhóm):
++ Tìm hiểu và lựa chọn công nghệ cho cả nhóm (CSDL: MySQL, Backend: Flask, Frontend: Vue)
++ Dựng cấu trúc backend gồm model - service - controller 
++ Thiết kế lược đồ quan hệ ER CSDL
++ Code phần đăng nhập, quên mật khẩu và đổi mật khẩu ở backend
++ Code phần xem, cấp phát, thêm, sửa, xóa hoặc khóa tài khoản của Admin + A1 + A2 + A3 + B1 ở backend
++ Code phần theo dõi tiến độ và trả dữ liệu thống kê ở backend
++ Code phần xuất phiếu cho B1 đi in và xuất file excel dữ liệu người dân ở backend
+=> Tất cả các phần code này cũng bao gồm luôn việc kiểm tra hợp thức của đầu vào mà frontend gửi đến.
++ Code module auth.py với jwt, gồm phân quyền cho từng bộ định tuyến và bảo vệ dựa trên 2 tiêu chí 
+vai trò người dùng (A1, A2, v.v) và có quyền khai báo (thêm, sửa, xóa) ở backend
+để các thành viên khác sử dụng
++ Kiểm thử an ninh, gồm các trường hợp đầu vào không hợp lệ
