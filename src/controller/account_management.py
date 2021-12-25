@@ -3,7 +3,7 @@ from src.models.accountDb import AccountDb
 from src.services.accountService import AccountService
 from src.core.auth import crud_permission_required, authorized_required
 from werkzeug.security import generate_password_hash
-from datetime import datetime
+from datetime import datetime, date
 from src.services import my_mail
 from flask_jwt_extended import jwt_required, get_jwt_identity, get_jwt
 from flask_mail import Message
@@ -176,12 +176,14 @@ class AccountManagementChange(Resource):
             return {'message': "invalid input"}, 400
         elif current_user.managerAccount != id_acc:
             return {"message": "not authorized"}, 403
-
         if email_modify is not None:
             current_user.email = email_modify
         if start_date_modify is not None:
             current_user.startDate = start_date_modify
             current_user.endDate = end_date_modify
+            today = date.today()
+            if current_user.startDate <= today <= current_user.endDate:
+                current_user.isLocked = False
         if is_locked_modify is not None:
             if is_locked_modify:
                 current_user.isLocked = is_locked_modify
@@ -192,7 +194,8 @@ class AccountManagementChange(Resource):
                 except Exception as e:
                     print(e)
                     return {"message": "something wrong"}, 500
-
+            if current_user.startDate is None and current_user.isLocked and not is_locked_modify:
+                return {"message": "you must update startDate and endDate to unLock"}, 400
         try:
             current_user.commit_to_db()  # need to recheck
             return {"message": "done"}, 200
