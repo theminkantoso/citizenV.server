@@ -90,7 +90,7 @@ class Citizen(Resource):
                 elif citizen == 1:
                     return {"message": "An error occurred inserting the citizen."}, 500
                 else:
-                    return {"Message": "cityProvince updated. "}, 200
+                    return {"message": "cityProvince updated. "}, 200
 
 
 class add_Citizen(Resource):
@@ -147,7 +147,7 @@ class add_Citizen(Resource):
                 elif citizen == 2:
                     return {"message": "An error occurred inserting the citzem."}, 500
                 else:
-                    return {"Message": "cityProvince added. "}, 200
+                    return {"message": "cityProvince added. "}, 200
 
 
 class all_Citizen(Resource):
