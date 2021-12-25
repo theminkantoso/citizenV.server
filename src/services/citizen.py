@@ -14,7 +14,7 @@ from src.models.wardDb import WardDb
 
 regex_group_id = '^(0[1-9]|[1-9][0-9]){4}$'
 regex_cccd = '[0-9]{12}'
-regex_edu_level = '^([0-9]|([1][012]))[/]([9]|([1][2]))$'
+regex_edu_level = '(^([0-9]|([1][0]))[/]([1][0])$)|(^([0-9]|([1][0-2]))[/]([1][2])$)'
 regex_area_id = '^[0-9]*$'
 
 
