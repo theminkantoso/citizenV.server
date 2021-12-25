@@ -1,6 +1,8 @@
 import pandas as pd
 import openpyxl
 
+from UliPlot.XLSX import auto_adjust_xlsx_column_width
+
 from flask import send_file
 from flask_restful import Resource
 from src.services.excelService import ExcelServices
@@ -22,7 +24,8 @@ class TestExcel(Resource):
         filename = "../danso.xlsx"
 
         writer = pd.ExcelWriter(filename)
-        df.to_excel(writer, sheet_name='DanSo')
+        df.to_excel(writer, sheet_name='DanSo', na_rep='')
+        auto_adjust_xlsx_column_width(df, writer, sheet_name="DanSo", margin=3)
         writer.save()
 
         return send_file(filename)
