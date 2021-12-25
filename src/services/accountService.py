@@ -128,7 +128,7 @@ class AccountService:
     def join_area_account(acc, managed_accounts, id_acc):
         accounts = []
         if acc["role"] == 0:  # Tất cả người dùng A1
-            Ad = AccountDb.find_managed_account_by_id(id_acc)
+            Ad = AccountDb.find_managed_account_by_id('00')
             for i in range(len(id_acc)):
                 accounts.append(AccountDb.jsonAdmin(Ad[i]))
         # Cho A1, A2, A3, B1
@@ -195,7 +195,7 @@ class AccountService:
         :return: True if any location match this input id
         """
         return (CityServices.check_exist(id) or DistrictServices.check_exist(id) or WardServices.check_exist(id)
-                or GroupServices.check_exist(id))
+                or GroupServices.check_exist(id)) or len(id) == 1
 
 
 

@@ -76,7 +76,7 @@ class AccountManagement(Resource):
 
         # check tk phải có id đúng format <tkcha> + <2 ký tự>
         id_create_len = len(id_create)
-        if not AccountService.check_format_id_plus_2(id_acc, id_create, id_create_len):
+        if not AccountService.check_format_id_plus_2(id_acc, id_create, id_create_len) and role_acc['role'] != 0:
             return {'message': "Wrong format <id> plus two digit"}, 400
 
         # prevent duplicate account
@@ -174,7 +174,7 @@ class AccountManagementChange(Resource):
         current_user = AccountDb.find_by_id(id_modify)
         if current_user is None:
             return {'message': "invalid input"}, 400
-        elif current_user.managerAccount != id_acc:
+        elif current_user.managerAccount != id_acc and len(id_acc) != 1:
             return {"message": "not authorized"}, 403
         if email_modify is not None:
             current_user.email = email_modify
