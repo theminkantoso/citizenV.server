@@ -13,7 +13,7 @@ pip install -r requirements.txt
 
 * Enable IMAP and allow less secure app in your Gmail account 
 
-* Setup your OS environment variable, 'MAIL' is your email and 'PASS' is your Gmail password
+* Setup your OS environment variable, ```MAIL``` is your email and ```PASS``` is your Gmail password
 
 * Create a ```citizenv``` database in your MySQL server, then import schema file ```citizenv.sql``` and data file ```data.sql```
 
