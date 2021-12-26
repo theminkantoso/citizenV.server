@@ -53,6 +53,6 @@ def crud_permission_required(func):
             if user.isLocked:
                 raise Exception()
         except:
-            return {'msg': "You are not authorized to perform this activity"}, 403
+            return {'msg': "You are not authorized to edit"}, 403
         return func(*args, **kwargs)
     return decorated
