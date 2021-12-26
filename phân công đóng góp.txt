@@ -26,29 +26,29 @@ vai trò người dùng (A1, A2, v.v) và có quyền khai báo (thêm, sửa, x
 + Code module người dân ở backend, bao gồm các thao tác CRUD
 + Code phần trả về tất cả mã vùng và người dùng(cả vùng có người dùng và không) 
 + Code phần tiến độ của các tổ dân phố, và cập nhật trạng thái hoàn thành của xã, phường backend
-+ Phần danh sách người dân theo  từng vùng hoặc nhóm vùng
++ Phần danh sách người dân theo từng vùng hoặc nhóm vùng
 => Tất cả các phần trên gồm cả kiểm tra hợp lệ đầu vào backend 
 + Kiểm thử chức năng, giao diện và dữ liệu
 + Giúp kết nối frontend và backend
-  Hỗ trợ frontend:
-+ đăng nhập
-+ in phiếu, xuất file excel người dân
-+ cấp mã, sửa xoá vùng và cấp tài khoản cho các vùng
-+ cấp mã, sửa xoá vùng và cấp tài khoản cho người dùng,
-+ thống kê, biểu đồ người dân theo các tiêu chí
-+ hiển thị người dân theo các tiêu chí
-+ màn hình tiến độ của các đơn vị
+  * Hỗ trợ frontend trong các công việc sau:
++ Đăng nhập
++ In phiếu, xuất file excel người dân
++ Cấp mã, sửa xoá vùng và cấp tài khoản cho các vùng
++ Cấp mã, sửa xoá vùng và cấp tài khoản cho người dùng,
++ Thống kê, biểu đồ người dân theo các tiêu chí
++ Hiển thị người dân theo các tiêu chí
++ Màn hình tiến độ của các đơn vị
 
 
 - Trần Thị Lan Anh:
- Code chính frontend tất cả các phần:
++ Code chính frontend tất cả các phần
 + Màn hình đăng nhập, đổi mật khẩu, quên mật khẩu
 + In phiếu điều tra, xuất excel người dân 
 + Màn hình thêm (cấp phát), sửa, xóa tài khoản, mã vùng (bao gồm thành phố, quận/huyện, xã/phường, tổ dân phố)
 + Phân quyền ẩn hiện các tài nguyên ở frontend dựa theo tài khoản truy cập
 + Màn hình thêm, sửa, xóa người dân của B1 và B2
 + Màn hình danh sách người dân hiện theo các tiêu chí chọn dựa theo các vùng (bao gồm thành phố, quận/huyện, xã/phường, tổ dân phố)
-+ Màn hình thống kê số liệu người dân dựa trên các tiêu chí
++ Màn hình thống kê hiển thị các biểu đồ số liệu người dân dựa trên các tiêu chí
 + Màn hình tiến độ nhập liệu của các đơn vị
 + Thêm reponsive và fetch ở frontend, settimeout 
 + Viết lại URL ở frontend
