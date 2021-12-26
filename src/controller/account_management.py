@@ -127,6 +127,7 @@ class AccountManagementChange(Resource):
     def put(self, id):
         data = AccountManagementChange.parser.parse_args()
         id_acc = get_jwt_identity()
+        role = get_jwt()["role"]
         id_modify = id
         email_modify = data['email']
         is_locked_modify = data['isLocked']
@@ -164,7 +165,8 @@ class AccountManagementChange(Resource):
 
         # ensure CRUD period of child account is valid with this account (parent account)
         # child.startDate > parent.startDate AND child.endDate < parent.endDate
-        if parent_user.startDate is not None and parent_user.endDate is not None:
+        if parent_user.startDate is not None and parent_user.endDate is not None\
+                and start_date_modify is not None and end_date_modify is not None:
             if parent_user.startDate > start_date_modify or parent_user.endDate < end_date_modify:
                 data_ok = False
 
@@ -185,6 +187,8 @@ class AccountManagementChange(Resource):
             today = date.today()
             if current_user.startDate <= today <= current_user.endDate:
                 current_user.isLocked = False
+        if is_locked_modify is not None and role == 0:
+            return {"msg": " Admin not authorized update lock"}
         if is_locked_modify is not None:
             if is_locked_modify:
                 current_user.isLocked = is_locked_modify
