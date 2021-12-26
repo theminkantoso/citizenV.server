@@ -62,8 +62,8 @@ class Statistics(Resource):
         for i in arr:
             if not StatisticsService.check_request_two_digit(i) or len(i) != len_first:
                 return {"message": "invalid input"}, 400
-            # if not StatisticsService.check_valid_request_role(i, role):
-            #     return {"message": "not authorized"}, 403
+            if not StatisticsService.check_valid_request_role(i, role):
+                return {"message": "not authorized"}, 403
         if 1 <= role <= 4:
             for i in arr:
                 if not StatisticsService.check_valid_request(id_acc, i):
