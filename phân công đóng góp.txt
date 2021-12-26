@@ -10,7 +10,7 @@
 + Dựng cấu trúc backend gồm model - service - controller 
 + Thiết kế lược đồ quan hệ ER CSDL
 + Code phần đăng nhập, quên mật khẩu và đổi mật khẩu ở backend
-+ Code phần xem, cấp phát, thêm, sửa, xóa hoặc khóa tài khoản của Admin + A1 + A2 + A3 + B1 ở backend
++ Code phần xem, cấp phát, thêm, sửa, xóa hoặc khóa tài khoản ở backend
 + Code phần theo dõi tiến độ cấp thành phố, quận/huyện, xã/phường ở backend
 + Code phần truy vấn và trả dữ liệu thống kê cấp thành phố, quận/huyện, xã/phường, tổ dân phố ở backend
 + Code phần xuất phiếu cho B1 đi in và xuất file excel dữ liệu người dân ở backend
@@ -19,7 +19,8 @@
 + Code module auth.py với jwt, gồm phân quyền cho từng bộ định tuyến và bảo vệ dựa trên 2 tiêu chí 
 vai trò người dùng (A1, A2, v.v) và có quyền khai báo (thêm, sửa, xóa) ở backend
 để các thành viên khác sử dụng
-+ Kiểm thử an ninh, gồm các trường hợp đầu vào không hợp lệ
++ Kiểm thử an ninh, gồm các trường hợp đầu vào không hợp lệ và không có quyền thêm, sửa, xóa
++ Thực hiện quay video demo
 
 - Lê Minh Tuyến:
 + Code module các vùng, bao gồm thành phố, quận/huyện, xã/phường, tổ dân phố ở backend, bao gồm các thao tác CRUD
@@ -30,15 +31,15 @@ vai trò người dùng (A1, A2, v.v) và có quyền khai báo (thêm, sửa, x
 => Tất cả các phần trên gồm cả kiểm tra hợp lệ đầu vào backend 
 + Kiểm thử chức năng, giao diện và dữ liệu
 + Giúp kết nối frontend và backend
++ Lên kịch bản quay video demo
   * Hỗ trợ frontend trong các công việc sau:
 + Đăng nhập
 + In phiếu, xuất file excel người dân
 + Cấp mã, sửa xoá vùng và cấp tài khoản cho các vùng
-+ Cấp mã, sửa xoá vùng và cấp tài khoản cho người dùng,
-+ Thống kê, biểu đồ người dân theo các tiêu chí
-+ Hiển thị người dân theo các tiêu chí
++ Cấp mã, sửa xoá vùng và cấp tài khoản cho cán bộ
++ Thống kê, biểu đồ người dân theo các tiêu chí lựa chọn
++ Hiển thị người dân theo các tiêu chí lựa chọn
 + Màn hình tiến độ của các đơn vị
-
 
 - Trần Thị Lan Anh:
 + Code chính frontend tất cả các phần
@@ -52,3 +53,4 @@ vai trò người dùng (A1, A2, v.v) và có quyền khai báo (thêm, sửa, x
 + Màn hình tiến độ nhập liệu của các đơn vị
 + Thêm reponsive và fetch ở frontend, settimeout 
 + Viết lại URL ở frontend
++ Lên kịch bản quay video demo
