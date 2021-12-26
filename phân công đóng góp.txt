@@ -20,9 +20,14 @@ vai trò người dùng (A1, A2, v.v) và có quyền khai báo (thêm, sửa, x
 + Kiểm thử an ninh, gồm các trường hợp đầu vào không hợp lệ
 
 - Lê Minh Tuyến:
-+ Code module các vùng, bao gồm thành phố, quận/huyện, xã/phường, tổ dân phố ở backend, bao gồm các thao tác CRUD
++ Code module các vùng, bao gồm thành phố, quậEn/huyện, xã/phường, tổ dân phố ở backend, bao gồm các thao tác CRUD
 + Code module người dân ở backend, bao gồm các thao tác CRUD
-+
++ Code phần tiến độ của các thôn bản, và cập nhật trạng thái hoàn thành của xã, phường backend
++ Phần danh sách người dân theo  từng vùng hoặc nhóm vùng
+=>  tất cả các phần trên gồm cả kiểm tra hợp lệ đầu vào backend của phần mình code
++ Kiểm thử chức năng, giao diện và dữ liệu
++ Giúp frontend kết nối với backend
++ Giúp frontend in phiếu, xuất excel, thống kê, cấp tài khoản,...
 
 - Trần Thị Lan Anh:
 + 
