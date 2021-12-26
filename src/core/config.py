@@ -1,6 +1,9 @@
 from datetime import timedelta
 import os
 
+SQLALCHEMY_DATABASE_URI = 'mysql://root:''@localhost/citizenv'
+SQLALCHEMY_TRACK_MODIFICATIONS = False
+SQLALCHEMY_POOL_SIZE = 1000   # Để tạm là 300 -> setTimeOutError sqlachemy
 MAIL_SERVER = 'smtp.gmail.com'
 MAIL_PORT = 587
 MAIL_USERNAME = os.environ.get('MAIL')
