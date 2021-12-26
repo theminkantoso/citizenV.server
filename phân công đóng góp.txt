@@ -29,6 +29,7 @@ vai trò người dùng (A1, A2, v.v) và có quyền khai báo (thêm, sửa, x
 => Tất cả các phần trên gồm cả kiểm tra hợp lệ đầu vào backend 
 + Kiểm thử chức năng, giao diện và dữ liệu
 + Giúp kết nối frontend và backend
++ Viết lại URL ở frontend
 
 // FE
 + In phiếu, xuất excel người dân 
