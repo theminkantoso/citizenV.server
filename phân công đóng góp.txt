@@ -20,8 +20,8 @@ vai trò người dùng (A1, A2, v.v) và có quyền khai báo (thêm, sửa, x
 + Kiểm thử an ninh, gồm các trường hợp đầu vào không hợp lệ
 
 - Lê Minh Tuyến:
-+
-+
++ Code module các vùng, bao gồm thành phố, quận/huyện, xã/phường, tổ dân phố ở backend, bao gồm các thao tác CRUD
++ Code module người dân ở backend, bao gồm các thao tác CRUD
 +
 
 - Trần Thị Lan Anh:
