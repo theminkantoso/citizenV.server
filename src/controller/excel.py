@@ -27,5 +27,4 @@ class TestExcel(Resource):
         df.to_excel(writer, sheet_name='DanSo', na_rep='')
         auto_adjust_xlsx_column_width(df, writer, sheet_name="DanSo", margin=3)
         writer.save()
-
-        return send_file(filename, download_name="Dan So", attachment_filename="Dan So")
+        return send_file(filename)
