@@ -64,10 +64,10 @@ class Statistics(Resource):
                 return {"msg": "invalid input"}, 400
             if not StatisticsService.check_valid_request_role(i, role):
                 return {"msg": "not authorized"}, 403
-        if 1 <= role <= 4:
-            for i in arr:
-                if not StatisticsService.check_valid_request(id_acc, i):
-                    return {"msg": "not authorized"}, 403
+        # if 1 <= role <= 4:
+        #     for i in arr:
+                # if not StatisticsService.check_valid_request(id_acc, i):
+                #     return {"msg": "not authorized"}, 403
         if 1 <= role <= 4:
             population = StatisticsService.populations(arr)
             stat_sex = StatisticsService.stat_sexs(arr)

@@ -30,16 +30,19 @@ vai trò người dùng (A1, A2, v.v) và có quyền khai báo (thêm, sửa, x
 => Tất cả các phần trên gồm cả kiểm tra hợp lệ đầu vào backend 
 + Kiểm thử chức năng, giao diện và dữ liệu
 + Giúp kết nối frontend và backend
-+ Giúp frontend đăng nhập
-+ Giúp frontend in phiếu, xuất file excel người dân
-+ Giúp frontend cấp mã, sửa xoá vùng và cấp tài khoản cho người dùng,
-+ Giúp frontend thống kê người dân theo các tiêu chí
-+ Giúp frontend hiển thị người dân theo các tiêu chí
-+ Giúp frontend màn hình tiến độ của các đơn vị
+  Hỗ trợ frontend:
++ đăng nhập
++ in phiếu, xuất file excel người dân
++ cấp mã, sửa xoá vùng và cấp tài khoản cho các vùng
++ cấp mã, sửa xoá vùng và cấp tài khoản cho người dùng,
++ thống kê, biểu đồ người dân theo các tiêu chí
++ hiển thị người dân theo các tiêu chí
++ màn hình tiến độ của các đơn vị
 
 
 - Trần Thị Lan Anh:
  Code chính frontend tất cả các phần:
++ Màn hình đăng nhập, đổi mật khẩu, quên mật khẩu
 + In phiếu điều tra, xuất excel người dân 
 + Màn hình thêm (cấp phát), sửa, xóa tài khoản, mã vùng (bao gồm thành phố, quận/huyện, xã/phường, tổ dân phố)
 + Phân quyền ẩn hiện các tài nguyên ở frontend dựa theo tài khoản truy cập
@@ -47,5 +50,5 @@ vai trò người dùng (A1, A2, v.v) và có quyền khai báo (thêm, sửa, x
 + Màn hình danh sách người dân hiện theo các tiêu chí chọn dựa theo các vùng (bao gồm thành phố, quận/huyện, xã/phường, tổ dân phố)
 + Màn hình thống kê số liệu người dân dựa trên các tiêu chí
 + Màn hình tiến độ nhập liệu của các đơn vị
-+ Thêm reponsive và AJAX ở frontend
++ Thêm reponsive và fetch ở frontend, settimeout 
 + Viết lại URL ở frontend
