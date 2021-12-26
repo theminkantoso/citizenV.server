@@ -25,7 +25,7 @@ class Statistics(Resource):
             edu = StatisticsService.stat_edu(id_acc, role)
             group_age = StatisticsService.stat_group_age(id_acc, role)
         else:
-            return {"message": "Something went wrong"}, 404
+            return {"msg": "Something went wrong"}, 404
 
         if stat_sex:
             stat_sex_json = StatisticsService.convert_to_dict_sex(stat_sex)
@@ -61,13 +61,13 @@ class Statistics(Resource):
         len_first = len(arr[0])
         for i in arr:
             if not StatisticsService.check_request_two_digit(i) or len(i) != len_first:
-                return {"message": "invalid input"}, 400
+                return {"msg": "invalid input"}, 400
             if not StatisticsService.check_valid_request_role(i, role):
-                return {"message": "not authorized"}, 403
+                return {"msg": "not authorized"}, 403
         if 1 <= role <= 4:
             for i in arr:
                 if not StatisticsService.check_valid_request(id_acc, i):
-                    return {"message": "not authorized"}, 403
+                    return {"msg": "not authorized"}, 403
         if 1 <= role <= 4:
             population = StatisticsService.populations(arr)
             stat_sex = StatisticsService.stat_sexs(arr)
@@ -75,7 +75,7 @@ class Statistics(Resource):
             edu = StatisticsService.stat_edus(arr)
             group_age = StatisticsService.stat_group_ages(arr)
         else:
-            return {"message": "Something went wrong"}, 404
+            return {"msg": "Something went wrong"}, 404
         edu_json = ''
         stat_sex_json = ''
         marital_json = ''
@@ -107,12 +107,12 @@ class StatisticsSpecific(Resource):
         role = claims["role"]
         id_request = id
         if not StatisticsService.check_request_two_digit(id_request):
-            return {"message": "invalid input"}, 400
+            return {"msg": "invalid input"}, 400
         if not StatisticsService.check_valid_request_role(id_request, role):
-            return {"message": "not authorized"}, 403
+            return {"msg": "not authorized"}, 403
         if 2 <= role <= 4:
             if not StatisticsService.check_valid_request(id_acc, id_request):
-                return {"message": "not authorized"}, 403
+                return {"msg": "not authorized"}, 403
         if 1 <= role <= 4:
             population = StatisticsService.population(id_request, StatisticsService.gen_index_request(id_request))
             stat_sex = StatisticsService.stat_sex(id_request, StatisticsService.gen_index_request(id_request))
@@ -121,7 +121,7 @@ class StatisticsSpecific(Resource):
             group_age = StatisticsService.stat_group_age(id_request, StatisticsService.gen_index_request(id_request))
             name = StatisticsService.get_name(id_request, StatisticsService.gen_index_request(id_request))
         else:
-            return {"message": "Something went wrong"}, 404
+            return {"msg": "Something went wrong"}, 404
         edu_json = ''
         if stat_sex:
             stat_sex_json = StatisticsService.convert_to_dict_sex(stat_sex)

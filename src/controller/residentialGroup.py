@@ -14,11 +14,11 @@ class Group(Resource):
         # Kiểm tra group_id có tồn tại và người dùng có quyền không
         group = GroupServices.exist_group(id_acc, group_id)
         if group == 0:
-            return {'message': "Invalid id"}, 400
+            return {'msg': "Invalid id"}, 400
         elif group == 1:
-            return {"message": "not authorized"}, 403
+            return {"msg": "not authorized"}, 403
         elif group is None:
-            return {'message': 'group not found.'}, 404
+            return {'msg': 'group not found.'}, 404
         else:
             return group.json(), 200
 
@@ -36,15 +36,15 @@ class Group(Resource):
         # create
         g = GroupServices.create_group(id_acc, data)
         if g == 0:
-            return {'message': "Invalid group_id"}, 400
+            return {'msg': "Invalid group_id"}, 400
         elif g == 1:
-            return {'message': "An group with name in ward already exists."}, 400
+            return {'msg': "An group with name in ward already exists."}, 400
         elif g == 2:
-            return {'message': "An group with id in ward already exists."}, 400
+            return {'msg': "An group with id in ward already exists."}, 400
         elif g == 3:
-            return {"message": "An error occurred inserting the group."}, 500
+            return {"msg": "An error occurred inserting the group."}, 500
         elif g == 4:
-            return {"message": "group added. "}, 200
+            return {"msg": "group added. "}, 200
 
     # Xoá 1 thôn/bản/tdp trong 1 xã/phường khỏi danh sách
     @jwt_required()
@@ -55,18 +55,18 @@ class Group(Resource):
         # Kiểm tra group_id có tồn tại và người dùng có quyền không
         g = GroupServices.exist_group(id_acc, group_id)
         if g == 0:
-            return {'message': "Invalid id"}, 400
+            return {'msg': "Invalid id"}, 400
         elif g == 1:
-            return {"message": "not authorized"}, 403
+            return {"msg": "not authorized"}, 403
         elif g is None:
-            return {'message': 'group not found.'}, 404
+            return {'msg': 'group not found.'}, 404
         else:
             # Kiểm tra group_id có tồn tại và người dùng có quyền không
             group = GroupServices.delete_group(g)
             if group == 1:
-                return {'message': 'Group deleted.'}, 200
+                return {'msg': 'Group deleted.'}, 200
             else:
-                return {'message': "An error occurred delete the group."}, 500
+                return {'msg': "An error occurred delete the group."}, 500
 
     # Sửa thông tin 1 thôn/bản/tdp
     @jwt_required()
@@ -81,21 +81,21 @@ class Group(Resource):
         # Kiểm tra group_id có tồn tại và người dùng có quyền không
         g = GroupServices.exist_group(id_acc, group_id)
         if g == 0:
-            return {'message': "Invalid id"}, 400
+            return {'msg': "Invalid id"}, 400
         elif g == 1:
-            return {"message": "not authorized"}, 403
+            return {"msg": "not authorized"}, 403
         elif g is None:
-            return {'message': 'group not found.'}, 404
+            return {'msg': 'group not found.'}, 404
         else:
             # group_id tồn tại và người dùng có quyền sửa
             group = GroupServices.update_group(id_acc, g, data)
             if group == 0:
-                return {"message": "Not change"}, 400
+                return {"msg": "Not change"}, 400
             if group == 1:
-                return {"message": "Name  already exists in other District."}, 400
+                return {"msg": "Name  already exists in other District."}, 400
             if group == 2:
-                return {'message': "An error occurred update the group."}, 500
-            return {'message': 'Group updated.'}, 200
+                return {'msg': "An error occurred update the group."}, 500
+            return {'msg': 'Group updated.'}, 200
 
 
 # Thống kê các thôn/bản/tdp
@@ -121,8 +121,8 @@ class all_groups_in_area(Resource):
                 or (len(id_acc) == 4 and id_acc == ward_id[0:2]) or (len(id_acc) == 6 and id_acc == ward_id):
             groups = GroupServices.list_group_in_ward(ward_id)
             if groups == 0:
-                return {'message': "Invalid ward_id"}, 400
+                return {'msg': "Invalid ward_id"}, 400
             elif groups is None:
-                return {'message': 'groups not found in ward.'}, 404
+                return {'msg': 'groups not found in ward.'}, 404
             return {"Areas": list(map(lambda x: x.json2(), groups))}, 200
-        return {"message": "not authorized"}, 403
+        return {"msg": "not authorized"}, 403

@@ -69,20 +69,20 @@ class AccountManagement(Resource):
 
         # validate input
         if not AccountService.validate_input_id_email_create(id_create, email_create):
-            return {'message': "Invalid input format"}, 400
+            return {'msg': "Invalid input format"}, 400
 
         # prevent creating a trash account where id does not match any location
         if not AccountService.prevent_trash_account(id_create):
-            return {'message': "This is a trash account"}, 400
+            return {'msg': "This is a trash account"}, 400
 
         # check tk phải có id đúng format <tkcha> + <2 ký tự>
         id_create_len = len(id_create)
         if not AccountService.check_format_id_plus_2(id_acc, id_create, id_create_len) and role_acc['role'] != 0:
-            return {'message': "Wrong format <id> plus two digit"}, 400
+            return {'msg': "Wrong format <id> plus two digit"}, 400
 
         # prevent duplicate account
         if not AccountService.find_duplicate(id_create):
-            return {'message': "Account already existed"}, 400
+            return {'msg': "Account already existed"}, 400
 
         try:
             password = AccountService.random_string()
@@ -95,10 +95,10 @@ class AccountManagement(Resource):
                                     email=email_create, RoleId=int(role_acc['role']) + 1, manager_account=id_acc,
                                     isLocked=1)
             new_account.save_to_db()
-            return {'message': "New account sent to user's mailbox!"}, 200
+            return {'msg': "New account sent to user's mailbox!"}, 200
         except Exception as e:
             print(e)
-            return {'messsage': 'Something wrong happened'}, 500
+            return {'msg': 'Something wrong happened'}, 500
 
 
 class AccountManagementChange(Resource):
@@ -116,10 +116,10 @@ class AccountManagementChange(Resource):
             specific_account = AccountDb.find_by_id(id)
             if specific_account:
                 if specific_account.managerAccount != id_acc:
-                    return {"message": "not authorized"}, 403
+                    return {"msg": "not authorized"}, 403
                 return specific_account.json(), 200
         except:
-            return {"message": "Not found"}, 404
+            return {"msg": "Not found"}, 404
 
     @jwt_required()
     @authorized_required(roles=[0, 1, 2, 3, 4])
@@ -147,20 +147,20 @@ class AccountManagementChange(Resource):
             data_ok = False
 
         if not data_ok:
-            return {'message': "invalid input"}, 400
+            return {'msg': "invalid input"}, 400
 
         if start_date_modify is not None and end_date_modify is not None:
             try:
                 start_date_modify = datetime.strptime(data['StartDate'], '%Y-%m-%d').date()
                 end_date_modify = datetime.strptime(data['EndDate'], '%Y-%m-%d').date()
             except:
-                return {'message': "invalid input"}, 400
+                return {'msg': "invalid input"}, 400
             data_ok = AccountService.validate_period(start_date_modify, end_date_modify)
 
         # ensure CRUD period satisfy with parent's account CRUD period
         parent_user = AccountDb.find_by_id(id_acc)
         if parent_user is None:
-            return {'message': "something went wrong"}, 500
+            return {'msg': "something went wrong"}, 500
 
         # ensure CRUD period of child account is valid with this account (parent account)
         # child.startDate > parent.startDate AND child.endDate < parent.endDate
@@ -169,14 +169,14 @@ class AccountManagementChange(Resource):
                 data_ok = False
 
         if not data_ok:
-            return {'message': "Check your CRUD period again"}, 400
+            return {'msg': "Check your CRUD period again"}, 400
 
         # prevent one user access other resources
         current_user = AccountDb.find_by_id(id_modify)
         if current_user is None:
-            return {'message': "invalid input"}, 400
+            return {'msg': "invalid input"}, 400
         elif current_user.managerAccount != id_acc and len(id_acc) != 1:
-            return {"message": "not authorized"}, 403
+            return {"msg": "not authorized"}, 403
         if email_modify is not None:
             current_user.email = email_modify
         if start_date_modify is not None:
@@ -194,14 +194,14 @@ class AccountManagementChange(Resource):
                     AccountDb.lock_managed_account_hierachy(id_modify)
                 except Exception as e:
                     print(e)
-                    return {"message": "something wrong"}, 500
+                    return {"msg": "something wrong"}, 500
             if current_user.startDate is None and current_user.isLocked and not is_locked_modify:
-                return {"message": "you must update startDate and endDate to unLock"}, 400
+                return {"msg": "you must update startDate and endDate to unLock"}, 400
         try:
             current_user.commit_to_db()  # need to recheck
-            return {"message": "done"}, 200
+            return {"msg": "done"}, 200
         except:
-            return {"message": "something wrong"}, 500
+            return {"msg": "something wrong"}, 500
 
     @jwt_required()
     @authorized_required(roles=[0, 1, 2, 3, 4])
@@ -212,18 +212,18 @@ class AccountManagementChange(Resource):
         current_user = AccountDb.find_by_id(id_delete)
 
         if current_user is None:
-            return {'message': "invalid input"}, 400
+            return {'msg': "invalid input"}, 400
         elif current_user.managerAccount != id_acc:
-            return {"message": "not authorized"}, 403
+            return {"msg": "not authorized"}, 403
 
         try:
             try:
                 AccountDb.delete_managed_account_hierachy(id_delete)
             except Exception as e:
                 print(e)
-                return {"message": "something wrong"}, 500
+                return {"msg": "something wrong"}, 500
             current_user.delete_from_db()  # need to recheck
-            return {"message": "done"}, 200
+            return {"msg": "done"}, 200
         except Exception as e:
             print(e)
-            return {"message": "something wrong"}, 500
+            return {"msg": "something wrong"}, 500

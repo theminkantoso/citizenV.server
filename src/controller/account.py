@@ -33,12 +33,12 @@ class Account(Resource):
 
         # validate input
         if not AccountService.validate_input_id_pass(id, password):
-            return {'message': "Invalid id or password"}, 400
+            return {'msg': "Invalid id or password"}, 400
 
         user = AccountDb.find_by_id(id)
 
         if user is None:
-            return {'message': "Incorrect id or password"}, 401
+            return {'msg': "Incorrect id or password"}, 401
 
         name = AccountService.area_name_of_acc(user)
 
@@ -70,13 +70,13 @@ class Account(Resource):
             except:
                 return jsonify(access_token=access_token)
 
-        return {"message": "Incorrect username or password"}, 401
+        return {"msg": "Incorrect username or password"}, 401
 
     def delete(self):
-        return {'message': 'Not allowed'}, 404
+        return {'msg': 'Not allowed'}, 404
 
     def put(self):
-        return {'message': 'Not allowed'}, 404
+        return {'msg': 'Not allowed'}, 404
 
 
 class Repass(Resource):
@@ -91,11 +91,11 @@ class Repass(Resource):
 
         # validate input
         if not AccountService.validate_input_id_email(id, email):
-            return {'message': "Check your id or email"}, 400
+            return {'msg': "Check your id or email"}, 400
 
         get_user = AccountDb.find_by_email(email, id)
         if get_user is None:
-            return {'message': "No account with this email and id"}, 400
+            return {'msg': "No account with this email and id"}, 400
         try:
             new_password = AccountService.random_string()
             # send new password to user
@@ -106,8 +106,8 @@ class Repass(Resource):
             get_user.commit_to_db()
         except Exception as e:
             print(e)
-            return {'message': "Unable to send confirmation mail"}, 400
-        return {'message': "New password sent to your mailbox!"}, 200
+            return {'msg': "Unable to send confirmation mail"}, 400
+        return {'msg': "New password sent to your mailbox!"}, 200
 
 
 class ChangePass(Resource):
@@ -123,15 +123,15 @@ class ChangePass(Resource):
 
         # validate input
         if not AccountService.validate_input_pass_newpass(password, new_password):
-            return {'message': "Wrong input format"}, 400
+            return {'msg': "Wrong input format"}, 400
 
         id = get_jwt_identity()
         get_user = AccountDb.find_by_id(id)
         if check_password_hash(get_user.password, password):
             get_user.password = generate_password_hash(new_password, method='sha256')
             get_user.save_to_db()
-            return {'message': "New password saved succeed!"}, 200
-        return {'message': "Wrong password"}, 400
+            return {'msg': "New password saved succeed!"}, 200
+        return {'msg': "Wrong password"}, 400
 
 
 class UserLogoutAccess(Resource):
@@ -149,10 +149,10 @@ class UserLogoutAccess(Resource):
 
             revoked_token.add()
 
-            return {'message': 'Access token has been revoked'}, 200
+            return {'msg': 'Access token has been revoked'}, 200
 
         except:
-            return {'message': 'Something went wrong'}, 500
+            return {'msg': 'Something went wrong'}, 500
 
 
 
