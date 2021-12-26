@@ -143,7 +143,7 @@ class add_Citizen(Resource):
                 if citizen == 0:
                     return {"msg": "not authorized"}, 403
                 elif citizen == 1:
-                    return {"msg": "CCCD is exist"}, 403
+                    return {"msg": "CCCD is exist"}, 400
                 elif citizen == 2:
                     return {"msg": "An error occurred inserting the citzem."}, 500
                 else:
@@ -157,7 +157,7 @@ class all_Citizen(Resource):
     def get(self):
         id_acc = get_jwt_identity()
         citizens = CitizenServices.all_citizen(id_acc)
-        return {'Citizens': list(map(lambda x: x.json(), citizens))}
+        return {'Citizens': list(map(lambda x: x.json(), citizens))}, 200
 
 
 class citizen_by_group_areas(Resource):
@@ -178,7 +178,7 @@ class citizen_by_group_areas(Resource):
             return {'msg': "Invalid id in list"}, 400
         if citizens == 2:
             return {'msg': "Invalid id in list not exist in spArea"}, 400
-        return {'Citizens': list(map(lambda x: x.json(), citizens))}
+        return {'Citizens': list(map(lambda x: x.json(), citizens))}, 200
 
 
 class all_Citizen_Area(Resource):
