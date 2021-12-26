@@ -97,7 +97,6 @@ class Statistics(Resource):
         return {}, 200
 
 
-
 class StatisticsSpecific(Resource):
 
     @jwt_required()
